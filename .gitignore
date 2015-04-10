@@ -1,3 +1,7 @@
 Assembly-CSharp-Editor-vs.csproj
 Library/
 Assembly-CSharp-Editor.csproj
+Temp/
+INSEIL_Unity.userprefs
+INSEIL_Unity.sln
+INSEIL_Unity-csharp.sln
