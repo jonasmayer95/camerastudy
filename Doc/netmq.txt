@@ -1,0 +1,20 @@
+Alright, since clrzmq hasn't been updated since 2012, I've decided to replace it with NetMQ,
+which is a straight C# port of libzmq. It contains a .NET 3.5 project that we can use within
+Unity, although there are some things you have to do to get it working properly.
+
+Note that there are NuGet packages of the libraries as well, but I haven't tested those, because
+I'm lazy and I was already building from source. The DLLs will probably end up being pushed into
+the repo anyway, but I'm not going to do it right away (and maybe search for a better solution
+instead of storing binary files in *source* control).
+Anyway, here's the build instructions:
+
+1. clone the latest NetMQ master (da8f4a657f7ec78af1b00ed12d8bdd9a632224ac as of now)
+   from https://github.com/zeromq/netmq.git
+2. build the NetMQ3.5 project and copy NetMQ.dll into our Assets folder
+3. clone the latest AsyncIO master (4634efa5c1fd6fd01b95810294ebd24e9b8cf170 as of now)
+   from https://github.com/somdoron/AsyncIO.git
+4. build the AsyncIO.Unity project and copy its output into our Assets folder
+5. start Unity and click play to confirm it works
+6. stare at all the wonderful log messages
+7. read the code, as it contains some comments
+8. if you make changes, do NOT push the netmq and asyncio DLLs yet; I'll take care of that.
