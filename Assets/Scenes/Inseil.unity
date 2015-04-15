@@ -173,7 +173,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 459232, guid: 7281d8ab464056d429e8e935c5d64f1d, type: 2}
       propertyPath: m_LocalPosition.y
-      value: .0799999982
+      value: .0399999991
       objectReference: {fileID: 0}
     - target: {fileID: 459232, guid: 7281d8ab464056d429e8e935c5d64f1d, type: 2}
       propertyPath: m_LocalPosition.z
@@ -197,19 +197,19 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 459232, guid: 7281d8ab464056d429e8e935c5d64f1d, type: 2}
       propertyPath: m_RootOrder
-      value: 8
+      value: 10
       objectReference: {fileID: 0}
-    - target: {fileID: 459232, guid: 7281d8ab464056d429e8e935c5d64f1d, type: 2}
-      propertyPath: m_LocalScale.x
-      value: .300000012
+    - target: {fileID: 129630, guid: 7281d8ab464056d429e8e935c5d64f1d, type: 2}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 459232, guid: 7281d8ab464056d429e8e935c5d64f1d, type: 2}
-      propertyPath: m_LocalScale.y
-      value: .300000012
+    - target: {fileID: 102242, guid: 7281d8ab464056d429e8e935c5d64f1d, type: 2}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 459232, guid: 7281d8ab464056d429e8e935c5d64f1d, type: 2}
-      propertyPath: m_LocalScale.z
-      value: .300000012
+    - target: {fileID: 135324, guid: 7281d8ab464056d429e8e935c5d64f1d, type: 2}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 7281d8ab464056d429e8e935c5d64f1d, type: 2}
@@ -802,7 +802,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400076, guid: 014dd983c047b9e439e3151e0eee3133, type: 3}
       propertyPath: m_RootOrder
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 13700000, guid: 014dd983c047b9e439e3151e0eee3133, type: 3}
       propertyPath: m_ReflectionProbeUsage
@@ -968,7 +968,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400006, guid: 6142a6b8fc847a24aa567290b62ea54b, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 13700000, guid: 6142a6b8fc847a24aa567290b62ea54b, type: 3}
       propertyPath: m_Materials.Array.data[0]

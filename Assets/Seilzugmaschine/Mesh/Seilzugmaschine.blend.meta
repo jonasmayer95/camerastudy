@@ -1,6 +1,6 @@
 fileFormatVersion: 2
-guid: 8a96eacf26aee254ea93c95492625cd2
-timeCreated: 1427546017
+guid: d995ecd4cd6a9134f946c2e8f93f25a4
+timeCreated: 1429123798
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
@@ -60,7 +60,7 @@ ModelImporter:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
-    addColliders: 1
+    addColliders: 0
     importBlendShapes: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
@@ -74,7 +74,7 @@ ModelImporter:
     secondaryUVPackMargin: 4
     useFileScale: 1
   tangentSpace:
-    normalSmoothAngle: 90
+    normalSmoothAngle: 60
     splitTangentsAcrossUV: 1
     normalImportMode: 0
     tangentImportMode: 1
@@ -92,7 +92,7 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   additionalBone: 0
   userData: 
   assetBundleName: 
