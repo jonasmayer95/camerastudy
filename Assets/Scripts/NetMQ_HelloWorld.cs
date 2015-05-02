@@ -72,24 +72,24 @@ public class NetMQ_HelloWorld : MonoBehaviour
     {
         //minimal testing code I found here: http://pastebin.com/EHvt4Na7
         //comment out everything above and call this in Start() to test
-        using (NetMQContext ctx = NetMQContext.Create())
-        {
-            using (var server = ctx.CreateResponseSocket())
-            {
-                server.Bind("tcp://127.0.0.1:5556");
-                using (var client = ctx.CreateRequestSocket())
-                {
-                    client.Connect("tcp://127.0.0.1:5556");
-                    client.Send("Hello" + Random.Range(0, 100).ToString());
+        //using (NetMQContext ctx = NetMQContext.Create())
+        //{
+        //    using (var server = ctx.CreateResponseSocket())
+        //    {
+        //        server.Bind("tcp://127.0.0.1:5556");
+        //        using (var client = ctx.CreateRequestSocket())
+        //        {
+        //            client.Connect("tcp://127.0.0.1:5556");
+        //            client.Send("Hello" + Random.Range(0, 100).ToString());
 
-                    string m1 = server.ReceiveString();
-                    Debug.Log("From Client: " + m1.ToString());
-                    server.Send("Hi " + m1.ToString());
+        //            string m1 = server.ReceiveString();
+        //            Debug.Log("From Client: " + m1.ToString());
+        //            server.Send("Hi " + m1.ToString());
 
-                    string m2 = client.ReceiveString();
-                    Debug.Log("From Server: " + m2.ToString());
-                }
-            }
-        }
+        //            string m2 = client.ReceiveString();
+        //            Debug.Log("From Server: " + m2.ToString());
+        //        }
+        //    }
+        //}
     }
 }
