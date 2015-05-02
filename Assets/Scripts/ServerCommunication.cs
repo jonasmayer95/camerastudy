@@ -7,6 +7,8 @@ public class ServerCommunication : MonoBehaviour
 {
     private NetMQContext ctx;
     private SubscriberSocket client;
+    private string topic;
+    private string serverAddress;
 
     private NetMQMessage message;
     private bool recv;
