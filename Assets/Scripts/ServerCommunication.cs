@@ -5,49 +5,84 @@ using NetMQ.Sockets;
 
 public class ServerCommunication : MonoBehaviour
 {
-    private NetMQContext ctx;
-    private SubscriberSocket client;
-    private string topic;
-    private string serverAddress;
+    private static NetMQContext ctx;
+    private static SubscriberSocket client;
 
     private NetMQMessage message;
     private bool recv;
 
+
     void Update()
     {
         recv = client.TryReceiveMultipartMessage(ref message);
+
         if (recv)
         {
-            Debug.Log("Got a message; parse it and pass it on to whatever component does the visualization");
+            Debug.Log(string.Format("Frames: {0}", message.FrameCount));
+            foreach (NetMQFrame fr in message)
+            {
+                Debug.Log(fr.ConvertToString());
+            }
+
         }
     }
 
     void OnApplicationQuit()
     {
-        if (client != null)
-            client.Dispose();
-
-        if (ctx != null)
-            ctx.Dispose();
+        Shutdown();
     }
 
     /// <summary>
     /// Sets up NetMQ context and SUB socket, then connects and subscribes to the
-    /// given topic. Works only once, before a context is instantiated.
+    /// given topic. Returns true on success and false if any NetMQ method throws
+    /// an exception.
     /// </summary>
     /// <param name="topic">The topic to subscribe to.</param>
     /// <param name="url">The publisher's IP and port.</param>
-    public void SetupConnection(string topic, string url)
+    /// <returns></returns>
+    public static bool ClientConnect(string topic, string url)
     {
-        if (ctx != null)
+        try
         {
-            ctx = NetMQContext.Create();
-            client = ctx.CreateSubscriberSocket();
+            if (ctx == null)
+            {
+                ctx = NetMQContext.Create();
+            }
+
+            if (client == null)
+            {
+                client = ctx.CreateSubscriberSocket();
+            }
 
             client.Options.ReceiveHighWatermark = 1000;
-            client.Connect(string.Concat("tcp://", url));
+            string addr = string.Concat("tcp://", url);
+            Debug.Log(addr);
+            client.Connect(addr);
             client.Subscribe(topic);
-            gameObject.SetActive(true);
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Properly disposes of NetMQ sockets and context.
+    /// </summary>
+    public static void Shutdown()
+    {
+        if (client != null)
+        {
+            client.Dispose();
+            Debug.Log("client disposed");
+        }
+
+        if (ctx != null)
+        {
+            ctx.Dispose();
+            Debug.Log("context disposed");
         }
     }
 }

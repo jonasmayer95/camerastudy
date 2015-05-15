@@ -4,13 +4,12 @@ using System.Collections;
 
 public class ConnectUI : MonoBehaviour
 {
-    private ServerCommunication comm;
+    public GameObject commObj;
     private Text addressInput;
     private Text topicInput;
 
     void Start()
     {
-        comm = GetComponent<ServerCommunication>();
         addressInput = transform.FindChild("AddressInputField").GetChild(1).GetComponent<Text>();
         topicInput = transform.FindChild("TopicInputField").GetChild(1). GetComponent<Text>();
     }
@@ -22,7 +21,17 @@ public class ConnectUI : MonoBehaviour
         string topic = topicInput.text;
         string url = addressInput.text;
 
-        //comm.SetupConnection(topic, url);
-        Debug.Log(string.Format("Connecting to {0}, subscribing to {1}", url, topic));
+
+        if (ServerCommunication.ClientConnect(topic, url))
+        {
+            commObj.SetActive(true);
+            this.gameObject.SetActive(false);
+        }
+        else
+        {
+            //dispose of NetMQ objects, otherwise the editor will freeze when compiling scripts
+            ServerCommunication.Shutdown();
+        }
+        
     }
 }
