@@ -23,7 +23,9 @@ public class ServerCommunication : MonoBehaviour
             {
                 Debug.Log(fr.ConvertToString());
             }
-
+            
+            //TODO: get message as string, feed it into a json parser and pass
+            //the relevant data to the visualization component
         }
     }
 
