@@ -1,13 +1,13 @@
 Here's a link to my (hacked together) sample of a zmq publisher:
 http://1drv.ms/1H7dyMw
 
-It just sends a message with the current timestamp, sleeps for
+It sends a message with some json from the spec, sleeps for
 one second and does the same thing all over again. NetMQ does
 not have problems connecting, since the publisher does not use
 any security features whatsoever.
 
 If you want to test it,
-download and extract the .zip and compile it with MSVC (don't
+download and extract the .zip, compile it with MSVC (don't
 forget to switch to x64 if it is not set) and start it. The server
 is set up on the loopback address 127.0.0.1:8888; the latest client
 version features a basic connection UI, so just type that in and

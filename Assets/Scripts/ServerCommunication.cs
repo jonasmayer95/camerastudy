@@ -12,7 +12,6 @@ public class ServerCommunication : MonoBehaviour
     private bool recv;
 
     private static readonly fsSerializer serializer = new fsSerializer();
-    private InseilMessage message;
 
     void Update()
     {
@@ -20,7 +19,7 @@ public class ServerCommunication : MonoBehaviour
 
         if (recv)
         {
-            Debug.Log(string.Format("Frames: {0}", serverMessage.FrameCount));
+            //Debug.Log(string.Format("Frames: {0}", serverMessage.FrameCount));
             foreach (NetMQFrame fr in serverMessage)
             {
                 Debug.Log(fr.ConvertToString());
@@ -39,11 +38,17 @@ public class ServerCommunication : MonoBehaviour
             //but i think it should be rather straightforward. don't take my word
             //for it, though.
 
-            //testing might be a bit of a problem since we don't have a server up and running,
-            //but you could just copy/paste that json from the protocol spec into my
-            //server sample (look it up at Doc/) and send that every second, just to verify
-            //the serializer is not doing some weird shit.
+            //testing can be done with my server sample (look it up at Doc/) so
+            //you can verify the serializer is not doing some weird shit.
 
+            //assuming we get everything in a singe frame
+            string json = serverMessage.First.ConvertToString();
+
+            InseilMessage message = new InseilMessage();
+            Deserialize<InseilMessage>(json, ref message);
+
+            //not quite working yet; we probably need a custom converter for InseilJoint
+            //because positions and rotations are not getting their values
         }
     }
 
@@ -104,5 +109,19 @@ public class ServerCommunication : MonoBehaviour
             ctx.Dispose();
             Debug.Log("context disposed");
         }
+    }
+
+    /// <summary>
+    /// Deserializes a JSON string into an instance of the passed type.
+    /// </summary>
+    /// <typeparam name="T">The type into which to deserialize</typeparam>
+    /// <param name="instance">An instance of T</param>
+    /// <param name="json">The JSON string to deserialize</param>
+    private void Deserialize<T>(string json, ref T instance)
+    {
+        fsData data = fsJsonParser.Parse(json);
+
+        //change this to AssertSuccess to disable exception handling
+        serializer.TryDeserialize<T>(data, ref instance).AssertSuccessWithoutWarnings();
     }
 }
