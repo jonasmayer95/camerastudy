@@ -20,26 +20,10 @@ public class ServerCommunication : MonoBehaviour
         if (recv)
         {
             //Debug.Log(string.Format("Frames: {0}", serverMessage.FrameCount));
-            foreach (NetMQFrame fr in serverMessage)
-            {
-                Debug.Log(fr.ConvertToString());
-            }
-            
-            //TODO: get message as string, feed it into a json parser and pass
-            //the relevant data to the visualization component
-            //you should find some useful info on how to do that here:
-            //https://github.com/jacobdufault/fullserializer
-            
-            //the access pattern for single joints would be e.g.:
-            //message.measurement.data["spinebase"].position.x
-            //deserialize into the message class variable and you're good to go.
-
-            //i'm not quite sure how the serializer will handle the dictionary,
-            //but i think it should be rather straightforward. don't take my word
-            //for it, though.
-
-            //testing can be done with my server sample (look it up at Doc/) so
-            //you can verify the serializer is not doing some weird shit.
+            //foreach (NetMQFrame fr in serverMessage)
+            //{
+            //    Debug.Log(fr.ConvertToString());
+            //}
 
             //assuming we get everything in a singe frame
             string json = serverMessage.First.ConvertToString();
@@ -47,8 +31,9 @@ public class ServerCommunication : MonoBehaviour
             InseilMessage message = new InseilMessage();
             Deserialize<InseilMessage>(json, ref message);
 
-            //not quite working yet; we probably need a custom converter for InseilJoint
-            //because positions and rotations are not getting their values
+            //measurement stuff is now deserialized correctly. and I'm awesome,
+            //but you probably knew that already.
+            Debug.Log(message.measurement.data["spinebase"].ToString());
         }
     }
 
