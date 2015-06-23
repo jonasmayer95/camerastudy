@@ -12,6 +12,7 @@ public class ServerCommunication : MonoBehaviour
     private bool recv;
 
     private static readonly fsSerializer serializer = new fsSerializer();
+    public InseilAnimatedCharacterModel mdl;
 
     void Update()
     {
@@ -19,12 +20,6 @@ public class ServerCommunication : MonoBehaviour
 
         if (recv)
         {
-            //Debug.Log(string.Format("Frames: {0}", serverMessage.FrameCount));
-            //foreach (NetMQFrame fr in serverMessage)
-            //{
-            //    Debug.Log(fr.ConvertToString());
-            //}
-
             //assuming we get everything in a singe frame
             string json = serverMessage.First.ConvertToString();
 
@@ -33,7 +28,9 @@ public class ServerCommunication : MonoBehaviour
 
             //measurement stuff is now deserialized correctly. and I'm awesome,
             //but you probably knew that already.
-            Debug.Log(message.measurement.data["spinebase"].ToString());
+            //Debug.Log(message.measurement.data["head"].ToString());
+
+            mdl.UpdateCharacterModel(message);
         }
     }
 

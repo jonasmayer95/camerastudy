@@ -9,7 +9,7 @@ using FullSerializer;
 /// we get from the server.
 /// </summary>
 
-struct InseilPosition
+public struct InseilPosition
 {
     public double x;
     public double y;
@@ -21,7 +21,7 @@ struct InseilPosition
     }
 }
 
-struct InseilRotation
+public struct InseilRotation
 {
     public double x;
     public double y;
@@ -35,7 +35,7 @@ struct InseilRotation
 }
 
 [fsObject(Converter = typeof(InseilJointConverter))]
-struct InseilJoint
+public struct InseilJoint
 {
     public InseilPosition position;
     public InseilRotation rotation;
@@ -99,7 +99,7 @@ class InseilJointConverter : fsDirectConverter<InseilJoint>
     }
 }
 
-class InseilMeasurement
+public class InseilMeasurement
 {
     //I used a dictionary because typing in all the joints is
     //not very flexible w.r.t. protocol changes, not to mention
@@ -114,7 +114,7 @@ class InseilMeasurement
         return data.ToString() + "\n" + timestamp.ToString() + "\n";
     }
 }
-class InseilMessage
+public class InseilMessage
 {
     public UInt32 version;
     public string id;
