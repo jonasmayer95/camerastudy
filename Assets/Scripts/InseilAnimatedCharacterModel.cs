@@ -205,7 +205,7 @@ public class InseilAnimatedCharacterModel : MonoBehaviour
         }
     }
 
-    public override Quaternion applyRelativeRotationChange(string jt, Quaternion initialModelJointRotation)
+    public Quaternion applyRelativeRotationChange(string jt, Quaternion initialModelJointRotation)
     {
         //missing information to calculate rotation for joint type
         if (!skeletalModelStructure_FromJointToJoint.ContainsKey(jt))
