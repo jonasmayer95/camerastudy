@@ -54,49 +54,52 @@ public class InseilAnimatedCharacterModel : MonoBehaviour
     // Updated over network
     private Dictionary<string, Vector3> model_CurrentJointPositions = new Dictionary<string, Vector3>();            // Used to calculate new joint orientations
     private Dictionary<string, Quaternion> model_CurrentJointOrientations = new Dictionary<string, Quaternion>();   // not used at the moment
+
     
     // Skeletal rigg hierarchy
     private Dictionary<string, string> skeletalModelStructure_FromJointToJoint = new Dictionary<string, string>()
     {
             // Spine to Head
             {"spinebase" , "spinemid"},
-            {"spinemid" , "spineshoulder" },
-            {"spineshoulder", "neck"},
-            {"neck" , "head" }, // use inverse direction to rotate the head like the neck
+            //{"spinemid" , "spineshoulder" },
+            //{"spineshoulder", "neck"},
+            {"spinemid", "neck"};
+            {"neck" , "head" }, 
+            {"head", "neck"},   // use inverse direction to rotate the head like the neck
                  
             // Spineshoulder to Left Arm
-            {"spineshoulder", "shoulderleft"},
+            //{"spineshoulder", "shoulderleft"},
             {"shoulderleft" , "elbowleft" },
             {"elbowleft" , "wristleft"},
             {"wristleft" , "handleft" },
-            {"handleft" , "thumbleft"},
+            //{"handleft" , "thumbleft"},
             {"handleft" , "handtipleft"},
-            //{"handtipleft" , "handleft" },// rotation of bone endings can't be computed from bone positions 
+            {"handtipleft" , "handleft" },// rotation of bone endings can't be computed from bone positions 
             //{"thumbleft" , "wristleft" },// rotation of bone endings can't be computed from bone positions 
             
             // Spineshoulder to Right Arm
-            {"spineshoulder", "shoulderright"},
+            //{"spineshoulder", "shoulderright"},
             {"shoulderright" , "elbowright" },
             {"elbowright" , "wristright" },
             {"wristright" , "handright" },
-            {"handright" , "thumbright"},
+            //{"handright" , "thumbright"},
             {"handright" , "handtipright"},
-            //{"handtipright" , "handright" },// rotation of bone endings can't be computed from bone positions 
+            {"handtipright" , "handright" },// rotation of bone endings can't be computed from bone positions 
             //{"thumbright" , "wristright" }// rotation of bone endings can't be computed from bone positions 
      
             // Spine to Left Leg
-            {"spinebase" , "hipleft"},
+            //{"spinebase" , "hipleft"},
             {"hipleft" , "kneeleft" },
             {"kneeleft" , "ankleleft" },
             {"ankleleft" , "footleft" },
-            //{"footleft" , "ankleleft" },// rotation of bone endings can't be computed from bone positions
+            {"footleft" , "ankleleft" },// rotation of bone endings can't be computed from bone positions
 
             // Spine to Right Leg
-            {"spinebase" , "hipright"},
+            //{"spinebase" , "hipright"},
             {"hipright" , "kneeright" },
             {"kneeright" , "ankleright" },
             {"ankleright" , "footright" },
-            //{"footright , "ankleright" },// rotation of bone endings can't be computed from bone positions 
+            {"footright" , "ankleright" },// rotation of bone endings can't be computed from bone positions 
     };
             
 
@@ -125,7 +128,7 @@ public class InseilAnimatedCharacterModel : MonoBehaviour
         foreach (KeyValuePair<string, InseilJoint> joint in jointData)
         {
             // Get joint in model
-            if (!model_Joints.ContainsKey(joint.Key))
+            if (!model_InitialJointOrientations.ContainsKey(joint.Key))
                 continue;
 
             // Fetch new position data
@@ -147,6 +150,10 @@ public class InseilAnimatedCharacterModel : MonoBehaviour
 
             Debug.Log(string.Format("{0} {1} {2}\n", joint.Key, joint.Value.position, model_CurrentJointPositions[joint.Key]));
         }
+
+        // additional operations for not default joints
+        //Quaternion tmpRot = applyRelativeRotationChange("spinebase", Quaternion.Inverse(model_root.rotation * transform.rotation));
+        //transform.rotation = model_root.rotation * tmpRot;
     }
 
     private void AddModelJoints()
@@ -163,16 +170,16 @@ public class InseilAnimatedCharacterModel : MonoBehaviour
         model_Joints.Add("shoulderleft", shoulderleft);
         model_Joints.Add("elbowleft", elbowleft);
         model_Joints.Add("wristleft", wristleft);
-        //model_Joints.Add("handleft", handleft);
+        model_Joints.Add("handleft", handleft);
         model_Joints.Add("handtipleft", handtipleft);
-        model_Joints.Add("thumbleft", thumbleft);
+        //model_Joints.Add("thumbleft", thumbleft);
         // Right arm
         model_Joints.Add("shoulderright", shoulderright);
         model_Joints.Add("elbowright", elbowright);
         model_Joints.Add("wristright", wristright);
-        //model_Joints.Add("handright", handright);
+        model_Joints.Add("handright", handright);
         model_Joints.Add("handtipright", handtipright);
-        model_Joints.Add("thumbright", thumbright);
+        //model_Joints.Add("thumbright", thumbright);
         // Left leg
         model_Joints.Add("hipleft", hipleft);
         model_Joints.Add("kneeleft", kneeleft);
@@ -202,11 +209,14 @@ public class InseilAnimatedCharacterModel : MonoBehaviour
 
             // Add initial joint Positions
             model_InitialJointPositions.Add(joint.Key, model_Joints[joint.Key].position);
+
+            model_CurrentJointPositions.Add(joint.Key, model_InitialJointPositions[joint.Key]);
         }
     }
 
     public Quaternion applyRelativeRotationChange(string jt, Quaternion initialModelJointRotation)
     {
+
         //missing information to calculate rotation for joint type
         if (!skeletalModelStructure_FromJointToJoint.ContainsKey(jt))
         {
@@ -219,6 +229,7 @@ public class InseilAnimatedCharacterModel : MonoBehaviour
             return initialModelJointRotation;
         }*/
 
+        
         // original direction of bone
         Vector3 initialDirection = model_InitialJointDirections[jt];
         // new direction of bone

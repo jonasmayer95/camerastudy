@@ -28,7 +28,7 @@ public class ServerCommunication : MonoBehaviour
 
             //measurement stuff is now deserialized correctly. and I'm awesome,
             //but you probably knew that already.
-            //Debug.Log(message.measurement.data["head"].ToString());
+            Debug.Log(message.measurement.data["spinebase"].ToString());
 
             mdl.UpdateCharacterModel(message);
         }

@@ -445,13 +445,13 @@ MonoBehaviour:
   shoulderleft: {fileID: 2121874425}
   elbowleft: {fileID: 1900901263}
   wristleft: {fileID: 508589029}
-  handleft: {fileID: 0}
+  handleft: {fileID: 762034864}
   handtipleft: {fileID: 762034864}
   thumbleft: {fileID: 1348167184}
   shoulderright: {fileID: 376084191}
   elbowright: {fileID: 98742624}
   wristright: {fileID: 455364569}
-  handright: {fileID: 0}
+  handright: {fileID: 225391420}
   handtipright: {fileID: 225391420}
   thumbright: {fileID: 406771694}
   hipleft: {fileID: 254537832}
@@ -462,6 +462,7 @@ MonoBehaviour:
   kneeright: {fileID: 1910196662}
   ankleright: {fileID: 1255501563}
   footright: {fileID: 489150848}
+  model_root: {fileID: 1961642751}
 --- !u!1 &685273788
 GameObject:
   m_ObjectHideFlags: 0
