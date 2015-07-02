@@ -343,6 +343,7 @@ public class AvatarController : MonoBehaviour
 
         //TODO: remove dependency on kinectmanager. this will be tricky, since the sensor only gives us position
         //and orientation data. the rest is calculated by kinectmanager from raw body frame data.
+        //CalculateJointOrients seems to be doing most of the work.
 
         Vector3 jointDir = /*kinectManager.GetJointDirection(userId, (int)joint, false, true)*/ Vector3.zero;
         Quaternion jointRotation = jointDir != Vector3.zero ? Quaternion.FromToRotation(baseDir, jointDir) : Quaternion.identity;
