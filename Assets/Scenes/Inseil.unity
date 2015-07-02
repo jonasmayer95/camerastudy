@@ -328,7 +328,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b851555d55105a04c9a7835bdaeaedbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mdl: {fileID: 0}
+  avatar: {fileID: 0}
 --- !u!4 &272343342
 Transform:
   m_ObjectHideFlags: 0
@@ -724,7 +724,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerIndex: 0
   mirroredMovement: 1
-  verticalMovement: 0
+  verticalMovement: 1
   moveRate: 1
   smoothFactor: 5
   offsetNode: {fileID: 0}
@@ -1739,10 +1739,10 @@ MonoBehaviour:
   sensorHeight: 1
   sensorAngle: 0
   autoHeightAngle: 0
-  computeUserMap: 1
+  computeUserMap: 0
   computeColorMap: 0
   computeInfraredMap: 0
-  displayUserMap: 1
+  displayUserMap: 0
   displayColorMap: 0
   displaySkeletonLines: 1
   DisplayMapsWidthPercent: 20
@@ -1753,7 +1753,7 @@ MonoBehaviour:
   detectClosestUser: 1
   ignoreInferredJoints: 0
   lateUpdateAvatars: 0
-  smoothing: 0
+  smoothing: 1
   useBoneOrientationConstraints: 0
   allowedHandRotations: 1
   avatarControllers: []

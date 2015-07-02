@@ -6,484 +6,652 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.IO;
-using System.Text; 
+using System.Text;
 
 [RequireComponent(typeof(Animator))]
 public class AvatarController : MonoBehaviour
-{	
-	// The index of the player, whose movements the model represents. Default 0 (first player).
-	public int playerIndex = 0;
-	
-	// Whether the character is facing the player or not. Default false.
-	public bool mirroredMovement = false;
-	
-	// Bool that determines whether the avatar is allowed to do vertical movement
-	public bool verticalMovement = false;
-	
-	// Rate at which avatar will move through the scene.
-	public float moveRate = 1f;
-	
-	// Slerp smooth factor
-	public float smoothFactor = 5f;
-	
-	// Offset node this transform is relative to, if any (optional)
-	public GameObject offsetNode;
+{
+    // The index of the player, whose movements the model represents. Default 0 (first player).
+    public int playerIndex = 0;
 
-	// Makes initial avatar position, relative to the specified camera
-	// to be equal to the user's position, relative to the sensor (optional)
-	public Camera posRelativeToCamera;
+    // Whether the character is facing the player or not. Default false.
+    public bool mirroredMovement = false;
 
+    // Bool that determines whether the avatar is allowed to do vertical movement
+    public bool verticalMovement = false;
 
-	// The body root node
-	protected Transform bodyRoot;
+    // Rate at which avatar will move through the scene.
+    public float moveRate = 1f;
 
-	// Variable to hold all them bones. It will initialize the same size as initialRotations.
-	protected Transform[] bones;
-	
-	// Rotations of the bones when the Kinect tracking starts.
-	protected Quaternion[] initialRotations;
+    // Slerp smooth factor
+    public float smoothFactor = 5f;
 
-	// Initial position and rotation of the transform
-	protected Vector3 initialPosition;
-	protected Quaternion initialRotation;
-	protected Vector3 offsetNodePos;
-	protected Quaternion offsetNodeRot;
-	protected Vector3 bodyRootPosition;
-	
-	// Calibration Offset Variables for Character Position.
-	protected bool offsetCalibrated = false;
-	protected float xOffset, yOffset, zOffset;
-	//private Quaternion originalRotation;
+    // Offset node this transform is relative to, if any (optional)
+    public GameObject offsetNode;
 
-	// whether the parent transform obeys physics
-	protected bool isRigidBody = false;
-	
-	// private instance of the KinectManager
-	protected KinectManager kinectManager;
+    // Makes initial avatar position, relative to the specified camera
+    // to be equal to the user's position, relative to the sensor (optional)
+    public Camera posRelativeToCamera;
 
 
-	// returns the number of bone transforms (array length)
-	public int GetBoneTransformCount()
-	{
-		return bones != null ? bones.Length : 0;
-	}
+    // The body root node
+    protected Transform bodyRoot;
 
-	// returns the bone transform by index
-	public Transform GetBoneTransform(int index)
-	{
-		if(index >= 0 && index < bones.Length)
-		{
-			return bones[index];
-		}
+    // Variable to hold all them bones. It will initialize the same size as initialRotations.
+    protected Transform[] bones;
 
-		return null;
-	}
+    // Rotations of the bones when the Kinect tracking starts.
+    protected Quaternion[] initialRotations;
 
+    // Initial position and rotation of the transform
+    protected Vector3 initialPosition;
+    protected Quaternion initialRotation;
+    protected Vector3 offsetNodePos;
+    protected Quaternion offsetNodeRot;
+    protected Vector3 bodyRootPosition;
 
-	// transform caching gives performance boost since Unity calls GetComponent<Transform>() each time you call transform 
-	private Transform _transformCache;
-	public new Transform transform
-	{
-		get
-		{
-			if (!_transformCache) 
-				_transformCache = base.transform;
+    // Calibration Offset Variables for Character Position.
+    protected bool offsetCalibrated = false;
+    protected float xOffset, yOffset, zOffset;
+    //private Quaternion originalRotation;
 
-			return _transformCache;
-		}
-	}
+    // whether the parent transform obeys physics
+    protected bool isRigidBody = false;
+
+    // private instance of the KinectManager
+    //protected KinectManager kinectManager;
 
 
-	public void Awake()
-    {	
-		// check for double start
-		if(bones != null)
-			return;
-		if(!gameObject.activeInHierarchy) 
-			return;
-
-		// inits the bones array
-		bones = new Transform[27];
-		
-		// Initial rotations and directions of the bones.
-		initialRotations = new Quaternion[bones.Length];
-
-		// Map bones to the points the Kinect tracks
-		MapBones();
-
-		// Get initial bone rotations
-		GetInitialRotations();
-
-		// if parent transform uses physics
-		isRigidBody = gameObject.GetComponent<Rigidbody>();
-	}
-	
-	// Update the avatar each frame.
-    public void UpdateAvatar(Int64 UserID)
-    {	
-		if(!gameObject.activeInHierarchy) 
-			return;
-
-		// Get the KinectManager instance
-		if(kinectManager == null)
-		{
-			kinectManager = KinectManager.Instance;
-		}
-		
-		// move the avatar to its Kinect position
-		MoveAvatar(UserID);
-
-		for (var boneIndex = 0; boneIndex < bones.Length; boneIndex++)
-		{
-			if (!bones[boneIndex]) 
-				continue;
-
-			if(boneIndex2JointMap.ContainsKey(boneIndex))
-			{
-				KinectInterop.JointType joint = !mirroredMovement ? boneIndex2JointMap[boneIndex] : boneIndex2MirrorJointMap[boneIndex];
-				TransformBone(UserID, joint, boneIndex, !mirroredMovement);
-			}
-			else if(specIndex2JointMap.ContainsKey(boneIndex))
-			{
-				// special bones (clavicles)
-				List<KinectInterop.JointType> alJoints = !mirroredMovement ? specIndex2JointMap[boneIndex] : specIndex2MirrorJointMap[boneIndex];
-
-				if(alJoints.Count >= 2)
-				{
-					//Debug.Log(alJoints[0].ToString());
-					Vector3 baseDir = alJoints[0].ToString().EndsWith("Left") ? Vector3.left : Vector3.right;
-					TransformSpecialBone(UserID, alJoints[0], alJoints[1], boneIndex, baseDir, !mirroredMovement);
-				}
-			}
-		}
-	}
-	
-	// Set bones to their initial positions and rotations.
-	public void ResetToInitialPosition()
-    {	
-		if(bones == null)
-			return;
-		
-		// For each bone that was defined, reset to initial position.
-		transform.rotation = Quaternion.identity;
-
-		for(int pass = 0; pass < 2; pass++)  // 2 passes because clavicles are at the end
-		{
-			for(int i = 0; i < bones.Length; i++)
-			{
-				if(bones[i] != null)
-				{
-					bones[i].rotation = initialRotations[i];
-				}
-			}
-		}
-
-//		if(bodyRoot != null)
-//		{
-//			bodyRoot.localPosition = Vector3.zero;
-//			bodyRoot.localRotation = Quaternion.identity;
-//		}
-
-		// Restore the offset's position and rotation
-		if(offsetNode != null)
-		{
-			offsetNode.transform.position = offsetNodePos;
-			offsetNode.transform.rotation = offsetNodeRot;
-		}
-
-		transform.position = initialPosition;
-		transform.rotation = initialRotation;
-    }
-	
-	// Invoked on the successful calibration of a player.
-	public void SuccessfulCalibration(Int64 userId)
-	{
-		// reset the models position
-		if(offsetNode != null)
-		{
-			offsetNode.transform.position = offsetNodePos;
-			offsetNode.transform.rotation = offsetNodeRot;
-		}
-
-		transform.position = initialPosition;
-		transform.rotation = initialRotation;
-
-		// re-calibrate the position offset
-		offsetCalibrated = false;
-	}
-	
-	// Apply the rotations tracked by kinect to the joints.
-	protected void TransformBone(Int64 userId, KinectInterop.JointType joint, int boneIndex, bool flip)
+    // returns the number of bone transforms (array length)
+    public int GetBoneTransformCount()
     {
-		Transform boneTransform = bones[boneIndex];
-		if(boneTransform == null || kinectManager == null)
-			return;
-		
-		int iJoint = (int)joint;
-		if(iJoint < 0 || !kinectManager.IsJointTracked(userId, iJoint))
-			return;
-		
-		// Get Kinect joint orientation
-		Quaternion jointRotation = kinectManager.GetJointOrientation(userId, iJoint, flip);
-		if(jointRotation == Quaternion.identity)
-			return;
+        return bones != null ? bones.Length : 0;
+    }
 
-		// Smoothly transition to the new rotation
-		Quaternion newRotation = Kinect2AvatarRot(jointRotation, boneIndex);
+    // returns the bone transform by index
+    public Transform GetBoneTransform(int index)
+    {
+        if (index >= 0 && index < bones.Length)
+        {
+            return bones[index];
+        }
 
-		if(smoothFactor != 0f)
-        	boneTransform.rotation = Quaternion.Slerp(boneTransform.rotation, newRotation, smoothFactor * Time.deltaTime);
-		else
-			boneTransform.rotation = newRotation;
-	}
-	
-	// Apply the rotations tracked by kinect to a special joint
-	protected void TransformSpecialBone(Int64 userId, KinectInterop.JointType joint, KinectInterop.JointType jointParent, int boneIndex, Vector3 baseDir, bool flip)
-	{
-		Transform boneTransform = bones[boneIndex];
-		if(boneTransform == null || kinectManager == null)
-			return;
-		
-		if(!kinectManager.IsJointTracked(userId, (int)joint) || 
-		   !kinectManager.IsJointTracked(userId, (int)jointParent))
-		{
-			return;
-		}
-		
-		Vector3 jointDir = kinectManager.GetJointDirection(userId, (int)joint, false, true);
-		Quaternion jointRotation = jointDir != Vector3.zero ? Quaternion.FromToRotation(baseDir, jointDir) : Quaternion.identity;
-		
-		if(!flip)
-		{
-			Vector3 mirroredAngles = jointRotation.eulerAngles;
-			mirroredAngles.y = -mirroredAngles.y;
-			mirroredAngles.z = -mirroredAngles.z;
+        return null;
+    }
 
-			jointRotation = Quaternion.Euler(mirroredAngles);
-		}
-		
-		if(jointRotation != Quaternion.identity)
-		{
-			// Smoothly transition to the new rotation
-			Quaternion newRotation = Kinect2AvatarRot(jointRotation, boneIndex);
-			
-			if(smoothFactor != 0f)
-				boneTransform.rotation = Quaternion.Slerp(boneTransform.rotation, newRotation, smoothFactor * Time.deltaTime);
-			else
-				boneTransform.rotation = newRotation;
-		}
-		
-	}
-	
-	// Moves the avatar in 3D space - pulls the tracked position of the user and applies it to root.
-	protected void MoveAvatar(Int64 UserID)
-	{
-		if(!kinectManager || !kinectManager.IsJointTracked(UserID, (int)KinectInterop.JointType.SpineBase))
-			return;
-		
+
+    // transform caching gives performance boost since Unity calls GetComponent<Transform>() each time you call transform 
+    private Transform _transformCache;
+    public new Transform transform
+    {
+        get
+        {
+            if (!_transformCache)
+                _transformCache = base.transform;
+
+            return _transformCache;
+        }
+    }
+
+
+    public void Awake()
+    {
+        // check for double start
+        if (bones != null)
+            return;
+        if (!gameObject.activeInHierarchy)
+            return;
+
+        // inits the bones array
+        bones = new Transform[27];
+
+        // Initial rotations and directions of the bones.
+        initialRotations = new Quaternion[bones.Length];
+
+        // Map bones to the points the Kinect tracks
+        MapBones();
+
+        // Get initial bone rotations
+        GetInitialRotations();
+
+        // if parent transform uses physics
+        isRigidBody = gameObject.GetComponent<Rigidbody>();
+    }
+
+    // Update the avatar each frame.
+    public void UpdateAvatar(Int64 UserID)
+    {
+        if (!gameObject.activeInHierarchy)
+            return;
+
+
+        // Get the KinectManager instance
+        //if (kinectManager == null)
+        //{
+        //    kinectManager = KinectManager.Instance;
+        //}
+
+        // move the avatar to its Kinect position
+        MoveAvatar(UserID);
+
+        for (var boneIndex = 0; boneIndex < bones.Length; boneIndex++)
+        {
+            if (!bones[boneIndex])
+                continue;
+
+            if (boneIndex2JointMap.ContainsKey(boneIndex))
+            {
+                KinectInterop.JointType joint = !mirroredMovement ? boneIndex2JointMap[boneIndex] : boneIndex2MirrorJointMap[boneIndex];
+                TransformBone(UserID, joint, boneIndex, !mirroredMovement);
+            }
+            else if (specIndex2JointMap.ContainsKey(boneIndex))
+            {
+                // special bones (clavicles)
+                List<KinectInterop.JointType> alJoints = !mirroredMovement ? specIndex2JointMap[boneIndex] : specIndex2MirrorJointMap[boneIndex];
+
+                if (alJoints.Count >= 2)
+                {
+                    //Debug.Log(alJoints[0].ToString());
+                    Vector3 baseDir = alJoints[0].ToString().EndsWith("Left") ? Vector3.left : Vector3.right;
+                    TransformSpecialBone(UserID, alJoints[0], alJoints[1], boneIndex, baseDir, !mirroredMovement);
+                }
+            }
+        }
+    }
+
+    public void UpdateInseilAvatar(InseilMeasurement kinectData)
+    {
+        if (!gameObject.activeInHierarchy)
+            return;
+
+        // move the avatar to its Kinect position
+        MoveInseilAvatar(kinectData);
+
+        for (var boneIndex = 0; boneIndex < bones.Length; boneIndex++)
+        {
+            if (!bones[boneIndex])
+                continue;
+
+            if (boneIndex2JointMap.ContainsKey(boneIndex))
+            {
+                KinectInterop.JointType joint = !mirroredMovement ? boneIndex2JointMap[boneIndex] : boneIndex2MirrorJointMap[boneIndex];
+                TransformInseilBone(joint, boneIndex, !mirroredMovement);
+            }
+            else if (specIndex2JointMap.ContainsKey(boneIndex))
+            {
+                // special bones (clavicles)
+                List<KinectInterop.JointType> alJoints = !mirroredMovement ? specIndex2JointMap[boneIndex] : specIndex2MirrorJointMap[boneIndex];
+
+                if (alJoints.Count >= 2)
+                {
+                    //Debug.Log(alJoints[0].ToString());
+                    Vector3 baseDir = alJoints[0].ToString().EndsWith("Left") ? Vector3.left : Vector3.right;
+                    TransformInseilSpecialBone(alJoints[0], alJoints[1], boneIndex, baseDir, !mirroredMovement);
+                }
+            }
+        }
+    }
+
+    // Set bones to their initial positions and rotations.
+    public void ResetToInitialPosition()
+    {
+        if (bones == null)
+            return;
+
+        // For each bone that was defined, reset to initial position.
+        transform.rotation = Quaternion.identity;
+
+        for (int pass = 0; pass < 2; pass++)  // 2 passes because clavicles are at the end
+        {
+            for (int i = 0; i < bones.Length; i++)
+            {
+                if (bones[i] != null)
+                {
+                    bones[i].rotation = initialRotations[i];
+                }
+            }
+        }
+
+        //		if(bodyRoot != null)
+        //		{
+        //			bodyRoot.localPosition = Vector3.zero;
+        //			bodyRoot.localRotation = Quaternion.identity;
+        //		}
+
+        // Restore the offset's position and rotation
+        if (offsetNode != null)
+        {
+            offsetNode.transform.position = offsetNodePos;
+            offsetNode.transform.rotation = offsetNodeRot;
+        }
+
+        transform.position = initialPosition;
+        transform.rotation = initialRotation;
+    }
+
+    // Invoked on the successful calibration of a player.
+    public void SuccessfulCalibration(Int64 userId)
+    {
+        // reset the models position
+        if (offsetNode != null)
+        {
+            offsetNode.transform.position = offsetNodePos;
+            offsetNode.transform.rotation = offsetNodeRot;
+        }
+
+        transform.position = initialPosition;
+        transform.rotation = initialRotation;
+
+        // re-calibrate the position offset
+        offsetCalibrated = false;
+    }
+
+    // Apply the rotations tracked by kinect to the joints.
+    protected void TransformBone(Int64 userId, KinectInterop.JointType joint, int boneIndex, bool flip)
+    {
+        Transform boneTransform = bones[boneIndex];
+        if (boneTransform == null /*|| kinectManager == null*/)
+            return;
+
+        int iJoint = (int)joint;
+        if (iJoint < 0 /*|| !kinectManager.IsJointTracked(userId, iJoint)*/)
+            return;
+
+        // Get Kinect joint orientation
+        Quaternion jointRotation = /*kinectManager.GetJointOrientation(userId, iJoint, flip)*/ Quaternion.identity;
+        if (jointRotation == Quaternion.identity)
+            return;
+
+        // Smoothly transition to the new rotation
+        Quaternion newRotation = Kinect2AvatarRot(jointRotation, boneIndex);
+
+        if (smoothFactor != 0f)
+            boneTransform.rotation = Quaternion.Slerp(boneTransform.rotation, newRotation, smoothFactor * Time.deltaTime);
+        else
+            boneTransform.rotation = newRotation;
+    }
+
+    protected void TransformInseilBone(KinectInterop.JointType joint, int boneIndex, bool flip)
+    {
+        Transform boneTransform = bones[boneIndex];
+        if (boneTransform == null)
+            return;
+
+        int iJoint = (int)joint;
+
+        //ubitrack only gives us tracked joints, no need to check
+        if (iJoint < 0 /*|| !kinectManager.IsJointTracked(userId, iJoint)*/)
+            return;
+
+        // Get Kinect joint orientation
+        Quaternion jointRotation = /*kinectManager.GetJointOrientation(userId, iJoint, flip)*/ Quaternion.identity; //TODO: get ubitrack data here
+        if (jointRotation == Quaternion.identity)
+            return;
+
+        // Smoothly transition to the new rotation
+        Quaternion newRotation = Kinect2AvatarRot(jointRotation, boneIndex);
+
+        if (smoothFactor != 0f)
+            boneTransform.rotation = Quaternion.Slerp(boneTransform.rotation, newRotation, smoothFactor * Time.deltaTime);
+        else
+            boneTransform.rotation = newRotation;
+    }
+
+    // Apply the rotations tracked by kinect to a special joint
+    protected void TransformSpecialBone(Int64 userId, KinectInterop.JointType joint, KinectInterop.JointType jointParent, int boneIndex, Vector3 baseDir, bool flip)
+    {
+        Transform boneTransform = bones[boneIndex];
+        if (boneTransform == null /*|| kinectManager == null*/)
+            return;
+
+        //if(!kinectManager.IsJointTracked(userId, (int)joint) || 
+        //   !kinectManager.IsJointTracked(userId, (int)jointParent))
+        //{
+        //    return;
+        //}
+
+        Vector3 jointDir = /*kinectManager.GetJointDirection(userId, (int)joint, false, true)*/ Vector3.zero;
+        Quaternion jointRotation = jointDir != Vector3.zero ? Quaternion.FromToRotation(baseDir, jointDir) : Quaternion.identity;
+
+        if (!flip)
+        {
+            Vector3 mirroredAngles = jointRotation.eulerAngles;
+            mirroredAngles.y = -mirroredAngles.y;
+            mirroredAngles.z = -mirroredAngles.z;
+
+            jointRotation = Quaternion.Euler(mirroredAngles);
+        }
+
+        if (jointRotation != Quaternion.identity)
+        {
+            // Smoothly transition to the new rotation
+            Quaternion newRotation = Kinect2AvatarRot(jointRotation, boneIndex);
+
+            if (smoothFactor != 0f)
+                boneTransform.rotation = Quaternion.Slerp(boneTransform.rotation, newRotation, smoothFactor * Time.deltaTime);
+            else
+                boneTransform.rotation = newRotation;
+        }
+
+    }
+
+    protected void TransformInseilSpecialBone(KinectInterop.JointType joint, KinectInterop.JointType jointParent, int boneIndex, Vector3 baseDir, bool flip)
+    {
+        Transform boneTransform = bones[boneIndex];
+        if (boneTransform == null)
+            return;
+
+        //TODO: remove dependency on kinectmanager. this will be tricky, since the sensor only gives us position
+        //and orientation data. the rest is calculated by kinectmanager from raw body frame data.
+
+        Vector3 jointDir = /*kinectManager.GetJointDirection(userId, (int)joint, false, true)*/ Vector3.zero;
+        Quaternion jointRotation = jointDir != Vector3.zero ? Quaternion.FromToRotation(baseDir, jointDir) : Quaternion.identity;
+
+        if (!flip)
+        {
+            Vector3 mirroredAngles = jointRotation.eulerAngles;
+            mirroredAngles.y = -mirroredAngles.y;
+            mirroredAngles.z = -mirroredAngles.z;
+
+            jointRotation = Quaternion.Euler(mirroredAngles);
+        }
+
+        if (jointRotation != Quaternion.identity)
+        {
+            // Smoothly transition to the new rotation
+            Quaternion newRotation = Kinect2AvatarRot(jointRotation, boneIndex);
+
+            if (smoothFactor != 0f)
+                boneTransform.rotation = Quaternion.Slerp(boneTransform.rotation, newRotation, smoothFactor * Time.deltaTime);
+            else
+                boneTransform.rotation = newRotation;
+        }
+    }
+
+    // Moves the avatar in 3D space - pulls the tracked position of the user and applies it to root.
+    protected void MoveAvatar(Int64 UserID)
+    {
+        //if(!kinectManager || !kinectManager.IsJointTracked(UserID, (int)KinectInterop.JointType.SpineBase))
+        //    return;
+
         // Get the position of the body and store it.
-		Vector3 trans = kinectManager.GetUserPosition(UserID);
-		
-		// If this is the first time we're moving the avatar, set the offset. Otherwise ignore it.
-		if (!offsetCalibrated)
-		{
-			offsetCalibrated = true;
-			
-			xOffset = trans.x;  // !mirroredMovement ? trans.x * moveRate : -trans.x * moveRate;
-			yOffset = trans.y;  // trans.y * moveRate;
-			zOffset = !mirroredMovement ? -trans.z : trans.z;  // -trans.z * moveRate;
+        Vector3 trans = /*kinectManager.GetUserPosition(UserID)*/ Vector3.zero;
 
-			if(posRelativeToCamera)
-			{
-				Vector3 cameraPos = posRelativeToCamera.transform.position;
-				Vector3 bodyRootPos = bodyRoot != null ? bodyRoot.position : transform.position;
-				Vector3 hipCenterPos = bodyRoot != null ? bodyRoot.position : bones[0].position;
+        // If this is the first time we're moving the avatar, set the offset. Otherwise ignore it.
+        if (!offsetCalibrated)
+        {
+            offsetCalibrated = true;
 
-				float yRelToAvatar = 0f;
-				if(verticalMovement)
-				{
-					yRelToAvatar = (trans.y - cameraPos.y) - (hipCenterPos - bodyRootPos).magnitude;
-				}
-				else
-				{
-					yRelToAvatar = bodyRootPos.y - cameraPos.y;
-				}
+            xOffset = trans.x;  // !mirroredMovement ? trans.x * moveRate : -trans.x * moveRate;
+            yOffset = trans.y;  // trans.y * moveRate;
+            zOffset = !mirroredMovement ? -trans.z : trans.z;  // -trans.z * moveRate;
 
-				Vector3 relativePos = new Vector3(trans.x, yRelToAvatar, trans.z);
-				Vector3 newBodyRootPos = cameraPos + relativePos;
+            if (posRelativeToCamera)
+            {
+                Vector3 cameraPos = posRelativeToCamera.transform.position;
+                Vector3 bodyRootPos = bodyRoot != null ? bodyRoot.position : transform.position;
+                Vector3 hipCenterPos = bodyRoot != null ? bodyRoot.position : bones[0].position;
 
-//				if(offsetNode != null)
-//				{
-//					newBodyRootPos += offsetNode.transform.position;
-//				}
+                float yRelToAvatar = 0f;
+                if (verticalMovement)
+                {
+                    yRelToAvatar = (trans.y - cameraPos.y) - (hipCenterPos - bodyRootPos).magnitude;
+                }
+                else
+                {
+                    yRelToAvatar = bodyRootPos.y - cameraPos.y;
+                }
 
-				if(bodyRoot != null)
-				{
-					bodyRoot.position = newBodyRootPos;
-				}
-				else
-				{
-					transform.position = newBodyRootPos;
-				}
+                Vector3 relativePos = new Vector3(trans.x, yRelToAvatar, trans.z);
+                Vector3 newBodyRootPos = cameraPos + relativePos;
 
-				bodyRootPosition = newBodyRootPos;
-			}
-		}
-	
-		// Smoothly transition to the new position
-		Vector3 targetPos = bodyRootPosition + Kinect2AvatarPos(trans, verticalMovement);
+                //				if(offsetNode != null)
+                //				{
+                //					newBodyRootPos += offsetNode.transform.position;
+                //				}
 
-		if(isRigidBody && !verticalMovement)
-		{
-			// workaround for obeying the physics (e.g. gravity falling)
-			targetPos.y = bodyRoot != null ? bodyRoot.position.y : transform.position.y;
-		}
-		
-		if(bodyRoot != null)
-		{
-			bodyRoot.position = smoothFactor != 0f ? 
-				Vector3.Lerp(bodyRoot.position, targetPos, smoothFactor * Time.deltaTime) : targetPos;
-		}
-		else
-		{
-			transform.position = smoothFactor != 0f ? 
-				Vector3.Lerp(transform.position, targetPos, smoothFactor * Time.deltaTime) : targetPos;
-		}
-	}
-	
-	// If the bones to be mapped have been declared, map that bone to the model.
-	protected virtual void MapBones()
-	{
-//		// make OffsetNode as a parent of model transform.
-//		offsetNode = new GameObject(name + "Ctrl") { layer = transform.gameObject.layer, tag = transform.gameObject.tag };
-//		offsetNode.transform.position = transform.position;
-//		offsetNode.transform.rotation = transform.rotation;
-//		offsetNode.transform.parent = transform.parent;
-		
-//		// take model transform as body root
-//		transform.parent = offsetNode.transform;
-//		transform.localPosition = Vector3.zero;
-//		transform.localRotation = Quaternion.identity;
-		
-		//bodyRoot = transform;
+                if (bodyRoot != null)
+                {
+                    bodyRoot.position = newBodyRootPos;
+                }
+                else
+                {
+                    transform.position = newBodyRootPos;
+                }
 
-		// get bone transforms from the animator component
-		Animator animatorComponent = GetComponent<Animator>();
-				
-		for (int boneIndex = 0; boneIndex < bones.Length; boneIndex++)
-		{
-			if (!boneIndex2MecanimMap.ContainsKey(boneIndex)) 
-				continue;
-			
-			bones[boneIndex] = animatorComponent.GetBoneTransform(boneIndex2MecanimMap[boneIndex]);
-		}
-	}
-	
-	// Capture the initial rotations of the bones
-	protected void GetInitialRotations()
-	{
-		// save the initial rotation
-		if(offsetNode != null)
-		{
-			offsetNodePos = offsetNode.transform.position;
-			offsetNodeRot = offsetNode.transform.rotation;
-		}
+                bodyRootPosition = newBodyRootPos;
+            }
+        }
 
-		initialPosition = transform.position;
-		initialRotation = transform.rotation;
+        // Smoothly transition to the new position
+        Vector3 targetPos = bodyRootPosition + Kinect2AvatarPos(trans, verticalMovement);
 
-//		if(offsetNode != null)
-//		{
-//			initialRotation = Quaternion.Inverse(offsetNodeRot) * initialRotation;
-//		}
+        if (isRigidBody && !verticalMovement)
+        {
+            // workaround for obeying the physics (e.g. gravity falling)
+            targetPos.y = bodyRoot != null ? bodyRoot.position.y : transform.position.y;
+        }
 
-		transform.rotation = Quaternion.identity;
+        if (bodyRoot != null)
+        {
+            bodyRoot.position = smoothFactor != 0f ?
+                Vector3.Lerp(bodyRoot.position, targetPos, smoothFactor * Time.deltaTime) : targetPos;
+        }
+        else
+        {
+            transform.position = smoothFactor != 0f ?
+                Vector3.Lerp(transform.position, targetPos, smoothFactor * Time.deltaTime) : targetPos;
+        }
+    }
 
-		// save the body root initial position
-		if(bodyRoot != null)
-		{
-			bodyRootPosition = bodyRoot.position;
-		}
-		else
-		{
-			bodyRootPosition = transform.position;
-		}
+    public void MoveInseilAvatar(InseilMeasurement kinectData)
+    {
+        // Get the position of the body and store it.
+        float xPos = (float)kinectData.data["spinebase"].position.x;
+        float yPos = (float)kinectData.data["spinebase"].position.y;
+        float zPos = (float)kinectData.data["spinebase"].position.z;
+        Vector3 trans = new Vector3(xPos, yPos, zPos);
 
-		if(offsetNode != null)
-		{
-			bodyRootPosition = bodyRootPosition - offsetNodePos;
-		}
-		
-		// save the initial bone rotations
-		for (int i = 0; i < bones.Length; i++)
-		{
-			if (bones[i] != null)
-			{
-				initialRotations[i] = bones[i].rotation;
-			}
-		}
+        // If this is the first time we're moving the avatar, set the offset. Otherwise ignore it.
+        if (!offsetCalibrated)
+        {
+            offsetCalibrated = true;
 
-		// Restore the initial rotation
-		transform.rotation = initialRotation;
-	}
-	
-	// Converts kinect joint rotation to avatar joint rotation, depending on joint initial rotation and offset rotation
-	protected Quaternion Kinect2AvatarRot(Quaternion jointRotation, int boneIndex)
-	{
-		Quaternion newRotation = jointRotation * initialRotations[boneIndex];
-		//newRotation = initialRotation * newRotation;
+            xOffset = trans.x;  // !mirroredMovement ? trans.x * moveRate : -trans.x * moveRate;
+            yOffset = trans.y;  // trans.y * moveRate;
+            zOffset = !mirroredMovement ? -trans.z : trans.z;  // -trans.z * moveRate;
 
-		if(offsetNode != null)
-		{
-			newRotation = offsetNode.transform.rotation * newRotation;
-		}
-		else
-		{
-			newRotation = initialRotation * newRotation;
-		}
-		
-		return newRotation;
-	}
-	
-	// Converts Kinect position to avatar skeleton position, depending on initial position, mirroring and move rate
-	protected Vector3 Kinect2AvatarPos(Vector3 jointPosition, bool bMoveVertically)
-	{
-		float xPos;
+            if (posRelativeToCamera)
+            {
+                Vector3 cameraPos = posRelativeToCamera.transform.position;
+                Vector3 bodyRootPos = bodyRoot != null ? bodyRoot.position : transform.position;
+                Vector3 hipCenterPos = bodyRoot != null ? bodyRoot.position : bones[0].position;
 
-//		if(!mirroredMovement)
-			xPos = (jointPosition.x - xOffset) * moveRate;
-//		else
-//			xPos = (-jointPosition.x - xOffset) * moveRate;
-		
-		float yPos = (jointPosition.y - yOffset) * moveRate;
-		//float zPos = (-jointPosition.z - zOffset) * moveRate;
-		float zPos = !mirroredMovement ? (-jointPosition.z - zOffset) * moveRate : (jointPosition.z - zOffset) * moveRate;
-		
-		Vector3 newPosition = new Vector3(xPos, bMoveVertically ? yPos : 0f, zPos);
+                float yRelToAvatar = 0f;
+                if (verticalMovement)
+                {
+                    yRelToAvatar = (trans.y - cameraPos.y) - (hipCenterPos - bodyRootPos).magnitude;
+                }
+                else
+                {
+                    yRelToAvatar = bodyRootPos.y - cameraPos.y;
+                }
 
-		if(offsetNode != null)
-		{
-			newPosition += offsetNode.transform.position;
-		}
-		
-		return newPosition;
-	}
+                Vector3 relativePos = new Vector3(trans.x, yRelToAvatar, trans.z);
+                Vector3 newBodyRootPos = cameraPos + relativePos;
 
-//	protected void OnCollisionEnter(Collision col)
-//	{
-//		Debug.Log("Collision entered");
-//	}
-//
-//	protected void OnCollisionExit(Collision col)
-//	{
-//		Debug.Log("Collision exited");
-//	}
-	
-	// dictionaries to speed up bones' processing
-	// the author of the terrific idea for kinect-joints to mecanim-bones mapping
-	// along with its initial implementation, including following dictionary is
-	// Mikhail Korchun (korchoon@gmail.com). Big thanks to this guy!
-	private readonly Dictionary<int, HumanBodyBones> boneIndex2MecanimMap = new Dictionary<int, HumanBodyBones>
+                //				if(offsetNode != null)
+                //				{
+                //					newBodyRootPos += offsetNode.transform.position;
+                //				}
+
+                if (bodyRoot != null)
+                {
+                    bodyRoot.position = newBodyRootPos;
+                }
+                else
+                {
+                    transform.position = newBodyRootPos;
+                }
+
+                bodyRootPosition = newBodyRootPos;
+            }
+        }
+
+        // Smoothly transition to the new position
+        Vector3 targetPos = bodyRootPosition + Kinect2AvatarPos(trans, verticalMovement);
+
+        if (isRigidBody && !verticalMovement)
+        {
+            // workaround for obeying the physics (e.g. gravity falling)
+            targetPos.y = bodyRoot != null ? bodyRoot.position.y : transform.position.y;
+        }
+
+        if (bodyRoot != null)
+        {
+            bodyRoot.position = smoothFactor != 0f ?
+                Vector3.Lerp(bodyRoot.position, targetPos, smoothFactor * Time.deltaTime) : targetPos;
+        }
+        else
+        {
+            transform.position = smoothFactor != 0f ?
+                Vector3.Lerp(transform.position, targetPos, smoothFactor * Time.deltaTime) : targetPos;
+        }
+    }
+
+    // If the bones to be mapped have been declared, map that bone to the model.
+    protected virtual void MapBones()
+    {
+        //		// make OffsetNode as a parent of model transform.
+        //		offsetNode = new GameObject(name + "Ctrl") { layer = transform.gameObject.layer, tag = transform.gameObject.tag };
+        //		offsetNode.transform.position = transform.position;
+        //		offsetNode.transform.rotation = transform.rotation;
+        //		offsetNode.transform.parent = transform.parent;
+
+        //		// take model transform as body root
+        //		transform.parent = offsetNode.transform;
+        //		transform.localPosition = Vector3.zero;
+        //		transform.localRotation = Quaternion.identity;
+
+        //bodyRoot = transform;
+
+        // get bone transforms from the animator component
+        Animator animatorComponent = GetComponent<Animator>();
+
+        for (int boneIndex = 0; boneIndex < bones.Length; boneIndex++)
+        {
+            if (!boneIndex2MecanimMap.ContainsKey(boneIndex))
+                continue;
+
+            bones[boneIndex] = animatorComponent.GetBoneTransform(boneIndex2MecanimMap[boneIndex]);
+        }
+    }
+
+    // Capture the initial rotations of the bones
+    protected void GetInitialRotations()
+    {
+        // save the initial rotation
+        if (offsetNode != null)
+        {
+            offsetNodePos = offsetNode.transform.position;
+            offsetNodeRot = offsetNode.transform.rotation;
+        }
+
+        initialPosition = transform.position;
+        initialRotation = transform.rotation;
+
+        //		if(offsetNode != null)
+        //		{
+        //			initialRotation = Quaternion.Inverse(offsetNodeRot) * initialRotation;
+        //		}
+
+        transform.rotation = Quaternion.identity;
+
+        // save the body root initial position
+        if (bodyRoot != null)
+        {
+            bodyRootPosition = bodyRoot.position;
+        }
+        else
+        {
+            bodyRootPosition = transform.position;
+        }
+
+        if (offsetNode != null)
+        {
+            bodyRootPosition = bodyRootPosition - offsetNodePos;
+        }
+
+        // save the initial bone rotations
+        for (int i = 0; i < bones.Length; i++)
+        {
+            if (bones[i] != null)
+            {
+                initialRotations[i] = bones[i].rotation;
+            }
+        }
+
+        // Restore the initial rotation
+        transform.rotation = initialRotation;
+    }
+
+    // Converts kinect joint rotation to avatar joint rotation, depending on joint initial rotation and offset rotation
+    protected Quaternion Kinect2AvatarRot(Quaternion jointRotation, int boneIndex)
+    {
+        Quaternion newRotation = jointRotation * initialRotations[boneIndex];
+        //newRotation = initialRotation * newRotation;
+
+        if (offsetNode != null)
+        {
+            newRotation = offsetNode.transform.rotation * newRotation;
+        }
+        else
+        {
+            newRotation = initialRotation * newRotation;
+        }
+
+        return newRotation;
+    }
+
+    // Converts Kinect position to avatar skeleton position, depending on initial position, mirroring and move rate
+    protected Vector3 Kinect2AvatarPos(Vector3 jointPosition, bool bMoveVertically)
+    {
+        float xPos;
+
+        //		if(!mirroredMovement)
+        xPos = (jointPosition.x - xOffset) * moveRate;
+        //		else
+        //			xPos = (-jointPosition.x - xOffset) * moveRate;
+
+        float yPos = (jointPosition.y - yOffset) * moveRate;
+        //float zPos = (-jointPosition.z - zOffset) * moveRate;
+        float zPos = !mirroredMovement ? (-jointPosition.z - zOffset) * moveRate : (jointPosition.z - zOffset) * moveRate;
+
+        Vector3 newPosition = new Vector3(xPos, bMoveVertically ? yPos : 0f, zPos);
+
+        if (offsetNode != null)
+        {
+            newPosition += offsetNode.transform.position;
+        }
+
+        return newPosition;
+    }
+
+    //	protected void OnCollisionEnter(Collision col)
+    //	{
+    //		Debug.Log("Collision entered");
+    //	}
+    //
+    //	protected void OnCollisionExit(Collision col)
+    //	{
+    //		Debug.Log("Collision exited");
+    //	}
+
+    // dictionaries to speed up bones' processing
+    // the author of the terrific idea for kinect-joints to mecanim-bones mapping
+    // along with its initial implementation, including following dictionary is
+    // Mikhail Korchun (korchoon@gmail.com). Big thanks to this guy!
+    private readonly Dictionary<int, HumanBodyBones> boneIndex2MecanimMap = new Dictionary<int, HumanBodyBones>
 	{
 		{0, HumanBodyBones.Hips},
 		{1, HumanBodyBones.Spine},
@@ -518,8 +686,8 @@ public class AvatarController : MonoBehaviour
 		{25, HumanBodyBones.LeftShoulder},
 		{26, HumanBodyBones.RightShoulder},
 	};
-	
-	protected readonly Dictionary<int, KinectInterop.JointType> boneIndex2JointMap = new Dictionary<int, KinectInterop.JointType>
+
+    protected readonly Dictionary<int, KinectInterop.JointType> boneIndex2JointMap = new Dictionary<int, KinectInterop.JointType>
 	{
 		{0, KinectInterop.JointType.SpineBase},
 		{1, KinectInterop.JointType.SpineMid},
@@ -553,14 +721,14 @@ public class AvatarController : MonoBehaviour
 		{23, KinectInterop.JointType.AnkleRight},
 		{24, KinectInterop.JointType.FootRight},
 	};
-	
-	protected readonly Dictionary<int, List<KinectInterop.JointType>> specIndex2JointMap = new Dictionary<int, List<KinectInterop.JointType>>
+
+    protected readonly Dictionary<int, List<KinectInterop.JointType>> specIndex2JointMap = new Dictionary<int, List<KinectInterop.JointType>>
 	{
 		{25, new List<KinectInterop.JointType> {KinectInterop.JointType.ShoulderLeft, KinectInterop.JointType.SpineShoulder} },
 		{26, new List<KinectInterop.JointType> {KinectInterop.JointType.ShoulderRight, KinectInterop.JointType.SpineShoulder} },
 	};
-	
-	protected readonly Dictionary<int, KinectInterop.JointType> boneIndex2MirrorJointMap = new Dictionary<int, KinectInterop.JointType>
+
+    protected readonly Dictionary<int, KinectInterop.JointType> boneIndex2MirrorJointMap = new Dictionary<int, KinectInterop.JointType>
 	{
 		{0, KinectInterop.JointType.SpineBase},
 		{1, KinectInterop.JointType.SpineMid},
@@ -594,12 +762,12 @@ public class AvatarController : MonoBehaviour
 		{23, KinectInterop.JointType.AnkleLeft},
 		{24, KinectInterop.JointType.FootLeft},
 	};
-	
-	protected readonly Dictionary<int, List<KinectInterop.JointType>> specIndex2MirrorJointMap = new Dictionary<int, List<KinectInterop.JointType>>
+
+    protected readonly Dictionary<int, List<KinectInterop.JointType>> specIndex2MirrorJointMap = new Dictionary<int, List<KinectInterop.JointType>>
 	{
 		{25, new List<KinectInterop.JointType> {KinectInterop.JointType.ShoulderRight, KinectInterop.JointType.SpineShoulder} },
 		{26, new List<KinectInterop.JointType> {KinectInterop.JointType.ShoulderLeft, KinectInterop.JointType.SpineShoulder} },
 	};
-	
+
 }
 

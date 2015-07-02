@@ -12,7 +12,17 @@ public class ServerCommunication : MonoBehaviour
     private bool recv;
 
     private static readonly fsSerializer serializer = new fsSerializer();
-    public InseilAnimatedCharacterModel mdl;
+    
+    public GameObject avatar;
+    private AvatarController avatarController;
+
+    void Awake()
+    {
+        if (avatar != null)
+        {
+            avatarController = avatar.GetComponent<AvatarController>();
+        }
+    }
 
     void Update()
     {
@@ -20,17 +30,17 @@ public class ServerCommunication : MonoBehaviour
 
         if (recv)
         {
-            //assuming we get everything in a singe frame
+            //assuming we get everything in a single frame
             string json = serverMessage.First.ConvertToString();
 
             InseilMessage message = new InseilMessage();
             Deserialize<InseilMessage>(json, ref message);
 
-            //measurement stuff is now deserialized correctly. and I'm awesome,
-            //but you probably knew that already.
+
             Debug.Log(message.measurement.data["spinebase"].ToString());
 
-            mdl.UpdateCharacterModel(message);
+            //uncomment as soon as the code is ubitrack-ready
+            //avatarController.UpdateInseilAvatar(message.measurement);
         }
     }
 
