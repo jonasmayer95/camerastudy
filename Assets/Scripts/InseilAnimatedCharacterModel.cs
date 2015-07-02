@@ -63,7 +63,7 @@ public class InseilAnimatedCharacterModel : MonoBehaviour
             {"spinebase" , "spinemid"},
             //{"spinemid" , "spineshoulder" },
             //{"spineshoulder", "neck"},
-            {"spinemid", "neck"};
+            {"spinemid", "neck"},
             {"neck" , "head" }, 
             {"head", "neck"},   // use inverse direction to rotate the head like the neck
                  
