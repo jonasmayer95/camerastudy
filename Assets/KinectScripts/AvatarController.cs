@@ -420,29 +420,30 @@ public class AvatarController : MonoBehaviour
         return joint;  // in case of end joint - Head, HandTipLeft, HandTipRight, FootLeft, FootRight
     }
 
-    private void CalculateJointOrients(ref KinectInterop.BodyData bodyData)
+    private void CalculateJointOrients(InseilMeasurement trackingData)
     {
-        int jointCount = bodyData.joint.Length;
+        int jointCount = trackingData.data.Count;
 
         for (int j = 0; j < jointCount; j++)
         {
             int joint = j;
 
+            //TODO: find the right joint order
             KinectInterop.JointData jointData = bodyData.joint[joint];
-            //bool bJointValid = ignoreInferredJoints ? jointData.trackingState == KinectInterop.TrackingState.Tracked : jointData.trackingState != KinectInterop.TrackingState.NotTracked;
+
 
             //if (bJointValid)
             {
                 int nextJoint = (int)GetNextJoint((JointType)joint);
-                if (nextJoint != joint && nextJoint >= 0 && nextJoint < sensorData.jointCount) //set jointcount to that from inseilmessage
+                if (nextJoint != joint && nextJoint >= 0 && nextJoint < jointCount) //set jointcount to that from inseilmessage
                 {
-                    //if current jointis in range, get the next one's data
+                    //if current joint is in range, get the next one's data
 
                     KinectInterop.JointData nextJointData = bodyData.joint[nextJoint];
                     //bool bNextJointValid = ignoreInferredJoints ? nextJointData.trackingState == KinectInterop.TrackingState.Tracked : nextJointData.trackingState != KinectInterop.TrackingState.NotTracked;
 
                     //calculate normalized direction of next joint
-                    Vector3 baseDir = KinectInterop.JointBaseDir[nextJoint];
+                    Vector3 baseDir = KinectInterop.JointBaseDir[nextJoint]; //TODO: copy base directions from KinectInterop
                     Vector3 jointDir = nextJointData.direction;
                     jointDir = new Vector3(jointDir.x, jointDir.y, -jointDir.z).normalized;
 
