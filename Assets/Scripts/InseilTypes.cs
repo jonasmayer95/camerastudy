@@ -8,18 +8,51 @@ using FullSerializer;
 /// Plain old data types that directly map to the JSON data
 /// we get from the server.
 /// </summary>
+/// 
+
+public enum JointType : int
+{
+    SpineBase = 0,
+    SpineMid = 1,
+    Neck = 2,
+    Head = 3,
+    ShoulderLeft = 4,
+    ElbowLeft = 5,
+    WristLeft = 6,
+    HandLeft = 7,
+    ShoulderRight = 8,
+    ElbowRight = 9,
+    WristRight = 10,
+    HandRight = 11,
+    HipLeft = 12,
+    KneeLeft = 13,
+    AnkleLeft = 14,
+    FootLeft = 15,
+    HipRight = 16,
+    KneeRight = 17,
+    AnkleRight = 18,
+    FootRight = 19,
+    SpineShoulder = 20,
+    HandTipLeft = 21,
+    ThumbLeft = 22,
+    HandTipRight = 23,
+    ThumbRight = 24
+    //Count = 25
+}
+
 
 public struct InseilPosition
 {
     public double x;
     public double y;
     public double z;
-
+    
     public override string ToString()
     {
         return string.Format("pos = x:{0}, y:{1}, z:{2}\n", x, y, z);
     }
 }
+
 
 public struct InseilRotation
 {
@@ -131,4 +164,3 @@ public class InseilMessage
         return sb.ToString();
     }
 }
-
