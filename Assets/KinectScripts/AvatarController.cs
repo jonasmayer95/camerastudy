@@ -371,54 +371,7 @@ public class AvatarController : MonoBehaviour
         }
     }
 
-    public JointType GetNextJoint(JointType joint)
-    {
-        switch (joint)
-        {
-            case JointType.SpineBase:
-                return JointType.SpineMid;
-            case JointType.SpineMid:
-                return JointType.SpineShoulder;
-            case JointType.SpineShoulder:
-                return JointType.Neck;
-            case JointType.Neck:
-                return JointType.Head;
-
-            case JointType.ShoulderLeft:
-                return JointType.ElbowLeft;
-            case JointType.ElbowLeft:
-                return JointType.WristLeft;
-            case JointType.WristLeft:
-                return JointType.HandLeft;
-            case JointType.HandLeft:
-                return JointType.HandTipLeft;
-
-            case JointType.ShoulderRight:
-                return JointType.ElbowRight;
-            case JointType.ElbowRight:
-                return JointType.WristRight;
-            case JointType.WristRight:
-                return JointType.HandRight;
-            case JointType.HandRight:
-                return JointType.HandTipRight;
-
-            case JointType.HipLeft:
-                return JointType.KneeLeft;
-            case JointType.KneeLeft:
-                return JointType.AnkleLeft;
-            case JointType.AnkleLeft:
-                return JointType.FootLeft;
-
-            case JointType.HipRight:
-                return JointType.KneeRight;
-            case JointType.KneeRight:
-                return JointType.AnkleRight;
-            case JointType.AnkleRight:
-                return JointType.FootRight;
-        }
-
-        return joint;  // in case of end joint - Head, HandTipLeft, HandTipRight, FootLeft, FootRight
-    }
+    
 
     private void CalculateJointOrients(InseilMeasurement trackingData)
     {
