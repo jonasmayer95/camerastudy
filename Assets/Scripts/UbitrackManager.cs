@@ -5,23 +5,27 @@ using System.Collections.Generic;
 
 class UbitrackManager
 {
+    private Matrix4x4 kinectToWorld = Matrix4x4.zero;
+
     /// <summary>
-    /// Generates a UTBodyData object that can be used for visualization.
+    /// Returns a UTBodyData object that can be used for visualization of an avatar.
     /// </summary>
-    /// <param name="skeleton">Kinect-tracked skeleton data</param>
-    /// <returns></returns>
-    public UTBodyData GenerateBodyData(InseilMeasurement skeleton)
+    /// <param name="skeleton"></param>
+    public void GenerateBodyData(InseilMeasurement skeleton)
     {
         UTBodyData retVal = new UTBodyData(skeleton.data.Count);
-        //InitializeBodyData(ref retVal, ref skeleton);
+        InitializeBodyData(ref retVal, ref skeleton, ref kinectToWorld);
 
-        //CalculateJointDirections here
+        CalculateJointDirections(ref retVal);
 
-        //we still need some stuff that's present in processbodyframedata
-        //calculate special directions and calculatejointorients
-        return retVal;
+        //calculate special directions and joint orientations
+        CalculateSpecialDirections(ref retVal);
+        CalculateJointOrientations(ref retVal);
 
-        //body data is complete, now update our avatar
+        //update kinect to world matrix, but we need sensor height and angle for that
+
+
+        //update avatar
     }
 
     public void InitializeBodyData(ref UTBodyData data, ref InseilMeasurement skeleton, ref Matrix4x4 kinectToWorld)
@@ -66,7 +70,7 @@ class UbitrackManager
         }
     }
 
-    private void CalculateJointOrients(ref UTBodyData bodyData)
+    private void CalculateJointOrientations(ref UTBodyData bodyData)
     {
         int jointCount = bodyData.joints.Length;
 
@@ -348,31 +352,23 @@ class UbitrackManager
     public void CalculateSpecialDirections(ref UTBodyData bodyData)
     {
         // calculate special directions
-        //if (bodyData.joints[(int)JointType.HipLeft].trackingState != KinectInterop.TrackingState.NotTracked &&
-        //   bodyData.joints[(int)KinectInterop.JointType.HipRight].trackingState != KinectInterop.TrackingState.NotTracked)
-        //{
-            Vector3 posRHip = bodyData.joints[(int)JointType.HipRight].position;
-            Vector3 posLHip = bodyData.joints[(int)JointType.HipLeft].position;
+        Vector3 posRHip = bodyData.joints[(int)JointType.HipRight].position;
+        Vector3 posLHip = bodyData.joints[(int)JointType.HipLeft].position;
 
-            bodyData.hipsDirection = posRHip - posLHip;
-            bodyData.hipsDirection -= Vector3.Project(bodyData.hipsDirection, Vector3.up);
-        //}
+        bodyData.hipsDirection = posRHip - posLHip;
+        bodyData.hipsDirection -= Vector3.Project(bodyData.hipsDirection, Vector3.up);
+ 
+        Vector3 posRShoulder = bodyData.joints[(int)JointType.ShoulderRight].position;
+        Vector3 posLShoulder = bodyData.joints[(int)JointType.ShoulderLeft].position;
 
-        //if (bodyData.joint[(int)KinectInterop.JointType.ShoulderLeft].trackingState != KinectInterop.TrackingState.NotTracked &&
-        //   bodyData.joint[(int)KinectInterop.JointType.ShoulderRight].trackingState != KinectInterop.TrackingState.NotTracked)
-        //{
-            Vector3 posRShoulder = bodyData.joints[(int)JointType.ShoulderRight].position;
-            Vector3 posLShoulder = bodyData.joints[(int)JointType.ShoulderLeft].position;
+        bodyData.shouldersDirection = posRShoulder - posLShoulder;
+        bodyData.shouldersDirection -= Vector3.Project(bodyData.shouldersDirection, Vector3.up);
 
-            bodyData.shouldersDirection = posRShoulder - posLShoulder;
-            bodyData.shouldersDirection -= Vector3.Project(bodyData.shouldersDirection, Vector3.up);
+        Vector3 shouldersDir = bodyData.shouldersDirection;
+        shouldersDir.z = -shouldersDir.z;
 
-            Vector3 shouldersDir = bodyData.shouldersDirection;
-            shouldersDir.z = -shouldersDir.z;
-
-            Quaternion turnRot = Quaternion.FromToRotation(Vector3.right, shouldersDir);
-            bodyData.bodyTurnAngle = turnRot.eulerAngles.y;
-        //}
+        Quaternion turnRot = Quaternion.FromToRotation(Vector3.right, shouldersDir);
+        bodyData.bodyTurnAngle = turnRot.eulerAngles.y;
     }
 
     public JointType GetNextJoint(JointType joint)
