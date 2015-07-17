@@ -3,9 +3,33 @@ using System;
 using System.Collections.Generic;
 
 
-class UbitrackManager
+class UbitrackManager: MonoBehaviour
 {
-    private Matrix4x4 kinectToWorld = Matrix4x4.zero;
+    private Matrix4x4 kinectToWorld = Matrix4x4.identity;
+    private float sensorAngle;
+    private float sensorHeight = 1.0f;
+    private List<AvatarController> avatarControllers = new List<AvatarController>();
+    public static UbitrackManager instance;
+
+    void Awake()
+    {
+        instance = this;
+    }
+
+    void Start()
+    {
+        // Get and init avatar controller
+        MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(MonoBehaviour)) as MonoBehaviour[];
+        foreach (MonoBehaviour monoScript in monoScripts)
+        {
+            if (typeof(AvatarController).IsAssignableFrom(monoScript.GetType()))
+            {
+                AvatarController avatar = (AvatarController)monoScript;
+                avatarControllers.Add(avatar);
+            }
+        }
+    }
+
 
     /// <summary>
     /// Returns a UTBodyData object that can be used for visualization of an avatar.
@@ -13,6 +37,10 @@ class UbitrackManager
     /// <param name="skeleton"></param>
     public void GenerateBodyData(InseilMeasurement skeleton)
     {
+        //update kinect to world matrix, but we need sensor height and angle for that
+        Quaternion quatTiltAngle = Quaternion.Euler(-sensorAngle, 0.0f, 0.0f);
+        kinectToWorld.SetTRS(new Vector3(0.0f, sensorHeight, 0.0f), quatTiltAngle, Vector3.one);
+
         UTBodyData retVal = new UTBodyData(skeleton.data.Count);
         InitializeBodyData(ref retVal, ref skeleton, ref kinectToWorld);
 
@@ -20,12 +48,10 @@ class UbitrackManager
 
         //calculate special directions and joint orientations
         CalculateSpecialDirections(ref retVal);
-        CalculateJointOrientations(ref retVal);
-
-        //update kinect to world matrix, but we need sensor height and angle for that
-
+        CalculateJointOrientations(ref retVal);       
 
         //update avatar
+        avatarControllers[0].UpdateInseilAvatar(skeleton);
     }
 
     public void InitializeBodyData(ref UTBodyData data, ref InseilMeasurement skeleton, ref Matrix4x4 kinectToWorld)
@@ -34,6 +60,25 @@ class UbitrackManager
         {
             //get the index of our joint from the current message
             JointType type = GetJointType(joint.Key);
+            if (type == JointType.Invalid)
+                continue;
+
+            if (type == JointType.FloorPlane)
+            {
+                Vector3 rot = new Vector3((float)joint.Value.rotation.x, (float)joint.Value.rotation.y, (float)joint.Value.rotation.z);
+                Quaternion sensorRotDetected = Quaternion.FromToRotation(rot, Vector3.up);
+                float sensorHgtDetected = (float)joint.Value.rotation.w;
+
+                float angle = sensorRotDetected.eulerAngles.x;
+                angle = angle > 180f ? (angle - 360f) : angle;
+                sensorAngle = -angle;
+
+                float height = sensorHgtDetected > 0f ? sensorHgtDetected : sensorHeight;
+                sensorHeight = height;
+                
+                Debug.Log(joint.Value.rotation);
+                continue;
+            }
 
             //set its position and orientation
             UTJointData jointData = new UTJointData();
@@ -479,7 +524,10 @@ class UbitrackManager
                 return JointType.HandTipRight;
             case "thumbright":
                 return JointType.ThumbRight;
+            case "floorplane":
+                return JointType.FloorPlane;
             default:
+                Debug.Log(name);
                 return JointType.Invalid;
         }
     }
@@ -630,6 +678,7 @@ public enum JointType : int
     HandTipLeft = 21,
     ThumbLeft = 22,
     HandTipRight = 23,
-    ThumbRight = 24
+    ThumbRight = 24,
+    FloorPlane = 25
     //Count = 25
 }

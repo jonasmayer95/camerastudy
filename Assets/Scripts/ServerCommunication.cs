@@ -40,7 +40,7 @@ public class ServerCommunication : MonoBehaviour
             Debug.Log(message.measurement.data["spinebase"].ToString());
 
             //uncomment as soon as the code is ubitrack-ready
-            //avatarController.UpdateInseilAvatar(message.measurement);
+            UbitrackManager.instance.GenerateBodyData(message.measurement);
         }
     }
 

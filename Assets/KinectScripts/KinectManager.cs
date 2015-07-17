@@ -1289,6 +1289,7 @@ public class KinectManager : MonoBehaviour
 
 	void StartKinect() 
 	{
+        Debug.Log("Called StartKinect");
 		try
 		{
 			// try to initialize the default Kinect2 sensor
@@ -1319,6 +1320,8 @@ public class KinectManager : MonoBehaviour
 			//create the transform matrix - kinect to world
 			Quaternion quatTiltAngle = Quaternion.Euler(-sensorAngle, 0.0f, 0.0f);
 			kinectToWorld.SetTRS(new Vector3(0.0f, sensorHeight, 0.0f), quatTiltAngle, Vector3.one);
+
+            
 		}
 		catch(DllNotFoundException ex)
 		{

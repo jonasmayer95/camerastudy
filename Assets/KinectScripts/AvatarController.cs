@@ -163,8 +163,9 @@ public class AvatarController : MonoBehaviour
 
     public void UpdateInseilAvatar(InseilMeasurement kinectData)
     {
+        Debug.Log("Updating avatar");
         if (!gameObject.activeInHierarchy)
-            return;
+            return;       
 
         // move the avatar to its Kinect position
         MoveInseilAvatar(kinectData);
