@@ -161,14 +161,13 @@ public class AvatarController : MonoBehaviour
         }
     }
 
-    public void UpdateInseilAvatar(InseilMeasurement kinectData)
+    public void UpdateInseilAvatar(ref UTBodyData kinectData)
     {
-        Debug.Log("Updating avatar");
         if (!gameObject.activeInHierarchy)
             return;       
 
         // move the avatar to its Kinect position
-        MoveInseilAvatar(kinectData);
+        MoveInseilAvatar(ref kinectData);
 
         for (var boneIndex = 0; boneIndex < bones.Length; boneIndex++)
         {
@@ -178,7 +177,12 @@ public class AvatarController : MonoBehaviour
             if (boneIndex2JointMap.ContainsKey(boneIndex))
             {
                 KinectInterop.JointType joint = !mirroredMovement ? boneIndex2JointMap[boneIndex] : boneIndex2MirrorJointMap[boneIndex];
-                TransformInseilBone(joint, boneIndex, !mirroredMovement);
+
+                //TODO: clean up this mess
+                //int dirtyHack = (int)joint;
+                //InseilJoint j = kinectData.data[UbitrackManager.instance.GetJointName((JointType)dirtyHack)];
+
+                //TransformInseilBone(joint, boneIndex, !mirroredMovement, ref kinectData);
             }
             else if (specIndex2JointMap.ContainsKey(boneIndex))
             {
@@ -189,7 +193,7 @@ public class AvatarController : MonoBehaviour
                 {
                     //Debug.Log(alJoints[0].ToString());
                     Vector3 baseDir = alJoints[0].ToString().EndsWith("Left") ? Vector3.left : Vector3.right;
-                    TransformInseilSpecialBone(alJoints[0], alJoints[1], boneIndex, baseDir, !mirroredMovement);
+                    //TransformInseilSpecialBone(alJoints[0], alJoints[1], boneIndex, baseDir, !mirroredMovement);
                 }
             }
         }
@@ -274,7 +278,7 @@ public class AvatarController : MonoBehaviour
             boneTransform.rotation = newRotation;
     }
 
-    protected void TransformInseilBone(KinectInterop.JointType joint, int boneIndex, bool flip)
+    protected void TransformInseilBone(KinectInterop.JointType joint, int boneIndex, bool flip, ref UTBodyData bodyData)
     {
         Transform boneTransform = bones[boneIndex];
         if (boneTransform == null)
@@ -287,7 +291,8 @@ public class AvatarController : MonoBehaviour
             return;
 
         // Get Kinect joint orientation
-        Quaternion jointRotation = /*kinectManager.GetJointOrientation(userId, iJoint, flip)*/ Quaternion.identity; //TODO: get ubitrack data here
+        Quaternion jointRotation = bodyData.joints[iJoint].normalRotation; //TODO: check for flip and return mirrored if needed
+            
         if (jointRotation == Quaternion.identity)
             return;
 
@@ -448,13 +453,14 @@ public class AvatarController : MonoBehaviour
         }
     }
 
-    public void MoveInseilAvatar(InseilMeasurement kinectData)
+    public void MoveInseilAvatar(ref UTBodyData kinectData)
     {
         // Get the position of the body and store it.
-        float xPos = (float)kinectData.data["spinebase"].position.x;
-        float yPos = (float)kinectData.data["spinebase"].position.y;
-        float zPos = (float)kinectData.data["spinebase"].position.z;
+        float xPos = kinectData.position.x;
+        float yPos = kinectData.position.y;
+        float zPos = kinectData.position.z;
         Vector3 trans = new Vector3(xPos, yPos, zPos);
+
 
         // If this is the first time we're moving the avatar, set the offset. Otherwise ignore it.
         if (!offsetCalibrated)

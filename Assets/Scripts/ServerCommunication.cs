@@ -13,15 +13,11 @@ public class ServerCommunication : MonoBehaviour
 
     private static readonly fsSerializer serializer = new fsSerializer();
     
-    public GameObject avatar;
-    private AvatarController avatarController;
+
 
     void Awake()
     {
-        if (avatar != null)
-        {
-            avatarController = avatar.GetComponent<AvatarController>();
-        }
+        
     }
 
     void Update()
@@ -37,7 +33,7 @@ public class ServerCommunication : MonoBehaviour
             Deserialize<InseilMessage>(json, ref message);
 
 
-            Debug.Log(message.measurement.data["spinebase"].ToString());
+            //Debug.Log(message.measurement.data["spinebase"].ToString());
 
             //uncomment as soon as the code is ubitrack-ready
             UbitrackManager.instance.GenerateBodyData(message.measurement);

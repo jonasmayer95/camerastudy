@@ -228,6 +228,7 @@ MonoBehaviour:
   smoothFactor: 5
   offsetNode: {fileID: 0}
   posRelativeToCamera: {fileID: 0}
+  allowedHandRotations: 1
 --- !u!1 &268483876
 GameObject:
   m_ObjectHideFlags: 0
@@ -328,7 +329,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b851555d55105a04c9a7835bdaeaedbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  avatar: {fileID: 0}
+  avatar: {fileID: 244114974}
 --- !u!4 &272343342
 Transform:
   m_ObjectHideFlags: 0
@@ -729,6 +730,7 @@ MonoBehaviour:
   smoothFactor: 5
   offsetNode: {fileID: 0}
   posRelativeToCamera: {fileID: 0}
+  allowedHandRotations: 1
 --- !u!95 &656057211
 Animator:
   serializedVersion: 3
@@ -1586,7 +1588,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 100176, guid: ae23d50304c93b9418b65cec8f9fe954, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ae23d50304c93b9418b65cec8f9fe954, type: 3}
@@ -1605,7 +1607,7 @@ GameObject:
   - 81: {fileID: 1059045176}
   - 114: {fileID: 1059045182}
   - 114: {fileID: 1059045181}
-  - 114: {fileID: 1059045183}
+  - 114: {fileID: 1059045184}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1725,44 +1727,18 @@ MonoBehaviour:
   m_MinZ: .00999999978
   m_SSAOShader: {fileID: 4800000, guid: 43ca18288c424f645aaa1e9e07f04c50, type: 3}
   m_RandomTexture: {fileID: 2800000, guid: a181ca8e3c62f3e4b8f183f6c586b032, type: 3}
---- !u!114 &1059045183
+--- !u!114 &1059045184
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1059045175}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b531f336dfee5f438f94ed501caefc7, type: 3}
+  m_Script: {fileID: 11500000, guid: ecf9a849381e69f43acccbeb10396d51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sensorHeight: 1
-  sensorAngle: 0
-  autoHeightAngle: 0
-  computeUserMap: 0
-  computeColorMap: 0
-  computeInfraredMap: 0
-  displayUserMap: 0
-  displayColorMap: 0
-  displaySkeletonLines: 1
-  DisplayMapsWidthPercent: 20
-  useMultiSourceReader: 0
-  minUserDistance: .5
-  maxUserDistance: 0
-  maxTrackedUsers: 6
-  detectClosestUser: 1
-  ignoreInferredJoints: 0
-  lateUpdateAvatars: 0
-  smoothing: 1
-  useBoneOrientationConstraints: 0
-  allowedHandRotations: 1
-  avatarControllers: []
-  playerCalibrationPose: 0
-  playerCommonGestures: 
-  minTimeBetweenGestures: .699999988
-  gestureListeners: []
-  calibrationText: {fileID: 0}
-  gesturesDebugText: {fileID: 0}
+  avatarObj: {fileID: 0}
 --- !u!1 &1098269140
 GameObject:
   m_ObjectHideFlags: 0
@@ -1939,6 +1915,10 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 100006, guid: 6142a6b8fc847a24aa567290b62ea54b, type: 3}
       propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9500000, guid: 6142a6b8fc847a24aa567290b62ea54b, type: 3}
+      propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -2667,6 +2647,7 @@ MonoBehaviour:
   smoothFactor: 5
   offsetNode: {fileID: 0}
   posRelativeToCamera: {fileID: 0}
+  allowedHandRotations: 1
 --- !u!1 &1772249143
 GameObject:
   m_ObjectHideFlags: 0

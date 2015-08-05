@@ -3,31 +3,46 @@ using System;
 using System.Collections.Generic;
 
 
-class UbitrackManager: MonoBehaviour
+class UbitrackManager : MonoBehaviour
 {
     private Matrix4x4 kinectToWorld = Matrix4x4.identity;
     private float sensorAngle;
     private float sensorHeight = 1.0f;
-    private List<AvatarController> avatarControllers = new List<AvatarController>();
+    //private List<AvatarController> avatarControllers = new List<AvatarController>();
+    
+    private const int kinectJointCount = 26;
+    private UTBodyData bodyData = new UTBodyData(kinectJointCount);
     public static UbitrackManager instance;
+
+    public GameObject avatar;
+    private AvatarController avatarController;
 
     void Awake()
     {
         instance = this;
+
+        if (avatar != null)
+        {
+            avatarController = avatar.GetComponent<AvatarController>();
+        }
     }
 
     void Start()
     {
         // Get and init avatar controller
-        MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(MonoBehaviour)) as MonoBehaviour[];
-        foreach (MonoBehaviour monoScript in monoScripts)
-        {
-            if (typeof(AvatarController).IsAssignableFrom(monoScript.GetType()))
-            {
-                AvatarController avatar = (AvatarController)monoScript;
-                avatarControllers.Add(avatar);
-            }
-        }
+        //MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(MonoBehaviour)) as MonoBehaviour[];
+        //foreach (MonoBehaviour monoScript in monoScripts)
+        //{
+        //    if (typeof(AvatarController).IsAssignableFrom(monoScript.GetType()))
+        //    {
+        //        AvatarController avatar = (AvatarController)monoScript;
+        //        avatarControllers.Add(avatar);
+        //    }
+        //}
+
+        Quaternion quatTiltAngle = Quaternion.Euler(-sensorAngle, 0.0f, 0.0f);
+        kinectToWorld.SetTRS(new Vector3(0.0f, sensorHeight, 0.0f), quatTiltAngle, Vector3.one);
+       
     }
 
 
@@ -41,17 +56,18 @@ class UbitrackManager: MonoBehaviour
         Quaternion quatTiltAngle = Quaternion.Euler(-sensorAngle, 0.0f, 0.0f);
         kinectToWorld.SetTRS(new Vector3(0.0f, sensorHeight, 0.0f), quatTiltAngle, Vector3.one);
 
-        UTBodyData retVal = new UTBodyData(skeleton.data.Count);
-        InitializeBodyData(ref retVal, ref skeleton, ref kinectToWorld);
+        //UTBodyData retVal = new UTBodyData(skeleton.data.Count);
+        InitializeBodyData(ref bodyData, ref skeleton, ref kinectToWorld);
 
-        CalculateJointDirections(ref retVal);
+        CalculateJointDirections(ref bodyData);
 
         //calculate special directions and joint orientations
-        CalculateSpecialDirections(ref retVal);
-        CalculateJointOrientations(ref retVal);       
+        CalculateSpecialDirections(ref bodyData);
+        CalculateJointOrientations(ref bodyData);
 
         //update avatar
-        avatarControllers[0].UpdateInseilAvatar(skeleton);
+        //avatarControllers[0].UpdateInseilAvatar(ref bodyData);
+        avatarController.UpdateInseilAvatar(ref bodyData);
     }
 
     public void InitializeBodyData(ref UTBodyData data, ref InseilMeasurement skeleton, ref Matrix4x4 kinectToWorld)
@@ -75,9 +91,6 @@ class UbitrackManager: MonoBehaviour
 
                 float height = sensorHgtDetected > 0f ? sensorHgtDetected : sensorHeight;
                 sensorHeight = height;
-                
-                Debug.Log(joint.Value.rotation);
-                continue;
             }
 
             //set its position and orientation
@@ -95,6 +108,7 @@ class UbitrackManager: MonoBehaviour
             {
                 data.position = jointData.position;
                 data.orientation = jointData.orientation;
+                Debug.Log(string.Format("UbitrackManager: world position: {0}, kinect position: {1}\n", jointData.position, jointData.kinectPos));
             }
 
             //write it into UTBodyData's joints array
@@ -414,6 +428,8 @@ class UbitrackManager: MonoBehaviour
 
         Quaternion turnRot = Quaternion.FromToRotation(Vector3.right, shouldersDir);
         bodyData.bodyTurnAngle = turnRot.eulerAngles.y;
+
+        //TODO: ankle directions are missing, look into ProcessBodyFrameData()
     }
 
     public JointType GetNextJoint(JointType joint)
@@ -529,6 +545,67 @@ class UbitrackManager: MonoBehaviour
             default:
                 Debug.Log(name);
                 return JointType.Invalid;
+        }
+    }
+
+    public string GetJointName(JointType joint)
+    {
+        switch (joint)
+        {
+            case JointType.SpineBase:
+                return "spinebase";
+            case JointType.SpineMid:
+                return "spinemid";
+            case JointType.Neck:
+                return "neck";
+            case JointType.Head:
+                return "head";
+            case JointType.ShoulderLeft:
+                return "shoulderleft";
+            case JointType.ElbowLeft:
+                return "elbowleft";
+            case JointType.WristLeft:
+                return "wristleft";
+            case JointType.HandLeft:
+                return "handleft";
+            case JointType.ShoulderRight:
+                return "shoulderright";
+            case JointType.ElbowRight:
+                return "elbowright";
+            case JointType.WristRight:
+                return "wristright";
+            case JointType.HandRight:
+                return "handright";
+            case JointType.HipLeft:
+                return "hipleft";
+            case JointType.KneeLeft:
+                return "kneeleft";
+            case JointType.AnkleLeft:
+                return "ankleleft";
+            case JointType.FootLeft:
+                return "footleft";
+            case JointType.HipRight:
+                return "hipright";
+            case JointType.KneeRight:
+                return "kneeright";
+            case JointType.AnkleRight:
+                return "ankleright";
+            case JointType.FootRight:
+                return "footright";
+            case JointType.SpineShoulder:
+                return "spineshoulder";
+            case JointType.HandTipLeft:
+                return "handtipleft";
+            case JointType.ThumbLeft:
+                return "thumbleft";
+            case JointType.HandTipRight:
+                return "handtipright";
+            case JointType.ThumbRight:
+                return "thumbright";
+            case JointType.FloorPlane:
+                return "floorplane";
+            default:
+                return "invalid";
         }
     }
 
@@ -653,7 +730,6 @@ public struct UTJointData
 
 public enum JointType : int
 {
-    Invalid = -1,
     SpineBase = 0,
     SpineMid = 1,
     Neck = 2,
@@ -679,6 +755,7 @@ public enum JointType : int
     ThumbLeft = 22,
     HandTipRight = 23,
     ThumbRight = 24,
-    FloorPlane = 25
+    FloorPlane = 25,
+    Invalid = -1
     //Count = 25
 }
