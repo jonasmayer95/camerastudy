@@ -45,7 +45,6 @@ class UbitrackManager : MonoBehaviour
        
     }
 
-
     /// <summary>
     /// Returns a UTBodyData object that can be used for visualization of an avatar.
     /// </summary>
@@ -126,6 +125,7 @@ class UbitrackManager : MonoBehaviour
             int parent = (int)GetParentJoint(data.joints[i].jointType);
 
             data.joints[i].direction = data.joints[i].position - data.joints[parent].position;
+            data.joints[i].direction = new Vector3(-data.joints[i].direction.x, data.joints[i].direction.y, data.joints[i].direction.z);
         }
     }
 
@@ -151,7 +151,7 @@ class UbitrackManager : MonoBehaviour
 
                 Vector3 baseDir = JointBaseDir[nextJoint];
                 Vector3 jointDir = nextJointData.direction;
-                jointDir = new Vector3(jointDir.x, jointDir.y, -jointDir.z).normalized;
+                jointDir = new Vector3(jointDir.x, jointDir.y, jointDir.z).normalized;
 
                 Quaternion jointOrientNormal = jointData.normalRotation;
                 //if (bNextJointValid)
@@ -379,7 +379,7 @@ class UbitrackManager : MonoBehaviour
                 mirroredAngles.y = -mirroredAngles.y;
                 mirroredAngles.z = -mirroredAngles.z;
 
-                jointData.mirroredRotation = Quaternion.Euler(mirroredAngles);
+                jointData.mirroredRotation = Quaternion.Euler(mirroredAngles);            
             }
             else
             {

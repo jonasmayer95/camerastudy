@@ -15,7 +15,7 @@ public class AvatarController : MonoBehaviour
     public int playerIndex = 0;
 
     // Whether the character is facing the player or not. Default false.
-    public bool mirroredMovement = false;
+    public bool mirroredMovement;
 
     // Bool that determines whether the avatar is allowed to do vertical movement
     public bool verticalMovement = false;
@@ -182,7 +182,7 @@ public class AvatarController : MonoBehaviour
                 //int dirtyHack = (int)joint;
                 //InseilJoint j = kinectData.data[UbitrackManager.instance.GetJointName((JointType)dirtyHack)];
 
-                //TransformInseilBone(joint, boneIndex, !mirroredMovement, ref kinectData);
+                TransformInseilBone(joint, boneIndex, mirroredMovement, ref kinectData);
             }
             else if (specIndex2JointMap.ContainsKey(boneIndex))
             {
@@ -193,7 +193,7 @@ public class AvatarController : MonoBehaviour
                 {
                     //Debug.Log(alJoints[0].ToString());
                     Vector3 baseDir = alJoints[0].ToString().EndsWith("Left") ? Vector3.left : Vector3.right;
-                    //TransformInseilSpecialBone(alJoints[0], alJoints[1], boneIndex, baseDir, !mirroredMovement);
+                    TransformInseilSpecialBone(alJoints[0], alJoints[1], boneIndex, baseDir, mirroredMovement);
                 }
             }
         }
@@ -291,7 +291,7 @@ public class AvatarController : MonoBehaviour
             return;
 
         // Get Kinect joint orientation
-        Quaternion jointRotation = bodyData.joints[iJoint].normalRotation; //TODO: check for flip and return mirrored if needed
+        Quaternion jointRotation = !flip ? bodyData.joints[iJoint].normalRotation : bodyData.joints[iJoint].mirroredRotation; //TODO: check for flip and return mirrored if needed
             
         if (jointRotation == Quaternion.identity)
             return;
@@ -321,7 +321,7 @@ public class AvatarController : MonoBehaviour
         Vector3 jointDir = /*kinectManager.GetJointDirection(userId, (int)joint, false, true)*/ Vector3.zero;
         Quaternion jointRotation = jointDir != Vector3.zero ? Quaternion.FromToRotation(baseDir, jointDir) : Quaternion.identity;
 
-        if (!flip)
+        if (flip)
         {
             Vector3 mirroredAngles = jointRotation.eulerAngles;
             mirroredAngles.y = -mirroredAngles.y;
@@ -356,11 +356,11 @@ public class AvatarController : MonoBehaviour
         Vector3 jointDir = /*kinectManager.GetJointDirection(userId, (int)joint, false, true)*/ Vector3.zero;
         Quaternion jointRotation = jointDir != Vector3.zero ? Quaternion.FromToRotation(baseDir, jointDir) : Quaternion.identity;
 
-        if (!flip)
+        if (flip)
         {
             Vector3 mirroredAngles = jointRotation.eulerAngles;
-            mirroredAngles.y = -mirroredAngles.y;
-            mirroredAngles.z = -mirroredAngles.z;
+           // mirroredAngles.y = -mirroredAngles.y;
+           // mirroredAngles.z = -mirroredAngles.z;
 
             jointRotation = Quaternion.Euler(mirroredAngles);
         }
@@ -456,9 +456,9 @@ public class AvatarController : MonoBehaviour
     public void MoveInseilAvatar(ref UTBodyData kinectData)
     {
         // Get the position of the body and store it.
-        float xPos = kinectData.position.x;
+        float xPos = mirroredMovement ? -kinectData.position.x : kinectData.position.x;
         float yPos = kinectData.position.y;
-        float zPos = kinectData.position.z;
+        float zPos = !mirroredMovement ? kinectData.position.z : -kinectData.position.z;
         Vector3 trans = new Vector3(xPos, yPos, zPos);
 
 
@@ -552,7 +552,7 @@ public class AvatarController : MonoBehaviour
         {
             if (!boneIndex2MecanimMap.ContainsKey(boneIndex))
                 continue;
-
+            
             bones[boneIndex] = animatorComponent.GetBoneTransform(boneIndex2MecanimMap[boneIndex]);
         }
     }
@@ -628,10 +628,10 @@ public class AvatarController : MonoBehaviour
     {
         float xPos;
 
-        //		if(!mirroredMovement)
-        xPos = (jointPosition.x - xOffset) * moveRate;
-        //		else
-        //			xPos = (-jointPosition.x - xOffset) * moveRate;
+        if (!mirroredMovement)
+            xPos = (-jointPosition.x - xOffset) * moveRate;
+        else
+            xPos = (jointPosition.x - xOffset) * moveRate;
 
         float yPos = (jointPosition.y - yOffset) * moveRate;
         //float zPos = (-jointPosition.z - zOffset) * moveRate;

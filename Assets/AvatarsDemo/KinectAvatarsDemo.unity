@@ -124,6 +124,7 @@ MonoBehaviour:
   smoothFactor: 5
   offsetNode: {fileID: 0}
   posRelativeToCamera: {fileID: 0}
+  allowedHandRotations: 1
 --- !u!136 &150217163
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -274,6 +275,10 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11400000, guid: ed1c50b3cebc9374f9da79ca55dd4e4b, type: 2}
       propertyPath: moveRate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11400000, guid: ed1c50b3cebc9374f9da79ca55dd4e4b, type: 2}
+      propertyPath: verticalMovement
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -430,6 +435,7 @@ MonoBehaviour:
   smoothFactor: 5
   offsetNode: {fileID: 0}
   posRelativeToCamera: {fileID: 0}
+  allowedHandRotations: 1
 --- !u!1 &1482082490
 GameObject:
   m_ObjectHideFlags: 0
