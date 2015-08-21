@@ -13,9 +13,11 @@ class UbitrackManager : MonoBehaviour
     private const int kinectJointCount = 26;
     private UTBodyData bodyData = new UTBodyData(kinectJointCount);
     public static UbitrackManager instance;
+    public InseilMeasurement measurement = new InseilMeasurement();
 
     public GameObject avatar;
     private AvatarController avatarController;
+    public bool recievedData = false;
 
     void Awake()
     {
@@ -43,6 +45,20 @@ class UbitrackManager : MonoBehaviour
         Quaternion quatTiltAngle = Quaternion.Euler(-sensorAngle, 0.0f, 0.0f);
         kinectToWorld.SetTRS(new Vector3(0.0f, sensorHeight, 0.0f), quatTiltAngle, Vector3.one);
        
+    }
+
+    void Update()
+    {
+        if(measurement != null && recievedData)
+        {
+            recievedData = false;
+            GenerateBodyData(measurement);
+        }
+    }
+
+    public void UpdateInseilMeasurement(InseilMeasurement m)
+    {
+        measurement = m;
     }
 
     /// <summary>
@@ -107,7 +123,7 @@ class UbitrackManager : MonoBehaviour
             {
                 data.position = jointData.position;
                 data.orientation = jointData.orientation;
-                Debug.Log(string.Format("UbitrackManager: world position: {0}, kinect position: {1}\n", jointData.position, jointData.kinectPos));
+                //Debug.Log(string.Format("UbitrackManager: world position: {0}, kinect position: {1}\n", jointData.position, jointData.kinectPos));
             }
 
             //write it into UTBodyData's joints array
@@ -543,7 +559,7 @@ class UbitrackManager : MonoBehaviour
             case "floorplane":
                 return JointType.FloorPlane;
             default:
-                Debug.Log(name);
+//                Debug.Log(name);
                 return JointType.Invalid;
         }
     }

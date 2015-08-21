@@ -12,12 +12,14 @@ public class ServerCommunication : MonoBehaviour
     private bool recv;
 
     private static readonly fsSerializer serializer = new fsSerializer();
+
+    public static ServerCommunication instance;
     
 
 
     void Awake()
     {
-        
+        instance = this;
     }
 
     void Update()
@@ -28,15 +30,14 @@ public class ServerCommunication : MonoBehaviour
         {
             //assuming we get everything in a single frame
             string json = serverMessage.First.ConvertToString();
-
             InseilMessage message = new InseilMessage();
             Deserialize<InseilMessage>(json, ref message);
-
 
             //Debug.Log(message.measurement.data["spinebase"].ToString());
 
             //uncomment as soon as the code is ubitrack-ready
-            UbitrackManager.instance.GenerateBodyData(message.measurement);
+            UbitrackManager.instance.UpdateInseilMeasurement(message.measurement);
+            UbitrackManager.instance.recievedData = true;
         }
     }
 
