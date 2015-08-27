@@ -6,7 +6,7 @@ public enum AreaType
     linear, angular
 }
 
-public class AreaFeedback : MonoBehaviour {
+public class AreaFeedback : InseilFeedback {
 
     // General
     public Vector3 position;

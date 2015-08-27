@@ -16,7 +16,7 @@ class UbitrackManager : MonoBehaviour
     public InseilMeasurement measurement = new InseilMeasurement();
 
     public GameObject avatar;
-    private AvatarController avatarController;
+    private InseilAvatarController avatarController;
     public bool recievedData = false;
 
     void Awake()
@@ -25,7 +25,7 @@ class UbitrackManager : MonoBehaviour
 
         if (avatar != null)
         {
-            avatarController = avatar.GetComponent<AvatarController>();
+            avatarController = avatar.GetComponent<InseilAvatarController>();
         }
     }
 
