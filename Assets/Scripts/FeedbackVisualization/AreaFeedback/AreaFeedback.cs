@@ -31,6 +31,7 @@ public class AreaFeedback : MonoBehaviour {
     private Vector3[] vertices;
     private Vector2[] uvs;
     private int[] triangles;
+    private Color[] colors;
 
     // Material and Texture
     public Texture texture;
@@ -57,6 +58,7 @@ public class AreaFeedback : MonoBehaviour {
             vertices = new Vector3[numTriangles + 4];
             uvs = new Vector2[vertices.Length];
             triangles = new int[numTriangles * 3];
+            colors = new Color[vertices.Length];
 
             // Calculate rotation angle and uvScaleFactor
             float angleStep = angle / (numTriangles/2 -1);
@@ -76,6 +78,9 @@ public class AreaFeedback : MonoBehaviour {
                 vertices[i + 1 + vertices.Length/2] = Quaternion.AngleAxis(i * angleStep, Vector3.forward) * Quaternion.AngleAxis(angle, Vector3.back) * Vector3.left;
                 vertices[i + 1].x = -vertices[i + 1].x;
                 vertices[i + 1 + vertices.Length / 2].x = -vertices[i + 1 + vertices.Length / 2].x;
+
+                // Coloring vertices
+                colors[i + 1] = Color.Lerp(Color.red, Color.green, vertices[i + 1].y);
 
 
                 // Calculate uv coordinates
@@ -158,6 +163,7 @@ public class AreaFeedback : MonoBehaviour {
         mesh.vertices = vertices;
         mesh.uv = uvs;
         mesh.triangles = triangles;
+        mesh.colors = colors;
     }
 
     void CalculateTransform()
