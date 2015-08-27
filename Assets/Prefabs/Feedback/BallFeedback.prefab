@@ -73,9 +73,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2f0d6c56f82d7d40864a828b30db54c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  number: 0
+  relToObject: {fileID: 0}
   positions:
-  - {x: -.75, y: 1.5, z: 0}
-  - {x: 0, y: 0, z: 0}
+  - {x: -.5, y: 1.75, z: 0}
+  - {x: -.5, y: 1, z: 0}
+  - {x: .5, y: 1, z: 0}
+  - {x: .5, y: 1.75, z: 0}
   scale: {x: .5, y: .5, z: .5}
   joint: {fileID: 0}
   particles: {fileID: 0}
@@ -98,7 +102,39 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: positions.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: positions.Array.data[0].y
+      value: 1.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: positions.Array.data[1].x
+      value: -.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: positions.Array.data[1].y
+      value: 1.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: positions.Array.data[2].x
+      value: .75
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: positions.Array.data[2].y
+      value: 1.25
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: positions.Array.data[3].x
+      value: .75
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: positions.Array.data[3].y
+      value: 1.75
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 178006}

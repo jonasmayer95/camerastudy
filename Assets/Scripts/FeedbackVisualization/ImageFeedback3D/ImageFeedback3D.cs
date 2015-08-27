@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ImageFeedback3D : MonoBehaviour {
+public class ImageFeedback3D : InseilFeedback {
 
     public Vector3 position;
     public Vector3 orientation;

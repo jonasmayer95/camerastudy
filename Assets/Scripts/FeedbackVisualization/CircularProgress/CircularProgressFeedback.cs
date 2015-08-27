@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class CircularProgressFeedback : MonoBehaviour {
+public class CircularProgressFeedback : InseilFeedback {
 
     float revealOffset;
     private SpriteRenderer rend;
@@ -15,8 +15,13 @@ public class CircularProgressFeedback : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        revealOffset = (float)(Time.timeSinceLevelLoad % 10) / 10.1f;
+        //revealOffset = (float)(Time.timeSinceLevelLoad % 10) / 10.1f;
 
         rend.material.SetFloat("_Cutoff", revealOffset );
 	}
+
+    public void UpdateLoadingCircle(float percentage)
+    {
+        revealOffset = percentage;
+    }
 }
