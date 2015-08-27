@@ -194,7 +194,7 @@ public class AreaFeedback : InseilFeedback {
     {
         colors[0] = Color.black;
         colors[colors.Length / 2] = Color.black;
-        for (int i = 1; i < colors.Length / 2; i++)
+        /*for (int i = 1; i < colors.Length / 2; i++)
         {
             if (i <= midPoint)
             {
@@ -206,7 +206,21 @@ public class AreaFeedback : InseilFeedback {
                 colors[i] = Color.Lerp(midColor, endColor, ((float)i - midPoint) / (colors.Length / 2 - 1 - midPoint));
                 colors[i + colors.Length / 2] = Color.Lerp(midColor, endColor, ((float)i - midPoint)/(colors.Length/2 - 1 - midPoint));
             }
+        }*/
+        for (int i = 1; i < colors.Length / 2; i ++)
+        {
+            colors[i] = startColor;
+            colors[i + colors.Length / 2] = startColor;
         }
+        colors[midPoint] = midColor;
+        colors[(midPoint + 1) %(colors.Length/2)] = midColor;
+        colors[(midPoint - 1+colors.Length/2) %(colors.Length/2)] = midColor;
+        colors[midPoint + colors.Length/2] = midColor;
+        colors[(midPoint + 1) % (colors.Length / 2) + colors.Length/2] = midColor;
+        colors[(midPoint - 1 + colors.Length / 2) % (colors.Length / 2) + colors.Length/2] = midColor;
+        colors[0] = Color.black;
+        colors[colors.Length / 2] = Color.black;
+        
         mesh.colors = colors;
     }
 }

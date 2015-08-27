@@ -25,6 +25,8 @@ public class BallFeedback : InseilFeedback {
 
         relPos = relToObject.position;
         transform.position = relPos + positions[0];
+
+        ballRenderer = GetComponent<Renderer>();
         //transform.localScale = scale;
 
         if (loadingCircle != null)
@@ -35,7 +37,6 @@ public class BallFeedback : InseilFeedback {
             currHoldingTime = holdingTime;
             circle.UpdateLoadingCircle(1);
 
-            ballRenderer = GetComponent<Renderer>();
             ballRenderer.material.color = Color.red;
 
             if (!showBall)

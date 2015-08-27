@@ -1046,6 +1046,7 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
+  m_TargetEye: 3
   m_HDR: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
@@ -1651,6 +1652,10 @@ Prefab:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 11457604, guid: 27db777324b7f0c42b19788d9721ce34, type: 2}
+      propertyPath: showBall
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 27db777324b7f0c42b19788d9721ce34, type: 2}
   m_IsPrefabParent: 0
@@ -1873,6 +1878,50 @@ Prefab:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 11408140, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
+      propertyPath: startColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11408140, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
+      propertyPath: startColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11408140, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
+      propertyPath: startColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11408140, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
+      propertyPath: midColor.r
+      value: .0344827175
+      objectReference: {fileID: 0}
+    - target: {fileID: 11408140, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
+      propertyPath: midColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11408140, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
+      propertyPath: midColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11408140, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
+      propertyPath: endColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11408140, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
+      propertyPath: endColor.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11408140, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
+      propertyPath: endColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11408140, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
+      propertyPath: switchTime
+      value: .5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2353318, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 272f8d89d7bfcfc40a47153f49d9e553, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
   m_IsPrefabParent: 0

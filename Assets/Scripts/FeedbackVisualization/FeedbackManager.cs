@@ -7,7 +7,7 @@ public class FeedbackManager : MonoBehaviour {
     public static FeedbackManager instance;
 
     public List<InseilFeedback> feedbackTypes = new List<InseilFeedback>();
-    private int index;
+    private int index = 0;
 
 
     void Awake()
@@ -27,6 +27,10 @@ public class FeedbackManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            SwitchFeedbackType();
+        }
 	
 	}
 
@@ -38,6 +42,7 @@ public class FeedbackManager : MonoBehaviour {
 
     public void SwitchFeedbackType()
     {
+        feedbackTypes[index].gameObject.SetActive(false);
         index = (index + 1) % feedbackTypes.Count;
 
         ShowFeedback();        
