@@ -32,11 +32,12 @@ public class AreaFeedback : MonoBehaviour {
     private Vector2[] uvs;
     private int[] triangles;
     private Color[] colors;
-
-    // Material and Texture
-    public Texture texture;
-    public Shader shader;
-   
+    public Color startColor;
+    public Color midColor;
+    public Color endColor;
+    public int midPoint;
+    public float switchTime;
+    private float startTime;
 
 	// Use this for initialization
 	void Start () {
@@ -46,7 +47,12 @@ public class AreaFeedback : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+        UpdateColor();
+        if (Time.time > startTime + switchTime)
+        {
+            midPoint = (midPoint + 1) % (colors.Length / 2);
+            startTime = Time.time;
+        }
 	}
 
     void CreateGeometry(AreaType type)
@@ -70,6 +76,9 @@ public class AreaFeedback : MonoBehaviour {
             vertices[vertices.Length / 2] = Vector3.zero;
             uvs[0] = new Vector2(0.5f,0.5f);
             uvs[vertices.Length / 2] = uvs[0];
+            Debug.Log(uvs[0]);
+            colors[0] = (startColor + endColor)/2;
+            colors[vertices.Length/2] = (startColor + endColor) / 2;
 
             for (int i = 0; i < numTriangles/2; i++)
             {
@@ -80,8 +89,16 @@ public class AreaFeedback : MonoBehaviour {
                 vertices[i + 1 + vertices.Length / 2].x = -vertices[i + 1 + vertices.Length / 2].x;
 
                 // Coloring vertices
-                colors[i + 1] = Color.Lerp(Color.red, Color.green, vertices[i + 1].y);
-
+                if (i <= midPoint)
+                {
+                    colors[i + 1] = Color.Lerp(startColor, midColor, vertices[i + 1].y);
+                    colors[i + colors.Length / 2 + 1] = Color.Lerp(startColor, midColor, vertices[i + 1].y);
+                }
+                else
+                {
+                    colors[i + 1] = Color.Lerp(midColor, endColor, vertices[i + 1].y);
+                    colors[i + colors.Length / 2 + 1] = Color.Lerp(midColor, endColor, vertices[i + 1].y);
+                }
 
                 // Calculate uv coordinates
                 uvs[i + 1] = uvs[0] + (Vector2) (uvScaleFactor * vertices[i+1]);
@@ -148,11 +165,6 @@ public class AreaFeedback : MonoBehaviour {
         CreateGeometry(areaType);
         GetComponent<MeshFilter>().mesh = mesh;
         ApplyGeometry();
-
-        // Create Material
-        Renderer rend = GetComponent<Renderer>();
-        rend.material = new Material(shader);
-        rend.material.mainTexture = texture;
         
         CalculateTransform();
 
@@ -176,5 +188,25 @@ public class AreaFeedback : MonoBehaviour {
         {
             transform.localScale = new Vector3(scale.x, scale.y, 1);    
         }
+    }
+
+    void UpdateColor()
+    {
+        colors[0] = Color.black;
+        colors[colors.Length / 2] = Color.black;
+        for (int i = 1; i < colors.Length / 2; i++)
+        {
+            if (i <= midPoint)
+            {
+                colors[i] = Color.Lerp(startColor, midColor, (float)i / midPoint);
+                colors[i + colors.Length / 2] = Color.Lerp(startColor, midColor, (float)i / midPoint);
+            }
+            else
+            {
+                colors[i] = Color.Lerp(midColor, endColor, ((float)i - midPoint) / (colors.Length / 2 - 1 - midPoint));
+                colors[i + colors.Length / 2] = Color.Lerp(midColor, endColor, ((float)i - midPoint)/(colors.Length/2 - 1 - midPoint));
+            }
+        }
+        mesh.colors = colors;
     }
 }
