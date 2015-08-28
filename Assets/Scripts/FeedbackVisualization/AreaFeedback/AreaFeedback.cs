@@ -5,6 +5,10 @@ public enum AreaType
 {
     linear, angular
 }
+public enum ColoringType
+{
+    continious, jumping, interpolate
+}
 
 public class AreaFeedback : InseilFeedback {
 
@@ -15,17 +19,19 @@ public class AreaFeedback : InseilFeedback {
 
     // Geometry type
     public AreaType areaType;
+    public ColoringType colorType;
     public int numTriangles;
 
     // Angular
     public float angle;
     public float radius;
     private Vector3 pivot;
+    public float midColorRange;
 
     // Linear
-    public Vector2 scale; 
+    public Vector2 scale;
 
-
+    private bool forward = true;
     // Geometry
     private Mesh mesh; 
     private Vector3[] vertices;
@@ -35,24 +41,38 @@ public class AreaFeedback : InseilFeedback {
     public Color startColor;
     public Color midColor;
     public Color endColor;
-    public int midPoint;
-    public float switchTime;
-    private float startTime;
-
+    public float midPoint;
+    public float time;
+    public Transform bone;
 	// Use this for initialization
 	void Start () {
         orientation = Quaternion.Euler(rotation);
         InitializeFeedbackArea();
+        time *= colors.Length/2 - 1;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        UpdateColor();
-        if (Time.time > startTime + switchTime)
+
+        if (forward)
         {
-            midPoint = (midPoint + 1) % (colors.Length / 2);
-            startTime = Time.time;
+            midPoint += Time.deltaTime * time;
+            if (midPoint > colors.Length / 2)
+            {
+                forward = false;
+            }
         }
+        else 
+        {
+            midPoint -= Time.deltaTime * time;
+            if (midPoint < 0)
+            {
+                forward = true;
+            }
+        }
+        UpdateColor();
+        transform.position = bone.position;
+        transform.rotation = bone.rotation;
 	}
 
     void CreateGeometry(AreaType type)
@@ -180,8 +200,9 @@ public class AreaFeedback : InseilFeedback {
 
     void CalculateTransform()
     {
-        transform.position = position;
-        transform.rotation = orientation;
+        //transform.position = position;
+        transform.position = bone.position;
+        transform.rotation = bone.rotation;
         if (areaType == AreaType.angular)
             transform.localScale = Vector3.one * radius;
         else 
@@ -194,33 +215,72 @@ public class AreaFeedback : InseilFeedback {
     {
         colors[0] = Color.black;
         colors[colors.Length / 2] = Color.black;
-        /*for (int i = 1; i < colors.Length / 2; i++)
+
+        if (colorType == ColoringType.continious)
+        // Continous coloring
         {
-            if (i <= midPoint)
+            for (int i = 1; i < colors.Length / 2; i++)
             {
-                colors[i] = Color.Lerp(startColor, midColor, (float)i / midPoint);
-                colors[i + colors.Length / 2] = Color.Lerp(startColor, midColor, (float)i / midPoint);
+                if (i <= midPoint)
+                {
+                    colors[i] = Color.Lerp(startColor, midColor, (float)i / midPoint);
+                    colors[colors.Length -i] = Color.Lerp(startColor, midColor, (float)i / midPoint);
+                }
+                else
+                {
+                    colors[i] = Color.Lerp(midColor, endColor, ((float)i - midPoint) / (colors.Length / 2 - 1 - midPoint));
+                    colors[colors.Length - i] = Color.Lerp(midColor, endColor, ((float)i - midPoint) / (colors.Length / 2 - 1 - midPoint));
+                }
             }
-            else
-            {
-                colors[i] = Color.Lerp(midColor, endColor, ((float)i - midPoint) / (colors.Length / 2 - 1 - midPoint));
-                colors[i + colors.Length / 2] = Color.Lerp(midColor, endColor, ((float)i - midPoint)/(colors.Length/2 - 1 - midPoint));
-            }
-        }*/
-        for (int i = 1; i < colors.Length / 2; i ++)
-        {
-            colors[i] = startColor;
-            colors[i + colors.Length / 2] = startColor;
         }
-        colors[midPoint] = midColor;
-        colors[(midPoint + 1) %(colors.Length/2)] = midColor;
-        colors[(midPoint - 1+colors.Length/2) %(colors.Length/2)] = midColor;
-        colors[midPoint + colors.Length/2] = midColor;
-        colors[(midPoint + 1) % (colors.Length / 2) + colors.Length/2] = midColor;
-        colors[(midPoint - 1 + colors.Length / 2) % (colors.Length / 2) + colors.Length/2] = midColor;
-        colors[0] = Color.black;
-        colors[colors.Length / 2] = Color.black;
-        
+        else if (colorType == ColoringType.jumping)
+        {
+            // jumping coloring
+            for (int i = 1; i < colors.Length / 2; i++)
+            {
+                colors[i] = startColor;
+                colors[colors.Length/2 - 1 -i] = startColor;
+            }
+            colors[(int)midPoint] = midColor;
+            colors[((int)midPoint + 1) % (colors.Length / 2)] = midColor;
+            colors[((int)midPoint - 1 + colors.Length / 2) % (colors.Length / 2)] = midColor;
+            colors[colors.Length - 1 - (int)midPoint] = midColor;
+            colors[colors.Length / 2 - 1 - ((int)midPoint + 1) % (colors.Length / 2) + colors.Length / 2] = midColor;
+            colors[colors.Length / 2 - 1 - ((int)midPoint - 1 + colors.Length / 2) % (colors.Length / 2) + colors.Length / 2] = midColor;
+            colors[0] = Color.black;
+            colors[colors.Length / 2] = Color.black;
+        }
+        else if (colorType == ColoringType.interpolate)
+        {
+            int range = (int)((colors.Length / 2 - 1) * midColorRange);
+            for(int i = 1; i < colors.Length/2; i++)
+            {
+                if((int)midPoint - range > i+1)
+                {
+                    colors[i] = startColor;
+                    colors[colors.Length  - i] = startColor;
+                }
+                else if ((int)midPoint + range < i)
+                {
+                    colors[i] = endColor;
+                    colors[colors.Length  - i] = endColor;
+                }
+                else
+                {
+                    if (i < midPoint)
+                    {
+                        colors[i] = Color.Lerp(startColor, midColor, (i - (midPoint - range)) / (2 * range));
+                        colors[colors.Length  - i] = Color.Lerp(startColor, midColor, (i - (midPoint - range)) / (2 * range));
+                    }
+                    else
+                    {
+                        colors[i] = Color.Lerp(midColor, endColor, 1 - ((midPoint + range) - i) / (2 * range));
+                        colors[colors.Length  - i] = Color.Lerp(midColor, endColor, 1 - ((midPoint + range) - i) / (2 * range));
+                        
+                    }
+                }
+            }
+        }
         mesh.colors = colors;
     }
 }
