@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class BallFeedback : InseilFeedback {
 
     public Transform relToObject;
-    public Vector3[] positions;
+    public List<Vector3> positions = new List<Vector3>();
     public Vector3 scale;
     public GameObject joint;
     public GameObject loadingCircle;
@@ -13,8 +13,10 @@ public class BallFeedback : InseilFeedback {
     public float holdingTime;
     public Color colorClose;
     public Color colorFar;
+    public float fadeDistance;
     public GameObject particles;   
     public float particlesLifeTime;
+    public int positionChanges;
     private Vector3 relPos;
     private int index = 0;
     private CircularProgressFeedback circle;
@@ -56,13 +58,32 @@ public class BallFeedback : InseilFeedback {
 
         transform.position = relPos + positions[index];
         ballRenderer.enabled = showBall;
+
+        float distance = (joint.transform.position - transform.position).sqrMagnitude;
+
+        if (distance <= fadeDistance)
+        {
+            float transparencyValue = distance / fadeDistance;
+
+            if (transparencyValue >= 0.25f)
+            {
+                ballRenderer.material.color = new Color(ballRenderer.material.color.r, ballRenderer.material.color.g, ballRenderer.material.color.b, transparencyValue);
+            }
+        }
+        else ballRenderer.material.color = new Color(ballRenderer.material.color.r, ballRenderer.material.color.g, ballRenderer.material.color.b, 1);
 	}
+
+    public void ResetCounter()
+    {
+        positionChanges = 0;
+    }
 
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject == joint && loadingCircle == null)
         {
-            index = (index + 1) % positions.Length;
+            index = (index + 1) % positions.Count;
+            positionChanges++;
             if (particles != null)
             {
                 Destroy(Instantiate(particles, transform.position, Quaternion.identity), particlesLifeTime);
@@ -90,11 +111,12 @@ public class BallFeedback : InseilFeedback {
 
             if (currHoldingTime <= 0)
             {
-                index = (index + 1) % positions.Length;
+                index = (index + 1) % positions.Count;
                 currHoldingTime = holdingTime;
                 percentage = currHoldingTime / holdingTime;
                 circle.UpdateLoadingCircle(percentage);
                 ballRenderer.material.color = colorFar;
+                positionChanges++;
             }
         }
     }

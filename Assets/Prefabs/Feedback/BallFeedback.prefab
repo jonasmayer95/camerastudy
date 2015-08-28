@@ -41,7 +41,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: ce01363fdfe6f3e4894a07c1276214b4, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 1
@@ -87,6 +87,7 @@ MonoBehaviour:
   holdingTime: 2
   colorClose: {r: .117241383, g: 1, b: 0, a: 0}
   colorFar: {r: 1, g: 0, b: 0, a: 0}
+  fadeDistance: 0
   particles: {fileID: 0}
   particlesLifeTime: 0
 --- !u!135 &13537692
@@ -164,6 +165,10 @@ Prefab:
       propertyPath: colorFar.b
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: ce01363fdfe6f3e4894a07c1276214b4, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 178006}

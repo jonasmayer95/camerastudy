@@ -7,6 +7,7 @@ public class FeedbackManager : MonoBehaviour {
     public static FeedbackManager instance;
 
     public List<InseilFeedback> feedbackTypes = new List<InseilFeedback>();
+    
     private int index = 0;
 
 
@@ -35,9 +36,13 @@ public class FeedbackManager : MonoBehaviour {
 	
 	}
 
+    public InseilFeedback GetFeedbackType(int id)
+    {
+        return feedbackTypes[id];
+    }
+
     public void ShowFeedback()
     {
-
         feedbackTypes[index].gameObject.SetActive(true);
     }
 

@@ -190,7 +190,7 @@ RectTransform:
   m_RootOrder: 3
   m_AnchorMin: {x: .5, y: 0}
   m_AnchorMax: {x: .5, y: 0}
-  m_AnchoredPosition: {x: 314, y: 71}
+  m_AnchoredPosition: {x: 314, y: 73.6999969}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &35846272
@@ -657,6 +657,34 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!1 &290775169
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 290775170}
+  m_Layer: 0
+  m_Name: Exercises
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &290775170
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 290775169}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1259564601}
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
 --- !u!1 &382074213
 GameObject:
   m_ObjectHideFlags: 0
@@ -1541,7 +1569,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1059045175}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: .0900000036, y: 2, z: -3.77200007}
+  m_LocalPosition: {x: -.300000012, y: 1.12, z: -2.22000003}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1678,7 +1706,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: .5, y: 0}
   m_AnchorMax: {x: .5, y: 0}
-  m_AnchoredPosition: {x: 314, y: 177}
+  m_AnchoredPosition: {x: 314, y: 141.600006}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &1062762266
@@ -2233,6 +2261,49 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1480600405}
   m_RootOrder: 2
+--- !u!1 &1259564600
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1259564601}
+  - 114: {fileID: 1259564602}
+  m_Layer: 0
+  m_Name: BicepsCurl
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1259564601
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1259564600}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 290775170}
+  m_RootOrder: 0
+--- !u!114 &1259564602
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1259564600}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48eaa65e1d66e6e428b317045245f13b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sizeOfSet: 10
+  wrist: {fileID: 1741904445}
+  namePerson: Test
+  numSet: 0
 --- !u!1 &1283343290 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 100062, guid: ae23d50304c93b9418b65cec8f9fe954, type: 3}
@@ -2318,6 +2389,30 @@ Prefab:
       propertyPath: joint
       value: 
       objectReference: {fileID: 1741904444}
+    - target: {fileID: 11457604, guid: 27db777324b7f0c42b19788d9721ce34, type: 2}
+      propertyPath: loadingCircle
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 11457604, guid: 27db777324b7f0c42b19788d9721ce34, type: 2}
+      propertyPath: fadeDistance
+      value: .150000006
+      objectReference: {fileID: 0}
+    - target: {fileID: 11457604, guid: 27db777324b7f0c42b19788d9721ce34, type: 2}
+      propertyPath: colorFar.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11457604, guid: 27db777324b7f0c42b19788d9721ce34, type: 2}
+      propertyPath: colorFar.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 11457604, guid: 27db777324b7f0c42b19788d9721ce34, type: 2}
+      propertyPath: colorFar.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11457604, guid: 27db777324b7f0c42b19788d9721ce34, type: 2}
+      propertyPath: colorFar.b
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 27db777324b7f0c42b19788d9721ce34, type: 2}
   m_IsPrefabParent: 0
@@ -2385,7 +2480,7 @@ RectTransform:
   m_RootOrder: 1
   m_AnchorMin: {x: .5, y: 0}
   m_AnchorMax: {x: .5, y: 0}
-  m_AnchoredPosition: {x: 314, y: 142}
+  m_AnchoredPosition: {x: 314, y: 176.300003}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: .5, y: .5}
 --- !u!114 &1502669083
@@ -2669,6 +2764,10 @@ Prefab:
 --- !u!1 &1741904444 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 100060, guid: ae23d50304c93b9418b65cec8f9fe954, type: 3}
+  m_PrefabInternal: {fileID: 1166522932}
+--- !u!4 &1741904445 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 400060, guid: ae23d50304c93b9418b65cec8f9fe954, type: 3}
   m_PrefabInternal: {fileID: 1166522932}
 --- !u!135 &1741904446
 SphereCollider:
