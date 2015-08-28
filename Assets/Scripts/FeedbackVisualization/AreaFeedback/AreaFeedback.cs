@@ -72,7 +72,7 @@ public class AreaFeedback : InseilFeedback {
         }
         UpdateColor();
         transform.position = bone.position;
-        transform.rotation = bone.rotation;
+        transform.rotation = bone.parent.rotation * Quaternion.FromToRotation(Vector3.up, Vector3.right) *Quaternion.FromToRotation(Vector3.right, Vector3.left);
 	}
 
     void CreateGeometry(AreaType type)

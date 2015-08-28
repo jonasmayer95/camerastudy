@@ -2655,54 +2655,14 @@ Prefab:
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 133880, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 11408140, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
-      propertyPath: startColor.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 11408140, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
-      propertyPath: startColor.g
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 11408140, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
-      propertyPath: startColor.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 11408140, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
-      propertyPath: midColor.r
-      value: .0344827175
-      objectReference: {fileID: 0}
-    - target: {fileID: 11408140, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
-      propertyPath: midColor.g
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 11408140, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
-      propertyPath: midColor.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 11408140, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
-      propertyPath: endColor.r
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 11408140, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
-      propertyPath: endColor.g
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 11408140, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
-      propertyPath: endColor.b
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 11408140, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
-      propertyPath: switchTime
-      value: .5
-      objectReference: {fileID: 0}
-    - target: {fileID: 2353318, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
-      propertyPath: m_Materials.Array.data[0]
+      propertyPath: bone
       value: 
-      objectReference: {fileID: 2100000, guid: 272f8d89d7bfcfc40a47153f49d9e553, type: 2}
+      objectReference: {fileID: 1958926535}
+    - target: {fileID: 11408140, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
+      propertyPath: radius
+      value: .349999994
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: dc8c1709c4bd30e45b6949fc4347415b, type: 2}
   m_IsPrefabParent: 0
@@ -2998,6 +2958,10 @@ MeshFilter:
 --- !u!1 &1958926534 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 100020, guid: ae23d50304c93b9418b65cec8f9fe954, type: 3}
+  m_PrefabInternal: {fileID: 1166522932}
+--- !u!4 &1958926535 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 400020, guid: ae23d50304c93b9418b65cec8f9fe954, type: 3}
   m_PrefabInternal: {fileID: 1166522932}
 --- !u!54 &1958926536
 Rigidbody:

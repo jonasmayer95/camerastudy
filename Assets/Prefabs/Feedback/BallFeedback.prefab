@@ -85,6 +85,8 @@ MonoBehaviour:
   loadingCircle: {fileID: 113810, guid: 5aab5ea58c5a0c546aae63b90ad6ef20, type: 2}
   showBall: 1
   holdingTime: 2
+  colorClose: {r: .117241383, g: 1, b: 0, a: 0}
+  colorFar: {r: 1, g: 0, b: 0, a: 0}
   particles: {fileID: 0}
   particlesLifeTime: 0
 --- !u!135 &13537692
@@ -137,6 +139,30 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: positions.Array.data[3].y
       value: 1.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: colorClose.r
+      value: .117241383
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: colorClose.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: colorClose.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: colorFar.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: colorFar.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: colorFar.b
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
