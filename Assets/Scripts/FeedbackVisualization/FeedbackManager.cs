@@ -29,7 +29,8 @@ public class FeedbackManager : MonoBehaviour {
 	void Update () {
         if(Input.GetKeyDown(KeyCode.Space))
         {
-            SwitchFeedbackType();
+
+            SwitchFeedbackType((index + 1) % feedbackTypes.Count);
         }
 	
 	}
@@ -40,11 +41,14 @@ public class FeedbackManager : MonoBehaviour {
         feedbackTypes[index].gameObject.SetActive(true);
     }
 
-    public void SwitchFeedbackType()
-    {
-        feedbackTypes[index].gameObject.SetActive(false);
-        index = (index + 1) % feedbackTypes.Count;
-
-        ShowFeedback();        
+    public void SwitchFeedbackType(int id)
+    {        
+        if (id >= 0 && id < feedbackTypes.Count)
+        {
+            feedbackTypes[index].gameObject.SetActive(false);
+            index = id;
+            ShowFeedback();   
+        }
+        //index = (index + 1) % feedbackTypes.Count;            
     }
 }

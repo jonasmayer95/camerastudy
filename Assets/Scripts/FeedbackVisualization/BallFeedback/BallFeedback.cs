@@ -11,6 +11,8 @@ public class BallFeedback : InseilFeedback {
     public GameObject loadingCircle;
     public bool showBall;
     public float holdingTime;
+    public Color colorClose;
+    public Color colorFar;
     public GameObject particles;   
     public float particlesLifeTime;
     private Vector3 relPos;
@@ -29,6 +31,8 @@ public class BallFeedback : InseilFeedback {
         ballRenderer = GetComponent<Renderer>();
         //transform.localScale = scale;
 
+        ballRenderer.material.color = colorFar;
+
         if (loadingCircle != null)
         {
             GameObject c = Instantiate(loadingCircle, transform.position, Quaternion.identity) as GameObject;
@@ -37,7 +41,7 @@ public class BallFeedback : InseilFeedback {
             currHoldingTime = holdingTime;
             circle.UpdateLoadingCircle(1);
 
-            ballRenderer.material.color = Color.red;
+          
 
             if (!showBall)
             {               
@@ -68,21 +72,21 @@ public class BallFeedback : InseilFeedback {
 
     void OnTriggerExit(Collider other)
     {
-        if (other.gameObject == joint && loadingCircle != null)
+        if (other.gameObject == joint)
         {
-            ballRenderer.material.color = Color.red;
+            ballRenderer.material.color = colorFar;
         }
     }
 
     void OnTriggerStay(Collider other)
     {
-        if (other.gameObject == joint && loadingCircle != null)
+        if (other.gameObject == joint && loadingCircle != null && circle != null)
         {
             currHoldingTime -= Time.deltaTime;
             float percentage = currHoldingTime / holdingTime;
             circle.UpdateLoadingCircle(percentage);
 
-            ballRenderer.material.color = Color.green;
+            ballRenderer.material.color = colorClose;
 
             if (currHoldingTime <= 0)
             {
@@ -90,7 +94,7 @@ public class BallFeedback : InseilFeedback {
                 currHoldingTime = holdingTime;
                 percentage = currHoldingTime / holdingTime;
                 circle.UpdateLoadingCircle(percentage);
-                ballRenderer.material.color = Color.red;
+                ballRenderer.material.color = colorFar;
             }
         }
     }
