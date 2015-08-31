@@ -38,16 +38,34 @@ public class BicepsCurl : InseilExercise {
             {
                 iFB.gameObject.SetActive(true);
 
-                // Handle ballFeedback
+                // Print ballFeedback info
                 if (iFB.type == FeedbackType.BallFeedback)
                 {
                     BallFeedback targetBall = (BallFeedback)iFB;
 
-                    // Print 
+                    // Check for end of set
                     if (targetBall.positionChanges / 2 < sizeOfSet)
                     {
-                        PrintBicepsCurlInfo2(targetBall, i);
+                        PrintBicepsCurlInfo(targetBall, i);
                     }
+                }
+
+                // Print areaFeedback info
+                if (iFB.type == FeedbackType.AreaFeedback)
+                {
+                    AreaFeedback area = (AreaFeedback)iFB;
+
+                    // ToDo: Print Info
+                    PrintBicepsCurlInfo(area, i);
+                }
+
+                // Print imageFeedback info
+                if (iFB.type == FeedbackType.ImageFeedback)
+                {
+                    ImageFeedback3D image = (ImageFeedback3D)iFB;
+
+                    // ToDO: Print Info
+                    PrintBicepsCurlInfo(image, i);
                 }
             }
 
@@ -59,7 +77,7 @@ public class BicepsCurl : InseilExercise {
 	}
 
 
-    void PrintBicepsCurlInfo2(BallFeedback targetBall, int fileIndex)
+    void PrintBicepsCurlInfo(BallFeedback targetBall, int fileIndex)
     {
        
         if (sw[fileIndex] != null)
@@ -73,5 +91,15 @@ public class BicepsCurl : InseilExercise {
 
             sw[fileIndex].Flush();
         }
+    }
+
+    void PrintBicepsCurlInfo(AreaFeedback area, int fileIndex)
+    {
+
+    }
+
+    void PrintBicepsCurlInfo(ImageFeedback3D image, int fileIndex)
+    {
+
     }
 }

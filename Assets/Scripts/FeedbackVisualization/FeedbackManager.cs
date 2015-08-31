@@ -10,7 +10,6 @@ public class FeedbackManager : MonoBehaviour {
     
     private int index = 0;
 
-
     void Awake()
     {
         instance = this;
@@ -23,7 +22,6 @@ public class FeedbackManager : MonoBehaviour {
         {
             iEX.gameObject.SetActive(false);
         }
-        //ShowFeedback(0);
 	}
 	
 	// Update is called once per frame

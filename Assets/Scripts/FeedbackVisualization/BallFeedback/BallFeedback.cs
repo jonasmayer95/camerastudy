@@ -47,7 +47,10 @@ public class BallFeedback : InseilFeedback {
                 ballRenderer.material.color = new Color(ballRenderer.material.color.r, ballRenderer.material.color.g, ballRenderer.material.color.b, transparencyValue);
             }
         }
-        else ballRenderer.material.color = new Color(ballRenderer.material.color.r, ballRenderer.material.color.g, ballRenderer.material.color.b, 1);
+        else
+        {
+            ballRenderer.material.color = new Color(ballRenderer.material.color.r, ballRenderer.material.color.g, ballRenderer.material.color.b, 1);
+        }
 	}
 
     void OnEnable()

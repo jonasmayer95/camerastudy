@@ -1312,7 +1312,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11457604, guid: 27db777324b7f0c42b19788d9721ce34, type: 2}
       propertyPath: fadeDistance
-      value: .150000006
+      value: .100000001
       objectReference: {fileID: 0}
     - target: {fileID: 11457604, guid: 27db777324b7f0c42b19788d9721ce34, type: 2}
       propertyPath: relToObject
@@ -1768,7 +1768,6 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
-  m_TargetEye: 3
   m_HDR: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
@@ -3468,7 +3467,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11457604, guid: 27db777324b7f0c42b19788d9721ce34, type: 2}
       propertyPath: fadeDistance
-      value: .150000006
+      value: .100000001
       objectReference: {fileID: 0}
     - target: {fileID: 11457604, guid: 27db777324b7f0c42b19788d9721ce34, type: 2}
       propertyPath: relToObject
