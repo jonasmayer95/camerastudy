@@ -41,6 +41,7 @@ MeshRenderer:
   m_ReceiveShadows: 1
   m_Materials:
   - {fileID: 2100000, guid: 272f8d89d7bfcfc40a47153f49d9e553, type: 2}
+  - {fileID: 2100000, guid: 53c29207b6ee1494ab54df1a19eef625, type: 2}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
   m_UseLightProbes: 1
@@ -72,7 +73,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 379986dbf7091254396153926b247ddf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  number: 0
+  type: 0
   position: {x: 0, y: 1, z: 1}
   rotation: {x: 45, y: 0, z: 0}
   areaType: 1
@@ -86,8 +87,9 @@ MonoBehaviour:
   midColor: {r: .0344827175, g: 1, b: 0, a: 0}
   endColor: {r: 1, g: 0, b: 0, a: 0}
   midPoint: 0
-  time: 1
+  time: .5
   bone: {fileID: 0}
+  zSize: .100000001
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -96,9 +98,25 @@ Prefab:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 0}
+      propertyPath: m_Materials.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
       propertyPath: texture
       value: 
       objectReference: {fileID: 2800000, guid: a94c9a7eb94ceec4a8d67a1890e22e51, type: 3}
+    - target: {fileID: 0}
+      propertyPath: zSize
+      value: .100000001
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: time
+      value: .5
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 53c29207b6ee1494ab54df1a19eef625, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 133880}
