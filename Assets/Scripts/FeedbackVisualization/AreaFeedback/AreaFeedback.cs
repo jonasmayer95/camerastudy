@@ -29,7 +29,7 @@ public class AreaFeedback : InseilFeedback {
     public float radius;
     private Vector3 pivot;
     public float midColorRange;
-
+    public bool flip;
     // Linear
     public Vector2 scale;
 
@@ -87,6 +87,10 @@ public class AreaFeedback : InseilFeedback {
         UpdateColor();
         transform.position = bone.position;
         transform.rotation = bone.parent.rotation * Quaternion.FromToRotation(Vector3.up, Vector3.right) *Quaternion.FromToRotation(Vector3.right, Vector3.left);
+        if (flip)
+        {
+            transform.rotation = transform.rotation * Quaternion.FromToRotation(Vector3.back, Vector3.forward) * Quaternion.AngleAxis(180,Vector3.up);
+        }
 	}
 
     void CreateGeometry(AreaType type)

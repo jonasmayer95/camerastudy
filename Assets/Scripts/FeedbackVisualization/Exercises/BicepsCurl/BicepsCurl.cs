@@ -22,7 +22,7 @@ public class BicepsCurl : InseilExercise {
             InseilFeedback iFB = child.GetComponent<InseilFeedback>();
 
             feedbackList.Add(iFB);
-            sw.Add(new StreamWriter("BicepsCurl" + i +".txt"));
+            sw.Add(new StreamWriter("BicepsCurl_" + i + "_" + iFB.type + ".txt"));
         }
 
         FeedbackManager.instance.AddExercise(this);
