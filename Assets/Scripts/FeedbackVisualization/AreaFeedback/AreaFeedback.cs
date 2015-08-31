@@ -29,6 +29,7 @@ public class AreaFeedback : InseilFeedback {
     public float radius;
     private Vector3 pivot;
     public float midColorRange;
+    private float speed;
 
     // Linear
     public Vector2 scale;
@@ -57,7 +58,7 @@ public class AreaFeedback : InseilFeedback {
 	void Start () {
         orientation = Quaternion.Euler(rotation);
         InitializeFeedbackArea();
-        time *= colors.Length/2 - 1;
+        speed = time * (vertices1.Length / 2 - 1);
         arrowMat = GetComponent<MeshRenderer>().materials[1];
 	}
 	
@@ -66,8 +67,8 @@ public class AreaFeedback : InseilFeedback {
 
         if (forward)
         {
-            midPoint += Time.deltaTime * time;
-            arrowMat.SetTextureOffset("_MainTex", new Vector2(arrowMat.GetTextureOffset("_MainTex").x, arrowMat.GetTextureOffset("_MainTex").y - Time.deltaTime));
+            midPoint += Time.deltaTime * speed;
+            arrowMat.SetTextureOffset("_MainTex", new Vector2(arrowMat.GetTextureOffset("_MainTex").x, arrowMat.GetTextureOffset("_MainTex").y - Time.deltaTime * time));
             if (midPoint > vertices1.Length / 2)
             {
                 forward = false;
@@ -76,8 +77,8 @@ public class AreaFeedback : InseilFeedback {
         }
         else 
         {
-            midPoint -= Time.deltaTime * time;
-            arrowMat.SetTextureOffset("_MainTex", new Vector2(arrowMat.GetTextureOffset("_MainTex").x, arrowMat.GetTextureOffset("_MainTex").y - Time.deltaTime));
+            midPoint -= Time.deltaTime * speed;
+            arrowMat.SetTextureOffset("_MainTex", new Vector2(arrowMat.GetTextureOffset("_MainTex").x, arrowMat.GetTextureOffset("_MainTex").y - Time.deltaTime * time));
             if (midPoint < 0)
             {
                 forward = true;
