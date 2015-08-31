@@ -32,8 +32,7 @@ public class ImageFeedback3D : InseilFeedback {
             
             timeOfLastChange = Time.time;
             NextSprite();
-        }
-	
+        }	
 	}
 
     public void NextSprite()

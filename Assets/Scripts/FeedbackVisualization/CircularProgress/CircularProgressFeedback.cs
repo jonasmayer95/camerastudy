@@ -3,7 +3,7 @@ using System.Collections;
 
 public class CircularProgressFeedback : InseilFeedback {
 
-    float revealOffset;
+    private float revealOffset;
     private SpriteRenderer rend;
 
 	// Use this for initialization
@@ -14,8 +14,6 @@ public class CircularProgressFeedback : InseilFeedback {
 	
 	// Update is called once per frame
 	void Update () {
-
-        //revealOffset = (float)(Time.timeSinceLevelLoad % 10) / 10.1f;
 
         rend.material.SetFloat("_Cutoff", revealOffset );
 	}
