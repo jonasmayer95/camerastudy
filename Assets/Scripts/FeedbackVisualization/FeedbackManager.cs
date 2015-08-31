@@ -6,7 +6,7 @@ public class FeedbackManager : MonoBehaviour {
 
     public static FeedbackManager instance;
 
-    public List<InseilFeedback> feedbackTypes = new List<InseilFeedback>();
+    public List<InseilExercise> exercises = new List<InseilExercise>();
     
     private int index = 0;
 
@@ -19,41 +19,45 @@ public class FeedbackManager : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-        foreach (InseilFeedback iFB in feedbackTypes)
+        foreach (InseilExercise iEX in exercises)
         {
-            iFB.gameObject.SetActive(false);
+            iEX.gameObject.SetActive(false);
         }
-        ShowFeedback();
+        //ShowFeedback(0);
 	}
 	
 	// Update is called once per frame
 	void Update () {
+
         if(Input.GetKeyDown(KeyCode.Space))
         {
-
-            SwitchFeedbackType((index + 1) % feedbackTypes.Count);
-        }
-	
+            SwitchExercise((index + 1) % exercises.Count);
+        }	
 	}
 
-    public InseilFeedback GetFeedbackType(int id)
+    public void AddExercise(InseilExercise ex)
     {
-        return feedbackTypes[id];
+        exercises.Add(ex);
     }
 
-    public void ShowFeedback()
+    public void ShowFeedback(int type)
     {
-        feedbackTypes[index].gameObject.SetActive(true);
+        exercises[index].enabledFeedBackType = (FeedbackType)type;
     }
 
-    public void SwitchFeedbackType(int id)
-    {        
-        if (id >= 0 && id < feedbackTypes.Count)
+
+    private void SwitchExercise(int id)
+    {
+        if (id >= 0 && id < exercises.Count && exercises.Count > 0)
         {
-            feedbackTypes[index].gameObject.SetActive(false);
+            exercises[index].gameObject.SetActive(false);
             index = id;
-            ShowFeedback();   
+            exercises[index].gameObject.SetActive(true);
         }
-        //index = (index + 1) % feedbackTypes.Count;            
+    }
+
+    public void NextExercise()
+    {
+        SwitchExercise((index + 1) % exercises.Count);
     }
 }

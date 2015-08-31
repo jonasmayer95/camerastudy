@@ -1,95 +1,77 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.IO;
+using System.Collections.Generic;
 
 public class BicepsCurl : InseilExercise {
 
-    Vector3 startPosition;
-    Vector3 endPosition;
     public int sizeOfSet;
-    public Transform wrist;
-    BallFeedback targetBall;
-    public string namePerson;
-    public int numSet;
+    public string nameOfPerson;
+    public int set;
+    public Transform printPosRelToJoint;
+    private List<InseilFeedback> feedbackList = new List<InseilFeedback>();
 
-    private bool oneShot;
-
-    StreamWriter sw;
+    private List<StreamWriter> sw = new List<StreamWriter>();
 
 	// Use this for initialization
 	void Start () {
 
-        // Get Feedback Method: BallFeedback
-        targetBall = (BallFeedback) FeedbackManager.instance.GetFeedbackType(1);
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            GameObject child = transform.GetChild(i).gameObject;
+            InseilFeedback iFB = child.GetComponent<InseilFeedback>();
 
-        // Init positions
-        targetBall.positions.Clear();
-        targetBall.positions.Add(startPosition);
-        targetBall.positions.Add(endPosition);
+            feedbackList.Add(iFB);
+            sw.Add(new StreamWriter("BicepsCurl" + i +".txt"));
+        }
 
-        // Init moving bone
-        targetBall.joint = wrist.gameObject;
-
-        // Init ballScale
-        targetBall.scale = new Vector3(0.25f, 0.25f, 0.25f);
-
-        string path = Application.dataPath;
-        Debug.Log(path);
-        sw = new StreamWriter("BicepsCurl.txt");
-        sw.WriteLine(namePerson + ", " + numSet + ", " + targetBall.positionChanges + ", " + startPosition.x + ", " + startPosition.y + ", " + startPosition.z + ", "
-                                                        + endPosition.x + ", "
-                                                        + endPosition.y + ", "
-                                                        + endPosition.z + ", "
-                                                        + wrist.position.x + ", "
-                                                        + wrist.position.y + ", "
-                                                        + wrist.position.z);
-
-        sw.Flush();
+        FeedbackManager.instance.AddExercise(this);
 	}
 	
 	// Update is called once per frame
 	void Update () {
 
-        while (targetBall.positionChanges < sizeOfSet && !oneShot)
+        for (int i = 0; i < feedbackList.Count; i++)
         {
-            PrintBicepsCurlInfo2();
-            oneShot = true;
-        }	
+            InseilFeedback iFB = feedbackList[i];
+            if (iFB.type == enabledFeedBackType)
+            {
+                iFB.gameObject.SetActive(true);
 
+                // Handle ballFeedback
+                if (iFB.type == FeedbackType.BallFeedback)
+                {
+                    BallFeedback targetBall = (BallFeedback)iFB;
 
+                    // Print 
+                    if (targetBall.positionChanges / 2 < sizeOfSet)
+                    {
+                        PrintBicepsCurlInfo2(targetBall, i);
+                    }
+                }
+            }
+
+            else
+            {
+                iFB.gameObject.SetActive(false);
+            }
+        }
 	}
 
-    void PrintBicepsCurlInfo1()
-    {
-        // Writing name, set, rep, start, end, wrist.pos into file
-        string path = Application.dataPath;
-        
-        System.IO.File.WriteAllText(path + "/Exercises/BicepsCurl.txt", namePerson + ", "
-                                                    + numSet + ", "
-                                                    + targetBall.positionChanges + ", "
-                                                    + startPosition.x + ", "
-                                                    + startPosition.y + ", "
-                                                    + startPosition.z + ", "
-                                                    + endPosition.x + ", "
-                                                    + endPosition.y + ", "
-                                                    + endPosition.z + ", "
-                                                    + wrist.position.x + ", "
-                                                    + wrist.position.y + ", "
-                                                    + wrist.position.z + "/n");
-    }
 
-    void PrintBicepsCurlInfo2()
+    void PrintBicepsCurlInfo2(BallFeedback targetBall, int fileIndex)
     {
-        if (sw != null)
+       
+        if (sw[fileIndex] != null)
         {
-            Debug.Log("Write to file");
-            sw.WriteLine(namePerson + ", " + numSet + ", " + targetBall.positionChanges + ", " + startPosition.x + ", " + startPosition.y + ", " + startPosition.z + ", "
-                                                        + endPosition.x + ", "
-                                                        + endPosition.y + ", "
-                                                        + endPosition.z + ", "
-                                                        + wrist.position.x + ", "
-                                                        + wrist.position.y + ", "
-                                                        + wrist.position.z);
+            int repetitions = targetBall.positionChanges / 2;
+            sw[fileIndex].WriteLine(nameOfPerson + ", " + set + ", "
+                        + repetitions + ", "
+                        + (targetBall.positions[0].x - printPosRelToJoint.position.x) + ", " + (targetBall.positions[0].y - printPosRelToJoint.position.y) + ", " + (targetBall.positions[0].z - printPosRelToJoint.position.z) + ", "
+                        + (targetBall.positions[1].x - printPosRelToJoint.position.x) + ", " + (targetBall.positions[1].y - printPosRelToJoint.position.y) + ", " + (targetBall.positions[1].z - printPosRelToJoint.position.z) + ", "
+                        + (targetBall.joint.transform.position.x - printPosRelToJoint.position.x) + ", " + (targetBall.joint.transform.position.y - printPosRelToJoint.position.y) + ", " + (targetBall.joint.transform.position.z - printPosRelToJoint.position.z));
+
+            sw[fileIndex].Flush();
         }
     }
 }

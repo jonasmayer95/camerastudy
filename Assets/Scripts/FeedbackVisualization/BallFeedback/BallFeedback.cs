@@ -27,30 +27,7 @@ public class BallFeedback : InseilFeedback {
 	// Use this for initialization
 	void Start () {
 
-        relPos = relToObject.position;
-        transform.position = relPos + positions[0];
-
-        ballRenderer = GetComponent<Renderer>();
-        //transform.localScale = scale;
-
-        ballRenderer.material.color = colorFar;
-
-        if (loadingCircle != null)
-        {
-            GameObject c = Instantiate(loadingCircle, transform.position, Quaternion.identity) as GameObject;
-            c.transform.parent = transform;
-            circle = c.GetComponent<CircularProgressFeedback>();
-            currHoldingTime = holdingTime;
-            circle.UpdateLoadingCircle(1);
-
-          
-
-            if (!showBall)
-            {               
-                ballRenderer.enabled = false;
-            }
-        }
-	
+        InitBallFeedback();	
 	}
 	
 	// Update is called once per frame
@@ -72,6 +49,36 @@ public class BallFeedback : InseilFeedback {
         }
         else ballRenderer.material.color = new Color(ballRenderer.material.color.r, ballRenderer.material.color.g, ballRenderer.material.color.b, 1);
 	}
+
+    void OnEnable()
+    {
+        //InitBallFeedback();
+    }
+
+    private void InitBallFeedback()
+    {
+        relPos = relToObject.position;
+        transform.position = relPos + positions[0];
+
+        ballRenderer = GetComponent<Renderer>();
+        //transform.localScale = scale;
+
+        ballRenderer.material.color = colorFar;
+
+        if (loadingCircle != null)
+        {
+            GameObject c = Instantiate(loadingCircle, transform.position, Quaternion.identity) as GameObject;
+            c.transform.parent = transform;
+            circle = c.GetComponent<CircularProgressFeedback>();
+            currHoldingTime = holdingTime;
+            circle.UpdateLoadingCircle(1);
+
+            if (!showBall)
+            {
+                ballRenderer.enabled = false;
+            }
+        }
+    }
 
     public void ResetCounter()
     {
