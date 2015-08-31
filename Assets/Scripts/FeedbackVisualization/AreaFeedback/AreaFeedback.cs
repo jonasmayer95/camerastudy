@@ -69,21 +69,23 @@ public class AreaFeedback : InseilFeedback {
         if (forward)
         {
             midPoint += Time.deltaTime * speed;
-            arrowMat.SetTextureOffset("_MainTex", new Vector2(arrowMat.GetTextureOffset("_MainTex").x, arrowMat.GetTextureOffset("_MainTex").y - Time.deltaTime * time));
+            arrowMat.SetTextureOffset("_MainTex", new Vector2(0, (arrowMat.GetTextureOffset("_MainTex").y - Time.deltaTime * time)));
             if (midPoint > vertices1.Length / 2)
             {
                 forward = false;
-                arrowMat.SetTextureScale("_MainTex", new Vector2(arrowMat.GetTextureScale("_MainTex").x, -arrowMat.GetTextureScale("_MainTex").y));
+                arrowMat.SetTextureScale("_MainTex", new Vector2(1, -arrowMat.GetTextureScale("_MainTex").y));
+                arrowMat.SetTextureOffset("_MainTex", new Vector2(0, 2));
             }
         }
         else 
         {
             midPoint -= Time.deltaTime * speed;
-            arrowMat.SetTextureOffset("_MainTex", new Vector2(arrowMat.GetTextureOffset("_MainTex").x, arrowMat.GetTextureOffset("_MainTex").y - Time.deltaTime * time));
+            arrowMat.SetTextureOffset("_MainTex", new Vector2(0, (arrowMat.GetTextureOffset("_MainTex").y - Time.deltaTime * time)));
             if (midPoint < 0)
             {
                 forward = true;
-                arrowMat.SetTextureScale("_MainTex", new Vector2(arrowMat.GetTextureScale("_MainTex").x,-arrowMat.GetTextureScale("_MainTex").y));
+                arrowMat.SetTextureScale("_MainTex", new Vector2(1,-arrowMat.GetTextureScale("_MainTex").y));
+                arrowMat.SetTextureOffset("_MainTex", new Vector2(0, 0));
             }
         }
         UpdateColor();
