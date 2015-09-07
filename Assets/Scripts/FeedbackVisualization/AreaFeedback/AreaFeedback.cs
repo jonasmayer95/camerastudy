@@ -222,7 +222,7 @@ public class AreaFeedback : InseilFeedback {
             vertices[3] = Vector2.one;
             vertices[4] = Quaternion.AngleAxis(180,Vector2.up) * Vector2.zero;
             vertices[5] = Quaternion.AngleAxis(180, Vector2.up) * Vector2.up;
-            vertices[6] = Quaternion.AngleAxis(180, Vector2.up) * Vector2.left;
+            vertices[6] = Quaternion.AngleAxis(180, Vector2.up) * -Vector2.right;
             vertices[7] = Quaternion.AngleAxis(180, Vector2.up) * new Vector2(-1, 1);
                 
 
