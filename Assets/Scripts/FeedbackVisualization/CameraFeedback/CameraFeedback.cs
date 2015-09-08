@@ -20,8 +20,8 @@ public class CameraFeedback : InseilFeedback {
     private GameObject line3D;
 
 	// Use this for initialization
-	void Start () {
-
+    void Start()
+    {
         cameraPosition = feedbackCamera.position;
         cameraOrientation = Quaternion.ToEulerAngles(feedbackCamera.rotation);
 
@@ -40,7 +40,7 @@ public class CameraFeedback : InseilFeedback {
         rend.SetVertexCount(2);
         rend.SetPosition(0, transform.position);
         rend.SetPosition(1, connectingJoint.position);
-	}
+    }
 	
 	// Update is called once per frame
 	void Update () 
