@@ -19,6 +19,7 @@ public class CameraFeedback : InseilFeedback {
     private GameObject arrow3D;
     private GameObject line3D;
 
+
 	// Use this for initialization
     void Start()
     {
@@ -27,11 +28,11 @@ public class CameraFeedback : InseilFeedback {
 
         targetSphere = Instantiate(targetSpherePrefab, feedbackAvatar_hip.position + relTargetPos, Quaternion.identity) as GameObject;
         targetSphere.GetComponent<Renderer>().material.color = targetSphereColor;
-        targetSphere.transform.parent = transform;
+        //targetSphere.transform.parent = transform;
         targetSphere.SetActive(false);
 
         arrow3D = Instantiate(arrow3DPrefab, feedbackAvatar_joint.position + ((feedbackAvatar_hip.position + relTargetPos) - feedbackAvatar_joint.position) / 2.0f, Quaternion.identity) as GameObject;
-        arrow3D.transform.parent = transform;
+        //arrow3D.transform.parent = transform;
         arrow3D.SetActive(false);
 
         line3D = Instantiate(line3DPrefab, transform.position, Quaternion.identity) as GameObject;
@@ -50,7 +51,7 @@ public class CameraFeedback : InseilFeedback {
             targetSphere.SetActive(true);
 
             arrow3D.transform.position = feedbackAvatar_joint.position + ((feedbackAvatar_hip.position + relTargetPos) - feedbackAvatar_joint.position) / 2.0f;
-            arrow3D.transform.LookAt(feedbackAvatar_hip.position + relTargetPos);
+            arrow3D.transform.LookAt(targetSphere.transform.position);
             arrow3D.SetActive(true);
         }
 
