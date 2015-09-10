@@ -26,7 +26,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 176790}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.67999995, y: 1.04999995, z: 0}
+  m_LocalPosition: {x: -1.56700003, y: 1.04999995, z: -.556999981}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -86,14 +86,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 3
-  cameraPosition: {x: 0, y: 0, z: 0}
-  cameraOrientation: {x: 0, y: 0, z: 0}
+  camDistance: 1
   feedbackCamera: {fileID: 0}
   feedbackAvatar_hip: {fileID: 0}
   feedbackAvatar_joint: {fileID: 0}
   connectingJoint: {fileID: 0}
-  relTargetPos: {x: -.5, y: .75, z: 0}
-  tolerance: 0
+  relTargetPos: {x: -.150000006, y: .100000001, z: -.200000003}
+  tolerance: .100000001
   arrow3DPrefab: {fileID: 172930, guid: 980ad7de033d3874e8cc8e1e180ae89b, type: 2}
   targetSpherePrefab: {fileID: 162198, guid: 4d932e12d8da59746990cd4af1135d9d, type: 2}
   targetSphereColor: {r: 0, g: .503448486, b: 1, a: 0}

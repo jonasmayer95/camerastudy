@@ -414,7 +414,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerIndex: 0
-  mirroredMovement: 1
+  mirroredMovement: 0
   verticalMovement: 0
   moveRate: 1
   smoothFactor: 5
@@ -1328,7 +1328,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerIndex: 0
-  mirroredMovement: 1
+  mirroredMovement: 0
   verticalMovement: 0
   moveRate: 1
   smoothFactor: 5
@@ -1361,9 +1361,9 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!4 &791982145 stripped
+--- !u!4 &791982148 stripped
 Transform:
-  m_PrefabParentObject: {fileID: 400060, guid: ae23d50304c93b9418b65cec8f9fe954, type: 3}
+  m_PrefabParentObject: {fileID: 400020, guid: ae23d50304c93b9418b65cec8f9fe954, type: 3}
   m_PrefabInternal: {fileID: 791982119}
 --- !u!1001 &804730669
 Prefab:
@@ -2694,7 +2694,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400176, guid: ae23d50304c93b9418b65cec8f9fe954, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 400176, guid: ae23d50304c93b9418b65cec8f9fe954, type: 3}
       propertyPath: m_LocalRotation.z
@@ -2702,7 +2702,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 400176, guid: ae23d50304c93b9418b65cec8f9fe954, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -1.62920685e-07
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 400176, guid: ae23d50304c93b9418b65cec8f9fe954, type: 3}
       propertyPath: m_RootOrder
@@ -2735,10 +2735,6 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: ae23d50304c93b9418b65cec8f9fe954, type: 3}
   m_IsPrefabParent: 0
---- !u!4 &1166522933 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400060, guid: ae23d50304c93b9418b65cec8f9fe954, type: 3}
-  m_PrefabInternal: {fileID: 1166522932}
 --- !u!1 &1195081971
 GameObject:
   m_ObjectHideFlags: 0
@@ -2808,7 +2804,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 485034, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
       propertyPath: m_LocalPosition.x
-      value: -1.67999995
+      value: -1.56700003
       objectReference: {fileID: 0}
     - target: {fileID: 485034, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
       propertyPath: m_LocalPosition.y
@@ -2816,7 +2812,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 485034, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 0
+      value: -.556999981
       objectReference: {fileID: 0}
     - target: {fileID: 485034, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
       propertyPath: m_LocalRotation.x
@@ -2849,11 +2845,23 @@ Prefab:
     - target: {fileID: 11478974, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
       propertyPath: feedbackAvatar_joint
       value: 
-      objectReference: {fileID: 791982145}
+      objectReference: {fileID: 791982148}
     - target: {fileID: 11478974, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
       propertyPath: connectingJoint
       value: 
-      objectReference: {fileID: 1166522933}
+      objectReference: {fileID: 1958926535}
+    - target: {fileID: 11478974, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
+      propertyPath: relTargetPos.y
+      value: .150000006
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478974, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
+      propertyPath: camDistance
+      value: .75
+      objectReference: {fileID: 0}
+    - target: {fileID: 11478974, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
+      propertyPath: cameraFeedbackMode
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
   m_IsPrefabParent: 0
@@ -3546,7 +3554,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1926261476}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: -1.62920685e-07}
   m_LocalPosition: {x: -.159999996, y: 12.2799997, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
