@@ -737,7 +737,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b3bb37fc1308b34c99522bc1654be37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  exercises: []
 --- !u!1 &363772370
 GameObject:
   m_ObjectHideFlags: 0
@@ -2860,8 +2859,12 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 11478974, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
       propertyPath: cameraFeedbackMode
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 11478974, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
+      propertyPath: cylinderPrefab
+      value: 
+      objectReference: {fileID: 196840, guid: a9662b23a7174fc4990e1e88eaea2b23, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
   m_IsPrefabParent: 0
