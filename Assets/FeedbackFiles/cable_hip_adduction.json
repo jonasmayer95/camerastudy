@@ -1,0 +1,37 @@
+{
+   "constraints":[
+      {
+         "radius":0.075,
+         "joint":"spineshoulder",
+         "base":"spinebase",
+         "position":{
+            "y":0.2882979214191437,
+            "z":0.009990237653255463,
+            "x":-0.056040599942207336
+         },
+         "type":"static"
+      },
+      {
+         "radius":0.12,
+         "joint":"footleft",
+         "base":"hipleft",
+         "position":{
+            "y":-0.21727001667022705,
+            "z":-0.023612648248672485,
+            "x":0.44353848695755005
+         },
+         "type":"motion_start"
+      },
+      {
+         "radius":0.12,
+         "joint":"footleft",
+         "base":"hipleft",
+         "position":{
+            "y":-0.4622049331665039,
+            "z":0.14175637066364288,
+            "x":-0.057178959250450134
+         },
+         "type":"motion_end"
+      }
+   ]
+}
