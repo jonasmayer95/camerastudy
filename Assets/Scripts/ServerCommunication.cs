@@ -9,6 +9,8 @@ public class ServerCommunication : MonoBehaviour
     private static NetMQContext ctx;
     private static SubscriberSocket client;
     private NetMQMessage serverMessage;
+    private InseilMessage im;
+    private string json;
     private bool recv;
 
     private static readonly fsSerializer serializer = new fsSerializer();
@@ -20,6 +22,7 @@ public class ServerCommunication : MonoBehaviour
     void Awake()
     {
         instance = this;
+        im = new InseilMessage();
     }
 
     void Update()
@@ -29,14 +32,14 @@ public class ServerCommunication : MonoBehaviour
         if (recv)
         {
             //assuming we get everything in a single frame
-            string json = serverMessage.First.ConvertToString();
-            InseilMessage message = new InseilMessage();
-            Deserialize<InseilMessage>(json, ref message);
+            json = serverMessage.First.ConvertToString();
+            im.measurement.data.Clear();
+            Deserialize<InseilMessage>(json, ref im);
 
             //Debug.Log(message.measurement.data["spinebase"].ToString());
 
             //uncomment as soon as the code is ubitrack-ready
-            UbitrackManager.instance.UpdateInseilMeasurement(message.measurement);
+            UbitrackManager.instance.UpdateInseilMeasurement(im.measurement);
             UbitrackManager.instance.recievedData = true;
         }
     }
