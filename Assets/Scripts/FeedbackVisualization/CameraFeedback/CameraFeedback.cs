@@ -114,6 +114,10 @@ public class CameraFeedback : InseilFeedback {
                 Vector2 projectedErrorVector;
                 projectedErrorVector = (targetSphere.transform.position - feedbackAvatar_joint.position).normalized;
                 Vector3 eulerOrientation = Vector3.Cross(projectedErrorVector, feedbackCamera.transform.forward.normalized);
+                if (targetSphere.transform.position.x - feedbackAvatar_joint.position.x < 0)
+                {
+                    eulerOrientation *= -1;
+                }
                 Quaternion targetRotation = Quaternion.FromToRotation(feedbackCylinder.transform.up, eulerOrientation);
                 feedbackCylinder.transform.rotation = Quaternion.Slerp(feedbackCylinder.transform.rotation, targetRotation, Time.deltaTime * 10);
 
