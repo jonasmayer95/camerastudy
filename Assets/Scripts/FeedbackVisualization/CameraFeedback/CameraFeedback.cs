@@ -91,6 +91,9 @@ public class CameraFeedback : InseilFeedback {
                 // Deactivate the cylinder
                 feedbackCylinder.SetActive(false);
 
+                float radius = Vector3.Distance(targetSphere.transform.position, feedbackAvatar_joint.position) / 2.0f;
+                arrow3D.transform.localScale = new Vector3(radius, radius, radius);
+
                 // Update and activate the 3D arrow
                 arrow3D.transform.position = feedbackAvatar_joint.position + ((feedbackAvatar_hip.position + relTargetPos) - feedbackAvatar_joint.position) / 2.0f;
                 arrow3D.transform.LookAt(targetSphere.transform.position);
@@ -114,12 +117,44 @@ public class CameraFeedback : InseilFeedback {
                 Vector2 projectedErrorVector;
                 projectedErrorVector = (targetSphere.transform.position - feedbackAvatar_joint.position).normalized;
                 Vector3 eulerOrientation = Vector3.Cross(projectedErrorVector, feedbackCamera.transform.forward.normalized);
-                if (targetSphere.transform.position.x - feedbackAvatar_joint.position.x < 0)
+                
+                // Upper Left
+                if (feedbackAvatar_joint.position.y - targetSphere.transform.position.y >= 0 && targetSphere.transform.position.x - feedbackAvatar_joint.position.x > 0)
                 {
-                    eulerOrientation *= -1;
+                    feedbackCylinder.GetComponent<Renderer>().material.SetTextureScale("_MainTex", new Vector2(-1, 1));
+                    Debug.Log("Now upper left ");
+
+                    Quaternion upRotation = Quaternion.FromToRotation(-feedbackCylinder.transform.forward, eulerOrientation);
+                    feedbackCylinder.transform.rotation = Quaternion.Slerp(feedbackCylinder.transform.rotation, upRotation, Time.deltaTime * 20);                    
                 }
-                Quaternion targetRotation = Quaternion.FromToRotation(feedbackCylinder.transform.up, eulerOrientation);
-                feedbackCylinder.transform.rotation = Quaternion.Slerp(feedbackCylinder.transform.rotation, targetRotation, Time.deltaTime * 10);
+
+                // Bottom Left
+                if (targetSphere.transform.position.y - feedbackAvatar_joint.position.y > 0 && targetSphere.transform.position.x - feedbackAvatar_joint.position.x > 0)
+                {
+                    feedbackCylinder.GetComponent<Renderer>().material.SetTextureScale("_MainTex", new Vector2(-1, 1));
+                    Debug.Log("Now bottom left ");
+
+                    Quaternion upRotation = Quaternion.FromToRotation(-feedbackCylinder.transform.forward, eulerOrientation) * Quaternion.Euler(180, 0, 0);
+                    feedbackCylinder.transform.rotation = Quaternion.Slerp(feedbackCylinder.transform.rotation, upRotation, Time.deltaTime * 20); 
+                }                
+
+                // Upper Right
+                if (feedbackAvatar_joint.position.y - targetSphere.transform.position.y > 0 && feedbackAvatar_joint.position.x - targetSphere.transform.position.x >= 0)
+                {                    
+                    Debug.Log("Now upper right ");
+                    feedbackCylinder.GetComponent<Renderer>().material.SetTextureScale("_MainTex", new Vector2(1, 1));
+                    Quaternion upRotation = Quaternion.FromToRotation(feedbackCylinder.transform.forward, eulerOrientation) * Quaternion.Euler(0, 0, 180);
+                    feedbackCylinder.transform.rotation = Quaternion.Slerp(feedbackCylinder.transform.rotation, upRotation, Time.deltaTime * 20);
+                }
+
+                // Bottom right
+                if (targetSphere.transform.position.y - feedbackAvatar_joint.position.y >= 0 && feedbackAvatar_joint.position.x - targetSphere.transform.position.x >= 0)
+                {                    
+                    Debug.Log("Now bottom right ");
+                    feedbackCylinder.GetComponent<Renderer>().material.SetTextureScale("_MainTex", new Vector2(1, 1));
+                    Quaternion upRotation = Quaternion.FromToRotation(feedbackCylinder.transform.forward, eulerOrientation) * Quaternion.Euler(0, 180, 0);
+                    feedbackCylinder.transform.rotation = Quaternion.Slerp(feedbackCylinder.transform.rotation, upRotation, Time.deltaTime * 20); 
+                }
 
                 // Activate cylinder
                 feedbackCylinder.SetActive(true);

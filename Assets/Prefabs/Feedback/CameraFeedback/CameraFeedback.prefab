@@ -86,16 +86,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 3
-  camDistance: 1
+  camDistance: .75
   feedbackCamera: {fileID: 0}
   feedbackAvatar_hip: {fileID: 0}
   feedbackAvatar_joint: {fileID: 0}
   connectingJoint: {fileID: 0}
-  relTargetPos: {x: -.150000006, y: .100000001, z: -.200000003}
-  tolerance: .100000001
-  arrow3DPrefab: {fileID: 172930, guid: 980ad7de033d3874e8cc8e1e180ae89b, type: 2}
+  relTargetPos: {x: -.150000006, y: .150000006, z: -.200000003}
+  tolerance: .200000003
+  cameraFeedbackMode: 1
   targetSpherePrefab: {fileID: 162198, guid: 4d932e12d8da59746990cd4af1135d9d, type: 2}
   targetSphereColor: {r: 0, g: .503448486, b: 1, a: 0}
+  arrow3DPrefab: {fileID: 172930, guid: 980ad7de033d3874e8cc8e1e180ae89b, type: 2}
+  cylinderPrefab: {fileID: 196840, guid: a9662b23a7174fc4990e1e88eaea2b23, type: 2}
   line3DPrefab: {fileID: 117850, guid: a2fa034be53b9b344b686e6b8f94ff86, type: 2}
 --- !u!1001 &100100000
 Prefab:
