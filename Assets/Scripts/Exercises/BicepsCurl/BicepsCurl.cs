@@ -3,6 +3,7 @@ using System.Collections;
 using System.IO;
 using System.Collections.Generic;
 
+
 public class BicepsCurl : InseilExercise {
 
     public int sizeOfSet;
@@ -24,10 +25,17 @@ public class BicepsCurl : InseilExercise {
             feedbackList.Add(iFB);
             sw.Add(new StreamWriter("BicepsCurl_" + i + "_" + iFB.type + ".txt"));
         }
-
+        InitializeExercise();
         FeedbackManager.instance.AddExercise(this);
 	}
 	
+    void InitializeExercise()
+    {
+        string json = File.ReadAllText("Assets/FeedbackFiles/biceps_curls_standing.json");
+        DeserializeExercise(json);
+        Debug.Log(this.exerciseConstraints[0].ToString());
+    }
+
 	// Update is called once per frame
 	void Update () {
 
@@ -102,4 +110,5 @@ public class BicepsCurl : InseilExercise {
     {
 
     }
+
 }
