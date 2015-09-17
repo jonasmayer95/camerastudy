@@ -2850,21 +2850,9 @@ Prefab:
       value: 
       objectReference: {fileID: 1958926535}
     - target: {fileID: 11478974, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
-      propertyPath: relTargetPos.y
-      value: .150000006
-      objectReference: {fileID: 0}
-    - target: {fileID: 11478974, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
-      propertyPath: camDistance
-      value: .75
-      objectReference: {fileID: 0}
-    - target: {fileID: 11478974, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
       propertyPath: cameraFeedbackMode
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 11478974, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
-      propertyPath: cylinderPrefab
-      value: 
-      objectReference: {fileID: 196840, guid: a9662b23a7174fc4990e1e88eaea2b23, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
   m_IsPrefabParent: 0
