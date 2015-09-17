@@ -1,0 +1,158 @@
+fileFormatVersion: 2
+guid: dce90974431e53e49a402b3debce9dfc
+timeCreated: 1442496898
+licenseType: Free
+ModelImporter:
+  serializedVersion: 18
+  fileIDToRecycleName:
+    100000: Armature
+    100002: Figure
+    100004: Head
+    100006: Head_end
+    100008: LeftArm
+    100010: LeftFingers
+    100012: LeftFingers_end
+    100014: LeftFoot
+    100016: LeftFoot_end
+    100018: LeftForeArm
+    100020: LeftHand
+    100022: LeftHip
+    100024: LeftLeg
+    100026: LeftLowerLeg
+    100028: LeftShoulder
+    100030: LeftThumb
+    100032: LeftThumb_end
+    100034: Neck
+    100036: RightArm
+    100038: RightFingers
+    100040: RightFingers_end
+    100042: RightFoot
+    100044: RightFoot_end
+    100046: RightForeArm
+    100048: RightHand
+    100050: RightHip
+    100052: RightLeg
+    100054: RightLowerLeg
+    100056: RightShoulder
+    100058: RightThumb
+    100060: RightThumb_end
+    100062: //RootNode
+    100064: Spine
+    100066: Spine.001
+    400000: Armature
+    400002: Figure
+    400004: Head
+    400006: Head_end
+    400008: LeftArm
+    400010: LeftFingers
+    400012: LeftFingers_end
+    400014: LeftFoot
+    400016: LeftFoot_end
+    400018: LeftForeArm
+    400020: LeftHand
+    400022: LeftHip
+    400024: LeftLeg
+    400026: LeftLowerLeg
+    400028: LeftShoulder
+    400030: LeftThumb
+    400032: LeftThumb_end
+    400034: Neck
+    400036: RightArm
+    400038: RightFingers
+    400040: RightFingers_end
+    400042: RightFoot
+    400044: RightFoot_end
+    400046: RightForeArm
+    400048: RightHand
+    400050: RightHip
+    400052: RightLeg
+    400054: RightLowerLeg
+    400056: RightShoulder
+    400058: RightThumb
+    400060: RightThumb_end
+    400062: //RootNode
+    400064: Spine
+    400066: Spine.001
+    4300000: Figure
+    7400000: Armature|Armature.001|Take 001|Take 001:BaseAnimation
+    7400002: Armature|HeadTop_End.001|Take 001|Take 001:BaseAnimation
+    7400004: Armature|LeftFootToeBase_End|Take 001|Take 001:BaseAnimation
+    7400006: Armature|LeftHandIndex3_End|Take 001|Take 001:BaseAnimation
+    7400008: Armature|LeftHandThumb2_End|Take 001|Take 001:BaseAnimation
+    7400010: Armature|RightFootToeBase_End|Take 001|Take 001:BaseAnimation
+    7400012: Armature|RightHandIndex3_End|Take 001|Take 001:BaseAnimation
+    7400014: Armature|RightHandThumb2_End|Take 001|Take 001:BaseAnimation
+    7400016: Armature|vincent_Casual_Male_Lod_1|Take 001|Take 001:BaseAnimation
+    7400018: Figure|Armature.001|Take 001|Take 001:BaseAnimation
+    7400020: Figure|HeadTop_End.001|Take 001|Take 001:BaseAnimation
+    7400022: Figure|LeftFootToeBase_End|Take 001|Take 001:BaseAnimation
+    7400024: Figure|LeftHandIndex3_End|Take 001|Take 001:BaseAnimation
+    7400026: Figure|LeftHandThumb2_End|Take 001|Take 001:BaseAnimation
+    7400028: Figure|RightFootToeBase_End|Take 001|Take 001:BaseAnimation
+    7400030: Figure|RightHandIndex3_End|Take 001|Take 001:BaseAnimation
+    7400032: Figure|RightHandThumb2_End|Take 001|Take 001:BaseAnimation
+    7400034: Figure|vincent_Casual_Male_Lod_1|Take 001|Take 001:BaseAnimation
+    9500000: //RootNode
+    13700000: Figure
+  materials:
+    importMaterials: 1
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: .800000012
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 101
+    splitTangentsAcrossUV: 1
+    normalImportMode: 1
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
