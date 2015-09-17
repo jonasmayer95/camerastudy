@@ -28,32 +28,45 @@ public class MotionJoint
         this.joint = joint;
     }
 }
-public class InseilExercise : MonoBehaviour {
-
-    private List<StreamWriter> sw = new List<StreamWriter>();
-    private List<InseilFeedback> feedbackList = new List<InseilFeedback>();
-    public FeedbackType enabledFeedBackType;
-    private ExerciseConstraint[] exerciseConstraints;
+public class InseilExercise : MonoBehaviour {    
+    
+    // Print information
     public int sizeOfSet;
     public string nameOfPerson;
     public int set;
     public Transform printPosRelToJoint;
-    public string exerciseName;
-    public List<StaticJoint> staticjoints;
-    public List<MotionJoint> motionjoints;
+    private List<StreamWriter> sw = new List<StreamWriter>();    
+
+    // Exercise parameter
+    private string exerciseName;
+    private ExerciseConstraint[] exerciseConstraints;
+    private List<StaticJoint> staticjoints;
+    private List<MotionJoint> motionjoints;
+
+    // Feedback
+    public FeedbackType enabledFeedBackType;
+    private List<FeedbackType> feedbackTypes = new List<FeedbackType>();
+    private List<InseilFeedback> feedbackList = new List<InseilFeedback>();
+
 
     // Use this for initialization
     void Start()
     {       
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            GameObject child = transform.GetChild(i).gameObject;
-            InseilFeedback iFB = child.GetComponent<InseilFeedback>();
+       
+    }   
 
-            feedbackList.Add(iFB);
-            sw.Add(new StreamWriter(name + i + "_" + iFB.type + ".txt"));
-        }
-        string json = File.ReadAllText("Assets/Resources/ExerciseFiles/"+name+".json");
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    public void InitExercise(string exerciseName, List<FeedbackType> feedbackTypes)
+    {
+        this.exerciseName = exerciseName;
+        this.feedbackTypes = feedbackTypes;
+
+        string json = File.ReadAllText("Assets/Resources/ExerciseFiles/" + exerciseName + ".json");
         DeserializeExercise(json);
 
         staticjoints = new List<StaticJoint>();
@@ -87,14 +100,63 @@ public class InseilExercise : MonoBehaviour {
                 }
             }
         }
-        FeedbackManager.instance.AddExercise(this);
+
+        InitAndSpawnFeedback();
     }
-   
 
-    // Update is called once per frame
-    void Update()
+    // Init and spawn all feedback interesting for this exercise here as child of this exercise 
+    public void InitAndSpawnFeedback()
     {
+        // Init every type
+        foreach (FeedbackType type in feedbackTypes)
+        {
+            // Spawn category object in hierarchy
+            GameObject feedbackTypeObject = new GameObject(type.ToString());
+            feedbackTypeObject.transform.parent = transform;
 
+            GameObject staticJointsObject = new GameObject("static joints");
+            staticJointsObject.transform.parent = feedbackTypeObject.transform;
+            GameObject motionJointsObject = new GameObject("motion joints");
+            motionJointsObject.transform.parent = feedbackTypeObject.transform;
+
+            // Init feedback for static joints
+            for (int i = 0; i < staticjoints.Count; i++)
+            {
+                GameObject feedbackObject = new GameObject(staticjoints[i].joint);
+                feedbackObject.transform.parent = staticJointsObject.transform;
+
+                // Make new feedback by type
+                // Call Init feedback here
+                // Store in collection
+            }
+
+            // Init feedback for motion joints
+            for (int i = 0; i < motionjoints.Count; i++)
+            {
+                GameObject feedbackObject = new GameObject(motionjoints[i].joint);
+                feedbackObject.transform.parent = motionJointsObject.transform;
+
+                // Make new feedback by type
+                // Call Init feedback here
+                // Store in collection
+            }
+        }
+    }
+
+    public void InitPrinting()
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            GameObject child = transform.GetChild(i).gameObject;
+            InseilFeedback iFB = child.GetComponent<InseilFeedback>();
+
+            feedbackList.Add(iFB);
+            sw.Add(new StreamWriter(name + i + "_" + iFB.type + ".txt"));
+        }
+    }
+
+    public void PrintExersiceInfo()
+    {
         for (int i = 0; i < feedbackList.Count; i++)
         {
             InseilFeedback iFB = feedbackList[i];

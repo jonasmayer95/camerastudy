@@ -737,6 +737,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b3bb37fc1308b34c99522bc1654be37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  feedbackTypes: 00000000010000000200000003000000
+  exercisePath: ExerciseFiles
 --- !u!1 &363772370
 GameObject:
   m_ObjectHideFlags: 0
@@ -2896,17 +2898,11 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1259564600}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 48eaa65e1d66e6e428b317045245f13b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enabledFeedBackType: 0
-  exerciseConstraints: []
-  sizeOfSet: 10
-  nameOfPerson: Max
-  set: 0
-  printPosRelToJoint: {fileID: 1419202880}
 --- !u!1001 &1262962754
 Prefab:
   m_ObjectHideFlags: 0

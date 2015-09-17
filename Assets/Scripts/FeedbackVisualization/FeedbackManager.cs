@@ -2,10 +2,27 @@
 using System.Collections;
 using System.Collections.Generic;
 
+public enum FeedbackType
+{
+    BallFeedback, AreaFeedback, ImageFeedback, CameraFeedback
+}
+
+public abstract class InseilFeedback : MonoBehaviour
+{
+    public FeedbackType type;
+}
+
 public class FeedbackManager : MonoBehaviour {
 
     // Singleton
     public static FeedbackManager instance;
+
+    public List<FeedbackType> feedbackTypes = new List<FeedbackType>();
+
+    //Exercise Data
+    public string exercisePath;
+    private Object[] exerciseData;
+    private List<string> exerciseNames = new List<string>();
 
     // Stores all exercises found in the scene
     private List<InseilExercise> exercises = new List<InseilExercise>();
@@ -20,7 +37,21 @@ public class FeedbackManager : MonoBehaviour {
     }
 
 	// Use this for initialization
-	void Start () {
+	void Start () {        
+
+        exerciseData = Resources.LoadAll(exercisePath);
+
+        // Init exercises
+        for (int i = 0; i < exerciseData.Length; i++){
+            exerciseNames.Add(exerciseData[i].name);
+
+            GameObject exerciseObject = new GameObject(exerciseData[i].name);
+            exerciseObject.transform.parent = transform;
+
+            InseilExercise ex = exerciseObject.AddComponent<InseilExercise>();
+            ex.InitExercise(exerciseData[i].name, feedbackTypes);
+            exercises.Add(ex);            
+        }
 
         // Deactivate all exercises
         foreach (InseilExercise iEX in exercises)
@@ -35,14 +66,22 @@ public class FeedbackManager : MonoBehaviour {
         if(Input.GetKeyDown(KeyCode.Space))
         {
             SwitchExercise((index + 1) % exercises.Count);
-        }	
+        }
+
+        // Print exercise Info into external files
+        exercises[index].PrintExersiceInfo();
 	}
 
+    public List<string> GetExerciseFileNames()
+    {
+        return exerciseNames;
+    }
+
     // Used by exercises to register
-    public void AddExercise(InseilExercise ex)
+    /*public void AddExercise(InseilExercise ex)
     {
         exercises.Add(ex);
-    }
+    }*/
 
     // Shows feedback by type
     public void ShowFeedback(int type)
