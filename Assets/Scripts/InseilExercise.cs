@@ -4,7 +4,11 @@ using SimpleJSON;
 using System.IO;
 using System.Collections.Generic;
 
-public class StaticJoint
+public abstract class ExerciseJoint
+{
+}
+
+public class StaticJoint : ExerciseJoint
 {
     public Vector3 targetPosition;
     public string joint;
@@ -15,7 +19,7 @@ public class StaticJoint
         this.joint = joint;
     }
 }
-public class MotionJoint
+public class MotionJoint : ExerciseJoint
 {
     public Vector3 startPosition;
     public Vector3 endPosition;
@@ -34,7 +38,7 @@ public class InseilExercise : MonoBehaviour {
     public int sizeOfSet;
     public string nameOfPerson;
     public int set;
-    public Transform printPosRelToJoint;
+    private Transform coordinatesRelToJoint;
     private List<StreamWriter> sw = new List<StreamWriter>();    
 
     // Exercise parameter
@@ -47,6 +51,7 @@ public class InseilExercise : MonoBehaviour {
     public FeedbackType enabledFeedBackType;
     private List<FeedbackType> feedbackTypes = new List<FeedbackType>();
     private List<InseilFeedback> feedbackList = new List<InseilFeedback>();
+    private BoneMap avatar;
 
 
     // Use this for initialization
@@ -61,7 +66,7 @@ public class InseilExercise : MonoBehaviour {
         
     }
 
-    public void InitExercise(string exerciseName, List<FeedbackType> feedbackTypes)
+    public void InitExercise(string exerciseName, List<FeedbackType> feedbackTypes, Transform relTo, BoneMap avatar)
     {
         this.exerciseName = exerciseName;
         this.feedbackTypes = feedbackTypes;
@@ -72,8 +77,12 @@ public class InseilExercise : MonoBehaviour {
         staticjoints = new List<StaticJoint>();
         motionjoints = new List<MotionJoint>();
 
+        coordinatesRelToJoint = relTo;
+        this.avatar = avatar;
+
         for (int i = 0; i < exerciseConstraints.Length; i++ )
         {
+
             if(exerciseConstraints[i].type == "static")
             {
                 staticjoints.Add(new StaticJoint(exerciseConstraints[i].position, exerciseConstraints[i].joint));
@@ -104,14 +113,17 @@ public class InseilExercise : MonoBehaviour {
         InitAndSpawnFeedback();
     }
 
+    
+
     // Init and spawn all feedback interesting for this exercise here as child of this exercise 
     public void InitAndSpawnFeedback()
     {
+
         // Init every type
-        foreach (FeedbackType type in feedbackTypes)
+        foreach (FeedbackType feedbackType in feedbackTypes)
         {
             // Spawn category object in hierarchy
-            GameObject feedbackTypeObject = new GameObject(type.ToString());
+            GameObject feedbackTypeObject = new GameObject(feedbackType.ToString());
             feedbackTypeObject.transform.parent = transform;
 
             GameObject staticJointsObject = new GameObject("static joints");
@@ -122,23 +134,41 @@ public class InseilExercise : MonoBehaviour {
             // Init feedback for static joints
             for (int i = 0; i < staticjoints.Count; i++)
             {
-                GameObject feedbackObject = new GameObject(staticjoints[i].joint);
-                feedbackObject.transform.parent = staticJointsObject.transform;
+                // Load feedback from Resources
+                if (Resources.Load("FeedbackTypes/" + feedbackType.ToString()))
+                {
+                    GameObject feedbackObject = Instantiate(Resources.Load("FeedbackTypes/" + feedbackType.ToString()), Vector3.zero, Quaternion.identity) as GameObject;
+                    feedbackObject.transform.parent = staticJointsObject.transform;
+                    feedbackObject.name = staticjoints[i].joint;
+                    InseilFeedback iFB = feedbackObject.GetComponent<InseilFeedback>();
 
-                // Make new feedback by type
-                // Call Init feedback here
-                // Store in collection
+                    iFB.InitFeedback(staticjoints[i], coordinatesRelToJoint, avatar);
+                    feedbackList.Add(iFB);
+                }
+                else
+                {
+                    Debug.Log("Failed to load:" + "FeedbackTypes/" + feedbackType.ToString());
+                }
             }
 
             // Init feedback for motion joints
             for (int i = 0; i < motionjoints.Count; i++)
             {
-                GameObject feedbackObject = new GameObject(motionjoints[i].joint);
-                feedbackObject.transform.parent = motionJointsObject.transform;
+                // Load feedback from Resources
+                if (Resources.Load("FeedbackTypes/" + feedbackType.ToString()))
+                {
+                    GameObject feedbackObject = Instantiate(Resources.Load("FeedbackTypes/" + feedbackType.ToString()), Vector3.zero, Quaternion.identity) as GameObject;
+                    feedbackObject.transform.parent = motionJointsObject.transform;
+                    feedbackObject.name = motionjoints[i].joint;
+                    InseilFeedback iFB = feedbackObject.GetComponent<InseilFeedback>();
 
-                // Make new feedback by type
-                // Call Init feedback here
-                // Store in collection
+                    iFB.InitFeedback(motionjoints[i], coordinatesRelToJoint, avatar);
+                    feedbackList.Add(iFB);
+                }
+                else
+                {
+                    Debug.Log("Failed to load:" + "FeedbackTypes/" + feedbackType.ToString());
+                }
             }
         }
     }
@@ -186,7 +216,7 @@ public class InseilExercise : MonoBehaviour {
                 }
 
                 // Print imageFeedback info
-                if (iFB.type == FeedbackType.ImageFeedback)
+                if (iFB.type == FeedbackType.ImageFeedback3D)
                 {
                     ImageFeedback3D image = (ImageFeedback3D)iFB;
 
@@ -225,9 +255,9 @@ public class InseilExercise : MonoBehaviour {
             int repetitions = targetBall.positionChanges / 2;
             sw[fileIndex].WriteLine(nameOfPerson + ", " + set + ", "
                         + repetitions + ", "
-                        + (targetBall.positions[0].x - printPosRelToJoint.position.x) + ", " + (targetBall.positions[0].y - printPosRelToJoint.position.y) + ", " + (targetBall.positions[0].z - printPosRelToJoint.position.z) + ", "
-                        + (targetBall.positions[1].x - printPosRelToJoint.position.x) + ", " + (targetBall.positions[1].y - printPosRelToJoint.position.y) + ", " + (targetBall.positions[1].z - printPosRelToJoint.position.z) + ", "
-                        + (targetBall.joint.transform.position.x - printPosRelToJoint.position.x) + ", " + (targetBall.joint.transform.position.y - printPosRelToJoint.position.y) + ", " + (targetBall.joint.transform.position.z - printPosRelToJoint.position.z));
+                        + (targetBall.positions[0].x - coordinatesRelToJoint.position.x) + ", " + (targetBall.positions[0].y - coordinatesRelToJoint.position.y) + ", " + (targetBall.positions[0].z - coordinatesRelToJoint.position.z) + ", "
+                        + (targetBall.positions[1].x - coordinatesRelToJoint.position.x) + ", " + (targetBall.positions[1].y - coordinatesRelToJoint.position.y) + ", " + (targetBall.positions[1].z - coordinatesRelToJoint.position.z) + ", "
+                        + (targetBall.joint.transform.position.x - coordinatesRelToJoint.position.x) + ", " + (targetBall.joint.transform.position.y - coordinatesRelToJoint.position.y) + ", " + (targetBall.joint.transform.position.z - coordinatesRelToJoint.position.z));
 
             sw[fileIndex].Flush();
         }

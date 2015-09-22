@@ -18,7 +18,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &460164
 Transform:
   m_ObjectHideFlags: 1
@@ -73,13 +73,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2f0d6c56f82d7d40864a828b30db54c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  number: 0
+  type: 0
   relToObject: {fileID: 0}
-  positions:
-  - {x: -.5, y: 1.75, z: 0}
-  - {x: -.5, y: 1, z: 0}
-  - {x: .5, y: 1, z: 0}
-  - {x: .5, y: 1.75, z: 0}
+  positions: []
   scale: {x: .25, y: .25, z: .25}
   joint: {fileID: 0}
   loadingCircle: {fileID: 113810, guid: 5aab5ea58c5a0c546aae63b90ad6ef20, type: 2}
@@ -90,6 +86,7 @@ MonoBehaviour:
   fadeDistance: 0
   particles: {fileID: 0}
   particlesLifeTime: 0
+  positionChanges: 0
 --- !u!135 &13537692
 SphereCollider:
   m_ObjectHideFlags: 1

@@ -70,6 +70,16 @@ public class CameraFeedback : InseilFeedback {
         UpdateCameraPosition();
     }
 
+    public override void InitFeedback(StaticJoint joint, Transform relTo, BoneMap bones)
+    {
+        throw new System.NotImplementedException();
+    }
+
+    public override void InitFeedback(MotionJoint joint, Transform relTo, BoneMap bones)
+    {
+        throw new System.NotImplementedException();
+    }
+
     void OnEnable()
     {
         //UpdateCameraPosition();

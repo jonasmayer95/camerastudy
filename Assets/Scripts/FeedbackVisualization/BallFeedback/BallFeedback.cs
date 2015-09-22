@@ -53,6 +53,27 @@ public class BallFeedback : InseilFeedback {
         }
 	}
 
+    public override void InitFeedback(StaticJoint joint, Transform relTo, BoneMap bones)
+    {
+        positions.Add(joint.targetPosition);
+        relToObject = relTo;
+
+        Transform bone;
+        bones.GetBoneMap().TryGetValue(joint.joint, out bone);
+        this.joint = bone.gameObject;
+    }
+
+    public override void InitFeedback(MotionJoint joint, Transform relTo, BoneMap bones)
+    {
+        positions.Add(joint.startPosition);
+        positions.Add(joint.endPosition);
+        relToObject = relTo;
+
+        Transform bone;
+        bones.GetBoneMap().TryGetValue(joint.joint, out bone);
+        this.joint = bone.gameObject;
+    }
+
     void OnEnable()
     {
         //InitBallFeedback();

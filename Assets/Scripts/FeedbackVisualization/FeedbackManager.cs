@@ -4,12 +4,15 @@ using System.Collections.Generic;
 
 public enum FeedbackType
 {
-    BallFeedback, AreaFeedback, ImageFeedback, CameraFeedback
+    BallFeedback, AreaFeedback, ImageFeedback3D, CameraFeedback
 }
 
 public abstract class InseilFeedback : MonoBehaviour
 {
     public FeedbackType type;
+
+    public abstract void InitFeedback(StaticJoint joint, Transform relTo, BoneMap bones);
+    public abstract void InitFeedback(MotionJoint joint, Transform relTo, BoneMap bones);
 }
 
 public class FeedbackManager : MonoBehaviour {
@@ -23,6 +26,10 @@ public class FeedbackManager : MonoBehaviour {
     public string exercisePath;
     private Object[] exerciseData;
     private List<string> exerciseNames = new List<string>();
+
+    // Avatars
+    public BoneMap boneMap;
+    public Transform coordinatesRelToJoint;
 
     // Stores all exercises found in the scene
     private List<InseilExercise> exercises = new List<InseilExercise>();
@@ -49,8 +56,9 @@ public class FeedbackManager : MonoBehaviour {
             exerciseObject.transform.parent = transform;
 
             InseilExercise ex = exerciseObject.AddComponent<InseilExercise>();
-            ex.InitExercise(exerciseData[i].name, feedbackTypes);
-            exercises.Add(ex);            
+            ex.InitExercise(exerciseData[i].name, feedbackTypes, coordinatesRelToJoint, boneMap);
+            exercises.Add(ex);
+            
         }
 
         // Deactivate all exercises
@@ -69,7 +77,7 @@ public class FeedbackManager : MonoBehaviour {
         }
 
         // Print exercise Info into external files
-        exercises[index].PrintExersiceInfo();
+        //exercises[index].PrintExersiceInfo();
 	}
 
     public List<string> GetExerciseFileNames()
