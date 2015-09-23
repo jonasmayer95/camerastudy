@@ -58,6 +58,8 @@ public class BallFeedback : InseilFeedback {
         positions.Add(joint.targetPosition);
         relToObject = relTo;
 
+        colorFar = colorClose = Color.blue;
+
         Transform bone;
         bones.GetBoneMap().TryGetValue(joint.joint, out bone);
         this.joint = bone.gameObject;

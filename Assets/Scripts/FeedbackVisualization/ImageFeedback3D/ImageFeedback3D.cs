@@ -37,12 +37,12 @@ public class ImageFeedback3D : InseilFeedback {
 
     public override void InitFeedback(StaticJoint joint, Transform relTo, BoneMap bones)
     {
-        throw new System.NotImplementedException();
+        //throw new System.NotImplementedException();
     }
 
     public override void InitFeedback(MotionJoint joint, Transform relTo, BoneMap bones)
     {
-        throw new System.NotImplementedException();
+        //throw new System.NotImplementedException();
     }
 
     public void NextSprite()

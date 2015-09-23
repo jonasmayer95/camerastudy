@@ -765,8 +765,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b3bb37fc1308b34c99522bc1654be37, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  feedbackTypes: 00000000
+  feedbackTypes: 0000000003000000
+  bodyHeight: 1.79999995
   exercisePath: ExerciseFiles
+  sizeOfSet: 10
+  nameOfPerson: Flo
+  set: 1
   boneMap: {fileID: 1323171370}
   coordinatesRelToJoint: {fileID: 2086180554}
 --- !u!4 &341345458 stripped

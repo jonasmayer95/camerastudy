@@ -4,6 +4,13 @@ using SimpleJSON;
 using System.IO;
 using System.Collections.Generic;
 
+public class ExerciseInfo : MonoBehaviour
+{
+    public int sizeOfSet;
+    public string nameOfPerson;
+    public int set;
+}
+
 public abstract class ExerciseJoint
 {
 }
@@ -35,11 +42,11 @@ public class MotionJoint : ExerciseJoint
 public class InseilExercise : MonoBehaviour {    
     
     // Print information
-    public int sizeOfSet;
-    public string nameOfPerson;
-    public int set;
+    private int sizeOfSet;
+    private string nameOfPerson;
+    private int set;
     private Transform coordinatesRelToJoint;
-    private List<StreamWriter> sw = new List<StreamWriter>();    
+    //private List<StreamWriter> sw = new List<StreamWriter>();    
 
     // Exercise parameter
     private string exerciseName;
@@ -50,23 +57,23 @@ public class InseilExercise : MonoBehaviour {
     // Feedback
     public FeedbackType enabledFeedBackType;
     private List<FeedbackType> feedbackTypes = new List<FeedbackType>();
-    private List<InseilFeedback> feedbackList = new List<InseilFeedback>();
+    private Dictionary<InseilFeedback, StreamWriter> feedbackList = new Dictionary<InseilFeedback, StreamWriter>();
     private BoneMap avatar;
 
 
     // Use this for initialization
     void Start()
-    {       
-       
+    {
+        
     }   
 
     // Update is called once per frame
     void Update()
     {
-        
+        PrintExersiceInfo();
     }
 
-    public void InitExercise(string exerciseName, List<FeedbackType> feedbackTypes, Transform relTo, BoneMap avatar)
+    public void InitExercise(string exerciseName, ExerciseInfo info, List<FeedbackType> feedbackTypes, float bodyHeight, Transform relTo, BoneMap avatar)
     {
         this.exerciseName = exerciseName;
         this.feedbackTypes = feedbackTypes;
@@ -80,12 +87,16 @@ public class InseilExercise : MonoBehaviour {
         coordinatesRelToJoint = relTo;
         this.avatar = avatar;
 
+        this.sizeOfSet = info.sizeOfSet;
+        this.nameOfPerson = info.nameOfPerson;
+        this.set = info.set;
+
         for (int i = 0; i < exerciseConstraints.Length; i++ )
         {
 
             if(exerciseConstraints[i].type == "static")
             {
-                staticjoints.Add(new StaticJoint(exerciseConstraints[i].position, exerciseConstraints[i].joint));
+                staticjoints.Add(new StaticJoint(exerciseConstraints[i].position * bodyHeight, exerciseConstraints[i].joint));
             }
             else
             {
@@ -93,11 +104,11 @@ public class InseilExercise : MonoBehaviour {
                 {
                     if (exerciseConstraints[i].type == "motion_start")
                     {
-                        motionjoints.Add(new MotionJoint(exerciseConstraints[i].position, Vector3.zero, exerciseConstraints[i].joint));
+                        motionjoints.Add(new MotionJoint(exerciseConstraints[i].position * bodyHeight, Vector3.zero, exerciseConstraints[i].joint));
                     }
                     else
                     {
-                        motionjoints.Add(new MotionJoint(Vector3.zero, exerciseConstraints[i].position, exerciseConstraints[i].joint));
+                        motionjoints.Add(new MotionJoint(Vector3.zero, exerciseConstraints[i].position * bodyHeight, exerciseConstraints[i].joint));
                     }
                 }
                 else
@@ -142,8 +153,13 @@ public class InseilExercise : MonoBehaviour {
                     feedbackObject.name = staticjoints[i].joint;
                     InseilFeedback iFB = feedbackObject.GetComponent<InseilFeedback>();
 
+                    // Init Printing
+                    feedbackList.Add(iFB, new StreamWriter(name + "_static_" + i + "_" + iFB.type + ".txt"));
+                    //sw.Add(new StreamWriter(name + "_static_" + i + "_" + iFB.type + ".txt"));
+
+                    // Init Feedback
                     iFB.InitFeedback(staticjoints[i], coordinatesRelToJoint, avatar);
-                    feedbackList.Add(iFB);
+                    //feedbackList.Add(iFB);
                 }
                 else
                 {
@@ -162,8 +178,13 @@ public class InseilExercise : MonoBehaviour {
                     feedbackObject.name = motionjoints[i].joint;
                     InseilFeedback iFB = feedbackObject.GetComponent<InseilFeedback>();
 
+                    // Init Printing
+                    feedbackList.Add(iFB, new StreamWriter(name + "_motion_" + i + "_" + iFB.type + ".txt"));
+                    //sw.Add(new StreamWriter(name + "_motion_" + i + "_" + iFB.type + ".txt"));
+
+                    // Init Feedback
                     iFB.InitFeedback(motionjoints[i], coordinatesRelToJoint, avatar);
-                    feedbackList.Add(iFB);
+                    //feedbackList.Add(iFB);
                 }
                 else
                 {
@@ -173,7 +194,7 @@ public class InseilExercise : MonoBehaviour {
         }
     }
 
-    public void InitPrinting()
+    /*public void InitPrinting()
     {
         for (int i = 0; i < transform.childCount; i++)
         {
@@ -183,13 +204,13 @@ public class InseilExercise : MonoBehaviour {
             feedbackList.Add(iFB);
             sw.Add(new StreamWriter(name + i + "_" + iFB.type + ".txt"));
         }
-    }
+    }*/
 
     public void PrintExersiceInfo()
     {
-        for (int i = 0; i < feedbackList.Count; i++)
+        foreach (InseilFeedback iFB in feedbackList.Keys)
         {
-            InseilFeedback iFB = feedbackList[i];
+            //InseilFeedback iFB = feedbackList[i];
             if (iFB.type == enabledFeedBackType)
             {
                 iFB.gameObject.SetActive(true);
@@ -202,7 +223,7 @@ public class InseilExercise : MonoBehaviour {
                     // Check for end of set
                     if (targetBall.positionChanges / 2 < sizeOfSet)
                     {
-                        PrintExerciseInfo(targetBall, i);
+                        PrintExerciseInfo(targetBall, feedbackList[iFB]);
                     }
                 }
 
@@ -212,7 +233,7 @@ public class InseilExercise : MonoBehaviour {
                     AreaFeedback area = (AreaFeedback)iFB;
 
                     // ToDo: Print Info
-                    PrintExerciseInfo(area, i);
+                    PrintExerciseInfo(area, feedbackList[iFB]);
                 }
 
                 // Print imageFeedback info
@@ -221,7 +242,7 @@ public class InseilExercise : MonoBehaviour {
                     ImageFeedback3D image = (ImageFeedback3D)iFB;
 
                     // ToDO: Print Info
-                    PrintExerciseInfo(image, i);
+                    PrintExerciseInfo(image, feedbackList[iFB]);
                 }
             }
 
@@ -247,28 +268,41 @@ public class InseilExercise : MonoBehaviour {
         }
     }
 
-    void PrintExerciseInfo(BallFeedback targetBall, int fileIndex)
+    void PrintExerciseInfo(BallFeedback targetBall, StreamWriter sw)
     {
 
-        if (sw[fileIndex] != null)
+        if (sw != null)
         {
             int repetitions = targetBall.positionChanges / 2;
-            sw[fileIndex].WriteLine(nameOfPerson + ", " + set + ", "
-                        + repetitions + ", "
-                        + (targetBall.positions[0].x - coordinatesRelToJoint.position.x) + ", " + (targetBall.positions[0].y - coordinatesRelToJoint.position.y) + ", " + (targetBall.positions[0].z - coordinatesRelToJoint.position.z) + ", "
-                        + (targetBall.positions[1].x - coordinatesRelToJoint.position.x) + ", " + (targetBall.positions[1].y - coordinatesRelToJoint.position.y) + ", " + (targetBall.positions[1].z - coordinatesRelToJoint.position.z) + ", "
-                        + (targetBall.joint.transform.position.x - coordinatesRelToJoint.position.x) + ", " + (targetBall.joint.transform.position.y - coordinatesRelToJoint.position.y) + ", " + (targetBall.joint.transform.position.z - coordinatesRelToJoint.position.z));
 
-            sw[fileIndex].Flush();
+            if (targetBall.positions.Count == 2)
+            {
+                sw.WriteLine(nameOfPerson + ", " + set + ", "
+                            + repetitions + ", "
+                            + (targetBall.positions[0].x - coordinatesRelToJoint.position.x) + ", " + (targetBall.positions[0].y - coordinatesRelToJoint.position.y) + ", " + (targetBall.positions[0].z - coordinatesRelToJoint.position.z) + ", "
+                            + (targetBall.positions[1].x - coordinatesRelToJoint.position.x) + ", " + (targetBall.positions[1].y - coordinatesRelToJoint.position.y) + ", " + (targetBall.positions[1].z - coordinatesRelToJoint.position.z) + ", "
+                            + (targetBall.joint.transform.position.x - coordinatesRelToJoint.position.x) + ", " + (targetBall.joint.transform.position.y - coordinatesRelToJoint.position.y) + ", " + (targetBall.joint.transform.position.z - coordinatesRelToJoint.position.z));
+
+                sw.Flush();
+            }
+            else
+            {
+                sw.WriteLine(nameOfPerson + ", " + set + ", "
+                            + repetitions + ", "
+                            + (targetBall.positions[0].x - coordinatesRelToJoint.position.x) + ", " + (targetBall.positions[0].y - coordinatesRelToJoint.position.y) + ", " + (targetBall.positions[0].z - coordinatesRelToJoint.position.z) + ", "
+                            + (targetBall.joint.transform.position.x - coordinatesRelToJoint.position.x) + ", " + (targetBall.joint.transform.position.y - coordinatesRelToJoint.position.y) + ", " + (targetBall.joint.transform.position.z - coordinatesRelToJoint.position.z));
+
+                sw.Flush();
+            }
         }
     }
 
-    void PrintExerciseInfo(AreaFeedback area, int fileIndex)
+    void PrintExerciseInfo(AreaFeedback area, StreamWriter sw)
     {
 
     }
 
-    void PrintExerciseInfo(ImageFeedback3D image, int fileIndex)
+    void PrintExerciseInfo(ImageFeedback3D image, StreamWriter sw)
     {
 
     }

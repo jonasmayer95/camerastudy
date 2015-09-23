@@ -23,7 +23,11 @@ public class FeedbackManager : MonoBehaviour {
     public List<FeedbackType> feedbackTypes = new List<FeedbackType>();
 
     //Exercise Data
+    public float bodyHeight;
     public string exercisePath;
+    public int sizeOfSet;
+    public string nameOfPerson;
+    public int set;
     private Object[] exerciseData;
     private List<string> exerciseNames = new List<string>();
 
@@ -55,8 +59,13 @@ public class FeedbackManager : MonoBehaviour {
             GameObject exerciseObject = new GameObject(exerciseData[i].name);
             exerciseObject.transform.parent = transform;
 
+            ExerciseInfo eInfo = new ExerciseInfo();
+            eInfo.sizeOfSet = sizeOfSet;
+            eInfo.set = set;
+            eInfo.nameOfPerson = nameOfPerson;
+
             InseilExercise ex = exerciseObject.AddComponent<InseilExercise>();
-            ex.InitExercise(exerciseData[i].name, feedbackTypes, coordinatesRelToJoint, boneMap);
+            ex.InitExercise(exerciseData[i].name, eInfo, feedbackTypes, bodyHeight, coordinatesRelToJoint, boneMap);
             exercises.Add(ex);
             
         }
@@ -66,6 +75,9 @@ public class FeedbackManager : MonoBehaviour {
         {
             iEX.gameObject.SetActive(false);
         }
+
+        // Activate first exercise
+        exercises[index].gameObject.SetActive(true);
 	}
 	
 	// Update is called once per frame
