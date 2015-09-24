@@ -6,9 +6,11 @@ public class BoneMap : MonoBehaviour {
 
     public List<Transform> bones = new List<Transform>();
     private Dictionary<string, Transform> boneMap = new Dictionary<string, Transform>();
+    private AvatarController avatar;
 
     void Awake()
     {
+        avatar = gameObject.GetComponent<AvatarController>();
         foreach (Transform bone in bones)
         {
             if (!boneMap.ContainsKey(bone.name))
@@ -37,65 +39,129 @@ public class BoneMap : MonoBehaviour {
         return boneMap;
     }
 
-    public static string GetBoneMapKey(string jointName)
+    public static string GetBoneMapKey(string jointName, bool mirrored)
     {
-        switch (jointName)
+        if (mirrored)
         {
-            case "spinebase":
-                return "Spine";
-            case "spinemid":
-                return "Spine.001";
-            case "spineshoulder":
-                return "Neck";            
-            case "hipleft":
-                return "LeftHip";
-            case "kneeleft":
-                return "LeftLeg";
-            case "ankleleft":
-                return "LeftLowerLeg";
-            case "footleft":
-                return "LeftFoot";
-            case "toesleft":
-                return "LeftToes";
-            case "hipright":
-                return "RightHip";
-            case "kneeright":
-                return "RightLeg";
-            case "ankleright":
-                return "RightLowerLeg";
-            case "footright":
-                return "RightFoot";
-            case "toesright":
-                return "RightToes";
-            case "shoulderleft":
-                return "LeftShoulder";
-            case "elbowleft":
-                return "LeftArm";
-            case "wristleft":
-                return "LeftForeArm";
-            case "handleft":
-                return "LeftHand";
-            case "fingersleft":
-                return "LeftFingers";
-            case "thumbleft":
-                return "LeftThumb";
-            case "shoulderright":
-                return "RightShoulder";
-            case "elbowright":
-                return "RightArm";
-            case "wristright":
-                return "RightForeArm";
-            case "handright":
-                return "RightHand";
-            case "fingersright":
-                return "RightFingers";
-            case "thumbright":
-                return "RightTumb";
-            case "neck":
-                return "Head";
-            case "head":
-                return "Head_end";
-            default: return "not found";
+            switch (jointName)
+            {
+                case "spinebase":
+                    return "Spine";
+                case "spinemid":
+                    return "Spine.001";
+                case "spineshoulder":
+                    return "Neck";
+                case "hipleft":
+                    return "LeftHip";
+                case "kneeleft":
+                    return "LeftLeg";
+                case "ankleleft":
+                    return "LeftLowerLeg";
+                case "footleft":
+                    return "LeftFoot";
+                case "toesleft":
+                    return "LeftToes";
+                case "hipright":
+                    return "RightHip";
+                case "kneeright":
+                    return "RightLeg";
+                case "ankleright":
+                    return "RightLowerLeg";
+                case "footright":
+                    return "RightFoot";
+                case "toesright":
+                    return "RightToes";
+                case "shoulderleft":
+                    return "LeftShoulder";
+                case "elbowleft":
+                    return "LeftArm";
+                case "wristleft":
+                    return "LeftForeArm";
+                case "handleft":
+                    return "LeftHand";
+                case "fingersleft":
+                    return "LeftFingers";
+                case "thumbleft":
+                    return "LeftThumb";
+                case "shoulderright":
+                    return "RightShoulder";
+                case "elbowright":
+                    return "RightArm";
+                case "wristright":
+                    return "RightForeArm";
+                case "handright":
+                    return "RightHand";
+                case "fingersright":
+                    return "RightFingers";
+                case "thumbright":
+                    return "RightTumb";
+                case "neck":
+                    return "Head";
+                case "head":
+                    return "Head_end";
+                default: return "not found";
+            }
+        }
+        else
+        {
+            switch (jointName)
+            {
+                case "spinebase":
+                    return "Spine";
+                case "spinemid":
+                    return "Spine.001";
+                case "spineshoulder":
+                    return "Neck";
+                case "hipleft":
+                    return "RightHip";
+                case "kneeleft":
+                    return "RightLeg";
+                case "ankleleft":
+                    return "RightLowerLeg";
+                case "footleft":
+                    return "RightFoot";
+                case "toesleft":
+                    return "RightToes";
+                case "hipright":
+                    return "LeftHip";
+                case "kneeright":
+                    return "LeftLeg";
+                case "ankleright":
+                    return "LeftLowerLeg";
+                case "footright":
+                    return "LeftFoot";
+                case "toesright":
+                    return "LeftToes";
+                case "shoulderleft":
+                    return "RightShoulder";
+                case "elbowleft":
+                    return "RightArm";
+                case "wristleft":
+                    return "RightForeArm";
+                case "handleft":
+                    return "RightHand";
+                case "fingersleft":
+                    return "RightFingers";
+                case "thumbleft":
+                    return "RightThumb";
+                case "shoulderright":
+                    return "LeftShoulder";
+                case "elbowright":
+                    return "LeftArm";
+                case "wristright":
+                    return "LeftForeArm";
+                case "handright":
+                    return "LeftHand";
+                case "fingersright":
+                    return "LeftFingers";
+                case "thumbright":
+                    return "LeftTumb";
+                case "neck":
+                    return "Head";
+                case "head":
+                    return "Head_end";
+                default: return "not found";
+            }
         }
     }
 }

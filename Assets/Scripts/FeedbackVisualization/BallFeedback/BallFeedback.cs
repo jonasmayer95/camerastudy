@@ -63,7 +63,7 @@ public class BallFeedback : InseilFeedback {
         colorFar = colorClose = Color.blue;
 
         Transform bone;
-        bones.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint), out bone);
+        bones.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint, bones.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
         this.joint = bone.gameObject;
     }
 
@@ -75,7 +75,7 @@ public class BallFeedback : InseilFeedback {
         relToObject = relTo;
 
         Transform bone;
-        bones.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint), out bone);
+        bones.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint, bones.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
         this.joint = bone.gameObject;
     }
 
