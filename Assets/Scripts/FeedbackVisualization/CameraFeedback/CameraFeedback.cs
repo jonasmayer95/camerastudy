@@ -78,13 +78,12 @@ public class CameraFeedback : InseilFeedback {
         positions.Add(joint.targetPosition);
 
         Transform bone;
-        bones.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint), out bone);
+        bones.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint, bones.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
         connectingJoint = bone;
-        Debug.Log(FeedbackCamera_Avatar.instance.GetBoneMap()[BoneMap.GetBoneMapKey(joint.joint)]);
-        FeedbackCamera_Avatar.instance.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint), out bone);
+        FeedbackCamera_Avatar.instance.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint, bones.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
         feedbackAvatar_joint = bone;
 
-        FeedbackCamera_Avatar.instance.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey("spinebase"), out bone);
+        FeedbackCamera_Avatar.instance.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey("spinebase", bones.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
         feedbackAvatar_hip = bone;
 
         feedbackCamera = FeedbackCamera_Avatar.instance.feedbackCamera;
@@ -97,13 +96,13 @@ public class CameraFeedback : InseilFeedback {
         positions.Add(joint.endPosition);
 
         Transform bone;
-        bones.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint), out bone);
+        bones.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint, bones.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
         connectingJoint = bone;
 
-        FeedbackCamera_Avatar.instance.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint), out bone);
+        FeedbackCamera_Avatar.instance.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint, bones.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
         feedbackAvatar_joint = bone;
 
-        FeedbackCamera_Avatar.instance.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey("spinebase"), out bone);
+        FeedbackCamera_Avatar.instance.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey("spinebase", bones.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
         feedbackAvatar_hip = bone;
 
         feedbackCamera = FeedbackCamera_Avatar.instance.feedbackCamera;

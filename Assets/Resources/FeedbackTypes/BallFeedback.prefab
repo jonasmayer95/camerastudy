@@ -12,6 +12,7 @@ GameObject:
   - 135: {fileID: 13537692}
   - 23: {fileID: 2394468}
   - 114: {fileID: 11457604}
+  - 54: {fileID: 5417394}
   m_Layer: 0
   m_Name: BallFeedback
   m_TagString: Untagged
@@ -27,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 178006}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -.75, y: 1.5, z: 0}
-  m_LocalScale: {x: .25, y: .25, z: .25}
+  m_LocalScale: {x: .125, y: .125, z: .125}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -62,6 +63,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 178006}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!54 &5417394
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 178006}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: .0500000007
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!114 &11457604
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -83,7 +99,7 @@ MonoBehaviour:
   holdingTime: 2
   colorClose: {r: .117241383, g: 1, b: 0, a: 0}
   colorFar: {r: 1, g: 0, b: 0, a: 0}
-  fadeDistance: 0
+  fadeDistance: .150000006
   particles: {fileID: 0}
   particlesLifeTime: 0
   positionChanges: 0
@@ -166,6 +182,26 @@ Prefab:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: ce01363fdfe6f3e4894a07c1276214b4, type: 2}
+    - target: {fileID: 0}
+      propertyPath: m_UseGravity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalScale.x
+      value: .125
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalScale.y
+      value: .125
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_LocalScale.z
+      value: .125
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: fadeDistance
+      value: .150000006
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 178006}
