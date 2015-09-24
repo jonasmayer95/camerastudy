@@ -73,6 +73,19 @@ public class CameraFeedback : InseilFeedback {
     public override void InitFeedback(StaticJoint joint, Transform relTo, BoneMap bones)
     {
         //throw new System.NotImplementedException();
+        relTargetPos = joint.targetPosition;
+
+        Transform bone;
+        bones.GetBoneMap().TryGetValue(joint.joint, out bone);
+        connectingJoint = bone;
+
+        FeedbackCamera_Avatar.instance.GetBoneMap().TryGetValue(joint.joint, out bone);
+        feedbackAvatar_joint = bone;
+
+        FeedbackCamera_Avatar.instance.GetBoneMap().TryGetValue("spinebase", out bone);
+        feedbackAvatar_hip = bone;
+
+        feedbackCamera = FeedbackCamera_Avatar.instance.feedbackCamera;
     }
 
     public override void InitFeedback(MotionJoint joint, Transform relTo, BoneMap bones)
