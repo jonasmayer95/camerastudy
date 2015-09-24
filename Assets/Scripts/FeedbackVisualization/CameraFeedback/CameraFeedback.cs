@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public enum CameraFeedbackMode
 {
@@ -18,8 +19,9 @@ public class CameraFeedback : InseilFeedback {
     public Transform connectingJoint;
 
     // Target position and tolerance
-    public Vector3 relTargetPos;
+    public List<Vector3> positions = new List<Vector3>();
     public float tolerance;
+    private int index;
 
     // Feedback mode
     public CameraFeedbackMode cameraFeedbackMode;
@@ -43,13 +45,13 @@ public class CameraFeedback : InseilFeedback {
     void Start()
     {
         // Spawn a sphere to show the target position for debugging
-        targetSphere = Instantiate(targetSpherePrefab, feedbackAvatar_hip.position + relTargetPos, Quaternion.identity) as GameObject;
+        targetSphere = Instantiate(targetSpherePrefab, feedbackAvatar_hip.position + positions[index], Quaternion.identity) as GameObject;
         targetSphere.GetComponent<Renderer>().material.color = targetSphereColor;
         targetSphere.transform.parent = transform;
         targetSphere.SetActive(false);
 
         // Spawn a linear arrow pointing from the joint to the correct position
-        arrow3D = Instantiate(arrow3DPrefab, feedbackAvatar_joint.position + ((feedbackAvatar_hip.position + relTargetPos) - feedbackAvatar_joint.position) / 2.0f, Quaternion.identity) as GameObject;
+        arrow3D = Instantiate(arrow3DPrefab, feedbackAvatar_joint.position + ((feedbackAvatar_hip.position + positions[index]) - feedbackAvatar_joint.position) / 2.0f, Quaternion.identity) as GameObject;
         arrow3D.transform.parent = transform;
         arrow3D.SetActive(false);
 
@@ -62,7 +64,7 @@ public class CameraFeedback : InseilFeedback {
         rend.SetPosition(1, connectingJoint.position);
 
         // Spawn a cylinder showing an bent arrow from the joint to the correct position
-        feedbackCylinder = Instantiate(cylinderPrefab, feedbackAvatar_joint.position + ((feedbackAvatar_hip.position + relTargetPos) - feedbackAvatar_joint.position) / 2.0f, Quaternion.identity) as GameObject;
+        feedbackCylinder = Instantiate(cylinderPrefab, feedbackAvatar_joint.position + ((feedbackAvatar_hip.position + positions[index]) - feedbackAvatar_joint.position) / 2.0f, Quaternion.identity) as GameObject;
         feedbackCylinder.transform.parent = transform;
         feedbackCylinder.SetActive(false);
 
@@ -73,7 +75,7 @@ public class CameraFeedback : InseilFeedback {
     public override void InitFeedback(StaticJoint joint, Transform relTo, BoneMap bones)
     {
         //throw new System.NotImplementedException();
-        relTargetPos = joint.targetPosition;
+        positions.Add(joint.targetPosition);
 
         Transform bone;
         bones.GetBoneMap().TryGetValue(joint.joint, out bone);
@@ -91,6 +93,20 @@ public class CameraFeedback : InseilFeedback {
     public override void InitFeedback(MotionJoint joint, Transform relTo, BoneMap bones)
     {
         //throw new System.NotImplementedException();
+        positions.Add(joint.startPosition);
+        positions.Add(joint.endPosition);
+
+        Transform bone;
+        bones.GetBoneMap().TryGetValue(joint.joint, out bone);
+        connectingJoint = bone;
+
+        FeedbackCamera_Avatar.instance.GetBoneMap().TryGetValue(joint.joint, out bone);
+        feedbackAvatar_joint = bone;
+
+        FeedbackCamera_Avatar.instance.GetBoneMap().TryGetValue("spinebase", out bone);
+        feedbackAvatar_hip = bone;
+
+        feedbackCamera = FeedbackCamera_Avatar.instance.feedbackCamera;
     }
 
     void OnEnable()
@@ -98,15 +114,23 @@ public class CameraFeedback : InseilFeedback {
         //UpdateCameraPosition();
     }
 
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject == feedbackAvatar_joint)
+        {
+            index = (index + 1) % positions.Count;
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {
         // Show the arrow only when out of tolerance
-        if (Vector3.Distance(feedbackAvatar_joint.position - feedbackAvatar_hip.position, relTargetPos) > tolerance)
+        if (Vector3.Distance(feedbackAvatar_joint.position - feedbackAvatar_hip.position, positions[index]) > tolerance)
         {
             // Show sphere at target position (for debugging)
             targetSphere.SetActive(true);
-            targetSphere.transform.position = feedbackAvatar_hip.position + relTargetPos;
+            targetSphere.transform.position = feedbackAvatar_hip.position + positions[index];
 
             // Update the position and orientation of the 3D arrow
             if (cameraFeedbackMode == CameraFeedbackMode.LinearArrow)
@@ -118,7 +142,7 @@ public class CameraFeedback : InseilFeedback {
                 arrow3D.transform.localScale = new Vector3(radius, radius, radius);
 
                 // Update and activate the 3D arrow
-                arrow3D.transform.position = feedbackAvatar_joint.position + ((feedbackAvatar_hip.position + relTargetPos) - feedbackAvatar_joint.position) / 2.0f;
+                arrow3D.transform.position = feedbackAvatar_joint.position + ((feedbackAvatar_hip.position + positions[index]) - feedbackAvatar_joint.position) / 2.0f;
                 arrow3D.transform.LookAt(targetSphere.transform.position);
 
                 // Activate the 3D arrow
@@ -132,7 +156,7 @@ public class CameraFeedback : InseilFeedback {
                 arrow3D.SetActive(false);
 
                 // Update position and size
-                feedbackCylinder.transform.position = feedbackAvatar_joint.position + ((feedbackAvatar_hip.position + relTargetPos) - feedbackAvatar_joint.position) / 2.0f;
+                feedbackCylinder.transform.position = feedbackAvatar_joint.position + ((feedbackAvatar_hip.position + positions[index]) - feedbackAvatar_joint.position) / 2.0f;
                 float radius = Vector3.Distance(targetSphere.transform.position, feedbackAvatar_joint.position) / 2.0f;
                 feedbackCylinder.transform.localScale = new Vector3(radius, radius, radius);
 
