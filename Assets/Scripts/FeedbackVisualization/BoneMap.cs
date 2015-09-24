@@ -36,4 +36,66 @@ public class BoneMap : MonoBehaviour {
     {
         return boneMap;
     }
+
+    public string GetBoneMapKey(string jointName)
+    {
+        switch (jointName)
+        {
+            case "spinebase":
+                return "Spine";
+            case "spinemid":
+                return "Spine.001";
+            case "spineshoulder":
+                return "Neck";            
+            case "hipleft":
+                return "LeftHip";
+            case "kneeleft":
+                return "LeftLeg";
+            case "ankleleft":
+                return "LeftLowerLeg";
+            case "footleft":
+                return "LeftFoot";
+            case "toesleft":
+                return "LeftToes";
+            case "hipright":
+                return "RightHip";
+            case "kneeright":
+                return "RightLeg";
+            case "ankleright":
+                return "RightLowerLeg";
+            case "footright":
+                return "RightFoot";
+            case "toesright":
+                return "RightToes";
+            case "shoulderleft":
+                return "LeftShoulder";
+            case "elbowleft":
+                return "LeftArm";
+            case "wristleft":
+                return "LeftForeArm";
+            case "handleft":
+                return "LeftHand";
+            case "fingersleft":
+                return "LeftFingers";
+            case "thumbleft":
+                return "LeftThumb";
+            case "shoulderright":
+                return "RightShoulder";
+            case "elbowright":
+                return "RightArm";
+            case "wristright":
+                return "RightForeArm";
+            case "handright":
+                return "RightHand";
+            case "fingersright":
+                return "RightFingers";
+            case "thumbright":
+                return "RightTumb";
+            case "neck":
+                return "Head";
+            case "head":
+                return "Head_end";
+            default: return "not found";
+        }
+    }
 }
