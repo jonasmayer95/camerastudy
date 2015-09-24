@@ -37,7 +37,7 @@ public class BoneMap : MonoBehaviour {
         return boneMap;
     }
 
-    public string GetBoneMapKey(string jointName)
+    public static string GetBoneMapKey(string jointName)
     {
         switch (jointName)
         {

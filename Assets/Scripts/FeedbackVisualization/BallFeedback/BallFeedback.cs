@@ -22,6 +22,7 @@ public class BallFeedback : InseilFeedback {
     private CircularProgressFeedback circle;
     private float currHoldingTime;
     private Renderer ballRenderer;
+    private bool motionjoint;
     
 
 	// Use this for initialization
@@ -55,24 +56,26 @@ public class BallFeedback : InseilFeedback {
 
     public override void InitFeedback(StaticJoint joint, Transform relTo, BoneMap bones)
     {
+        motionjoint = false;
         positions.Add(joint.targetPosition);
         relToObject = relTo;
 
         colorFar = colorClose = Color.blue;
 
         Transform bone;
-        bones.GetBoneMap().TryGetValue(joint.joint, out bone);
+        bones.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint), out bone);
         this.joint = bone.gameObject;
     }
 
     public override void InitFeedback(MotionJoint joint, Transform relTo, BoneMap bones)
     {
+        motionjoint = true;
         positions.Add(joint.startPosition);
         positions.Add(joint.endPosition);
         relToObject = relTo;
 
         Transform bone;
-        bones.GetBoneMap().TryGetValue(joint.joint, out bone);
+        bones.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint), out bone);
         this.joint = bone.gameObject;
     }
 
@@ -113,7 +116,8 @@ public class BallFeedback : InseilFeedback {
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject == joint && loadingCircle == null)
+        //if (other.gameObject == joint && loadingCircle == null)
+        if (other.gameObject == joint && motionjoint)
         {
             index = (index + 1) % positions.Count;
             positionChanges++;
@@ -128,7 +132,7 @@ public class BallFeedback : InseilFeedback {
     {
         if (other.gameObject == joint)
         {
-            ballRenderer.material.color = colorFar;
+            //ballRenderer.material.color = colorFar;
         }
     }
 
@@ -140,7 +144,7 @@ public class BallFeedback : InseilFeedback {
             float percentage = currHoldingTime / holdingTime;
             circle.UpdateLoadingCircle(percentage);
 
-            ballRenderer.material.color = colorClose;
+            //ballRenderer.material.color = colorClose;
 
             if (currHoldingTime <= 0)
             {
@@ -148,7 +152,7 @@ public class BallFeedback : InseilFeedback {
                 currHoldingTime = holdingTime;
                 percentage = currHoldingTime / holdingTime;
                 circle.UpdateLoadingCircle(percentage);
-                ballRenderer.material.color = colorFar;
+                //ballRenderer.material.color = colorFar;
                 positionChanges++;
             }
         }

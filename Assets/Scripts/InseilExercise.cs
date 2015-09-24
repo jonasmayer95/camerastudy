@@ -4,7 +4,7 @@ using SimpleJSON;
 using System.IO;
 using System.Collections.Generic;
 
-public class ExerciseInfo : MonoBehaviour
+public class ExerciseInfo
 {
     public int sizeOfSet;
     public string nameOfPerson;
@@ -91,16 +91,20 @@ public class InseilExercise : MonoBehaviour {
         this.nameOfPerson = info.nameOfPerson;
         this.set = info.set;
 
+        if(avatar.gameObject.GetComponent<AvatarController>().mirroredMovement)
+        {
+            NegateAllZValues();
+        }
+
         for (int i = 0; i < exerciseConstraints.Length; i++ )
         {
-
             if(exerciseConstraints[i].type == "static")
             {
                 staticjoints.Add(new StaticJoint(exerciseConstraints[i].position * bodyHeight, exerciseConstraints[i].joint));
             }
             else
             {
-                if(!ContainsJointName(exerciseConstraints[i].joint))
+                if (!ContainsJointName(exerciseConstraints[i].joint))
                 {
                     if (exerciseConstraints[i].type == "motion_start")
                     {
@@ -111,11 +115,27 @@ public class InseilExercise : MonoBehaviour {
                         motionjoints.Add(new MotionJoint(Vector3.zero, exerciseConstraints[i].position * bodyHeight, exerciseConstraints[i].joint));
                     }
                 }
-                else
+                else if (ContainsJointName(exerciseConstraints[i].joint))
                 {
-                    if(exerciseConstraints[i].type == "motion_start")
+                    if (exerciseConstraints[i].type == "motion_end")
                     {
-                        
+                        for (int k = 0; k < motionjoints.Count; k++)
+                        {
+                            if(motionjoints[k].joint == exerciseConstraints[i].joint)
+                            {
+                                motionjoints[k].endPosition = exerciseConstraints[i].position * bodyHeight;
+                            }
+                        }                                               
+                    }
+                    else if (exerciseConstraints[i].type == "motion_start")
+                    {
+                        for (int k = 0; k < motionjoints.Count; k++)
+                        {
+                            if (motionjoints[k].joint == exerciseConstraints[i].joint)
+                            {
+                                motionjoints[k].endPosition = exerciseConstraints[i].position * bodyHeight;
+                            }
+                        }
                     }
                 }
             }
@@ -331,5 +351,13 @@ public class InseilExercise : MonoBehaviour {
             }
         }
         return null;
+    }
+
+    private void NegateAllZValues()
+    {
+        for(int i = 0; i < exerciseConstraints.Length; i++)
+        {
+            exerciseConstraints[i].position.z *= -1;
+        }
     }
 }
