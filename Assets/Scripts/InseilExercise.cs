@@ -59,6 +59,8 @@ public class InseilExercise : MonoBehaviour {
     private List<FeedbackType> feedbackTypes = new List<FeedbackType>();
     private Dictionary<InseilFeedback, StreamWriter> feedbackList = new Dictionary<InseilFeedback, StreamWriter>();
     private BoneMap avatar;
+    private Vector2 minDimension, maxDimension;
+    private float minZ;
 
 
     // Use this for initialization
@@ -71,6 +73,14 @@ public class InseilExercise : MonoBehaviour {
     void Update()
     {
         PrintExersiceInfo();
+        InseilMainCamera.instance.UpdateExerciseDimensions(minDimension + new Vector2(coordinatesRelToJoint.position.x, coordinatesRelToJoint.position.y),
+            maxDimension + new Vector2(coordinatesRelToJoint.position.x, coordinatesRelToJoint.position.y), minZ + coordinatesRelToJoint.position.z, coordinatesRelToJoint);
+    }
+
+    void OnEnable()
+    {
+/*        InseilMainCamera.instance.UpdateExerciseDimensions(minDimension + new Vector2(coordinatesRelToJoint.position.x, coordinatesRelToJoint.position.y),
+            maxDimension + new Vector2(coordinatesRelToJoint.position.x, coordinatesRelToJoint.position.y), minZ + coordinatesRelToJoint.position.z, coordinatesRelToJoint);*/
     }
 
     public void InitExercise(string exerciseName, ExerciseInfo info, List<FeedbackType> feedbackTypes, float bodyHeight, Transform relTo, BoneMap avatar)
@@ -180,6 +190,7 @@ public class InseilExercise : MonoBehaviour {
                     // Init Feedback
                     iFB.InitFeedback(staticjoints[i], coordinatesRelToJoint, avatar);
                     //feedbackList.Add(iFB);
+
                 }
                 else
                 {
@@ -211,7 +222,106 @@ public class InseilExercise : MonoBehaviour {
                     Debug.Log("Failed to load:" + "FeedbackTypes/" + feedbackType.ToString());
                 }
             }
+
+            // Adjusting Camera position
+            Vector4 exerciseDimensions = CalculateExerciseDimensions();
+            minDimension = new Vector2(exerciseDimensions.x, exerciseDimensions.y);
+            maxDimension = new Vector2(exerciseDimensions.z, exerciseDimensions.w);
+            
         }
+    }
+
+    private Vector4 CalculateExerciseDimensions()
+    {
+        Vector4 dimensions = Vector4.zero;
+        minZ = 0;
+
+        // Initializing min and max feedback positions for camera positioning
+        for (int i = 0; i < staticjoints.Count; i++)
+        {
+            if (staticjoints[i].targetPosition.x < dimensions.x)
+            {
+                dimensions = new Vector4(staticjoints[i].targetPosition.x, dimensions.y, dimensions.z, dimensions.w);
+            }
+
+            if (staticjoints[i].targetPosition.y < dimensions.y)
+            {
+                dimensions = new Vector4(dimensions.x, staticjoints[i].targetPosition.y, dimensions.z, dimensions.w);
+            }
+
+            if (staticjoints[i].targetPosition.x > dimensions.z)
+            {
+                dimensions = new Vector4(dimensions.x, dimensions.y, staticjoints[i].targetPosition.x, dimensions.w);
+            }
+
+            if (staticjoints[i].targetPosition.y > dimensions.w)
+            {
+                dimensions = new Vector4(dimensions.x, dimensions.y, dimensions.z, staticjoints[i].targetPosition.y);
+            }
+
+            if (staticjoints[i].targetPosition.z < minZ)
+            {
+                minZ = staticjoints[i].targetPosition.z;
+            }
+        }
+
+        // Initializing min and max feedback positions for camera positioning
+        for (int i = 0; i < motionjoints.Count; i++)
+        {
+            // Comparing startPositions
+            if (motionjoints[i].startPosition.x < dimensions.x)
+            {
+                dimensions = new Vector4(motionjoints[i].startPosition.x, dimensions.y, dimensions.z, dimensions.w);
+            }
+
+            if (motionjoints[i].startPosition.y < dimensions.y)
+            {
+                dimensions = new Vector4(dimensions.x, motionjoints[i].startPosition.y, dimensions.z, dimensions.w);
+            }
+
+            if (motionjoints[i].startPosition.x > dimensions.z)
+            {
+                dimensions = new Vector4(dimensions.x, dimensions.y, motionjoints[i].startPosition.x, dimensions.w);
+            }
+
+            if (motionjoints[i].startPosition.y > dimensions.w)
+            {
+                dimensions = new Vector4(dimensions.x, dimensions.y, dimensions.z, motionjoints[i].startPosition.y);
+            }
+
+            if (motionjoints[i].startPosition.z < minZ)
+            {
+                minZ = motionjoints[i].startPosition.z;
+            }
+
+            // Comparing endPositions
+            if (motionjoints[i].endPosition.x < dimensions.x)
+            {
+                dimensions = new Vector4(motionjoints[i].endPosition.x, dimensions.y, dimensions.z, dimensions.w);
+            }
+
+            if (motionjoints[i].endPosition.y < dimensions.y)
+            {
+                dimensions = new Vector4(dimensions.x, motionjoints[i].endPosition.y, dimensions.z, dimensions.w);
+            }
+
+            if (motionjoints[i].endPosition.x > dimensions.z)
+            {
+                dimensions = new Vector4(dimensions.x, dimensions.y, motionjoints[i].endPosition.x, dimensions.w);
+            }
+
+            if (motionjoints[i].endPosition.y > dimensions.w)
+            {
+                dimensions = new Vector4(dimensions.x, dimensions.y, dimensions.z, motionjoints[i].endPosition.y);
+            }
+
+            if (motionjoints[i].endPosition.z < minZ)
+            {
+                minZ = motionjoints[i].endPosition.z;
+            }
+        }
+
+        return dimensions;
     }
 
     /*public void InitPrinting()

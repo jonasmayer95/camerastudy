@@ -34,6 +34,7 @@ public class BallFeedback : InseilFeedback {
 	// Update is called once per frame
 	void Update () {
 
+        relPos = relToObject.position;
         transform.position = relPos + positions[index];
         ballRenderer.enabled = showBall;
 
@@ -130,7 +131,7 @@ public class BallFeedback : InseilFeedback {
 
     void OnTriggerExit(Collider other)
     {
-        if (other.gameObject == joint)
+        if (other.gameObject == joint && motionjoint)
         {
             //ballRenderer.material.color = colorFar;
         }
