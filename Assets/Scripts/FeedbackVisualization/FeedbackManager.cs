@@ -2,14 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public enum FeedbackType
+public enum ExerciseExplanation
 {
-    BallFeedback, AreaFeedback, ImageFeedback3D, CameraFeedback
+    BallFeedback
 }
 
 public abstract class InseilFeedback : MonoBehaviour
 {
-    public FeedbackType type;
+    public ExerciseExplanation type;
 
     public abstract void InitFeedback(StaticJoint joint, Transform relTo, BoneMap bones);
     public abstract void InitFeedback(MotionJoint joint, Transform relTo, BoneMap bones);
@@ -20,7 +20,7 @@ public class FeedbackManager : MonoBehaviour {
     // Singleton
     public static FeedbackManager instance;
 
-    public List<FeedbackType> feedbackTypes = new List<FeedbackType>();
+    public List<ExerciseExplanation> feedbackTypes = new List<ExerciseExplanation>();
 
     //Exercise Data
     public float bodyHeight;
@@ -107,7 +107,7 @@ public class FeedbackManager : MonoBehaviour {
     public void ShowFeedback(int type)
     {
         // Tells feedback which feedback state is active at the moment
-        exercises[index].enabledFeedBackType = (FeedbackType)type;
+        exercises[index].enabledFeedBackType = (ExerciseExplanation)type;
     }
 
     // Called by GUI

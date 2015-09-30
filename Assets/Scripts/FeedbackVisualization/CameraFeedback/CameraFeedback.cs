@@ -7,7 +7,7 @@ public enum CameraFeedbackMode
     LinearArrow, Cylinder
 }
 
-public class CameraFeedback : InseilFeedback {
+public class CameraFeedback : MonoBehaviour {
 
     // Camera Setup
     public float camDistance;
@@ -40,18 +40,20 @@ public class CameraFeedback : InseilFeedback {
     private GameObject line3D;
     private LineRenderer rend;
 
+    private bool initialized = false;
+
 
 	// Use this for initialization
     void Start()
     {
         // Spawn a sphere to show the target position for debugging
-        targetSphere = Instantiate(targetSpherePrefab, feedbackAvatar_hip.position + positions[index], Quaternion.identity) as GameObject;
+        targetSphere = Instantiate(targetSpherePrefab, Vector3.zero, Quaternion.identity) as GameObject;
         targetSphere.GetComponent<Renderer>().material.color = targetSphereColor;
         targetSphere.transform.parent = transform;
         targetSphere.SetActive(false);
 
         // Spawn a linear arrow pointing from the joint to the correct position
-        arrow3D = Instantiate(arrow3DPrefab, feedbackAvatar_joint.position + ((feedbackAvatar_hip.position + positions[index]) - feedbackAvatar_joint.position) / 2.0f, Quaternion.identity) as GameObject;
+        arrow3D = Instantiate(arrow3DPrefab, Vector3.zero, Quaternion.identity) as GameObject;
         arrow3D.transform.parent = transform;
         arrow3D.SetActive(false);
 
@@ -61,51 +63,36 @@ public class CameraFeedback : InseilFeedback {
         rend = line3D.GetComponent<LineRenderer>();
         rend.SetVertexCount(2);
         rend.SetPosition(0, transform.position);
-        rend.SetPosition(1, connectingJoint.position);
+        rend.SetPosition(1, transform.position);
 
         // Spawn a cylinder showing an bent arrow from the joint to the correct position
-        feedbackCylinder = Instantiate(cylinderPrefab, feedbackAvatar_joint.position + ((feedbackAvatar_hip.position + positions[index]) - feedbackAvatar_joint.position) / 2.0f, Quaternion.identity) as GameObject;
+        feedbackCylinder = Instantiate(cylinderPrefab, Vector3.zero, Quaternion.identity) as GameObject;
         feedbackCylinder.transform.parent = transform;
         feedbackCylinder.SetActive(false);
 
         // Init camera position
-        UpdateCameraPosition();
+        //UpdateCameraPosition();
     }
 
-    public override void InitFeedback(StaticJoint joint, Transform relTo, BoneMap bones)
+    public void InitCorrectionWindow(StaticJoint joint, FeedbackCamera_Avatar avatar)
     {
         //throw new System.NotImplementedException();
         positions.Add(joint.targetPosition);
 
         Transform bone;
-        bones.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint, bones.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
+        avatar.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint, avatar.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
         connectingJoint = bone;
-        FeedbackCamera_Avatar.instance.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint, bones.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
+        avatar.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint, avatar.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
         feedbackAvatar_joint = bone;
 
-        FeedbackCamera_Avatar.instance.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey("spinebase", bones.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
+        avatar.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey("spinebase", avatar.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
         feedbackAvatar_hip = bone;
 
-        feedbackCamera = FeedbackCamera_Avatar.instance.feedbackCamera;
-    }
+        feedbackCamera = avatar.feedbackCamera;
 
-    public override void InitFeedback(MotionJoint joint, Transform relTo, BoneMap bones)
-    {
-        //throw new System.NotImplementedException();
-        positions.Add(joint.startPosition);
-        positions.Add(joint.endPosition);
+        initialized = true;
 
-        Transform bone;
-        bones.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint, bones.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
-        connectingJoint = bone;
-
-        FeedbackCamera_Avatar.instance.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint, bones.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
-        feedbackAvatar_joint = bone;
-
-        FeedbackCamera_Avatar.instance.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey("spinebase", bones.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
-        feedbackAvatar_hip = bone;
-
-        feedbackCamera = FeedbackCamera_Avatar.instance.feedbackCamera;
+        UpdateCameraPosition();
     }
 
     void OnEnable()
@@ -124,9 +111,9 @@ public class CameraFeedback : InseilFeedback {
     // Update is called once per frame
     void Update()
     {
-        // Show the arrow only when out of tolerance
-        if (Vector3.Distance(feedbackAvatar_joint.position - feedbackAvatar_hip.position, positions[index]) > tolerance)
+        if (initialized)
         {
+            Debug.Log("Enabled");
             // Show sphere at target position (for debugging)
             targetSphere.SetActive(true);
             targetSphere.transform.position = feedbackAvatar_hip.position + positions[index];
@@ -163,7 +150,7 @@ public class CameraFeedback : InseilFeedback {
                 Vector2 projectedErrorVector;
                 projectedErrorVector = (targetSphere.transform.position - feedbackAvatar_joint.position).normalized;
                 Vector3 eulerOrientation = Vector3.Cross(projectedErrorVector, feedbackCamera.transform.forward.normalized);
-                
+
                 // Upper Left
                 if (feedbackAvatar_joint.position.y - targetSphere.transform.position.y >= 0 && targetSphere.transform.position.x - feedbackAvatar_joint.position.x > 0)
                 {
@@ -171,7 +158,7 @@ public class CameraFeedback : InseilFeedback {
                     Debug.Log("Now upper left ");
 
                     Quaternion upRotation = Quaternion.FromToRotation(-feedbackCylinder.transform.forward, eulerOrientation);
-                    feedbackCylinder.transform.rotation = Quaternion.Slerp(feedbackCylinder.transform.rotation, upRotation, Time.deltaTime * 20);                    
+                    feedbackCylinder.transform.rotation = Quaternion.Slerp(feedbackCylinder.transform.rotation, upRotation, Time.deltaTime * 20);
                 }
 
                 // Bottom Left
@@ -181,12 +168,12 @@ public class CameraFeedback : InseilFeedback {
                     Debug.Log("Now bottom left ");
 
                     Quaternion upRotation = Quaternion.FromToRotation(-feedbackCylinder.transform.forward, eulerOrientation) * Quaternion.Euler(180, 0, 0);
-                    feedbackCylinder.transform.rotation = Quaternion.Slerp(feedbackCylinder.transform.rotation, upRotation, Time.deltaTime * 20); 
-                }                
+                    feedbackCylinder.transform.rotation = Quaternion.Slerp(feedbackCylinder.transform.rotation, upRotation, Time.deltaTime * 20);
+                }
 
                 // Upper Right
                 if (feedbackAvatar_joint.position.y - targetSphere.transform.position.y > 0 && feedbackAvatar_joint.position.x - targetSphere.transform.position.x >= 0)
-                {                    
+                {
                     Debug.Log("Now upper right ");
                     feedbackCylinder.GetComponent<Renderer>().material.SetTextureScale("_MainTex", new Vector2(1, 1));
                     Quaternion upRotation = Quaternion.FromToRotation(feedbackCylinder.transform.forward, eulerOrientation) * Quaternion.Euler(0, 0, 180);
@@ -195,33 +182,35 @@ public class CameraFeedback : InseilFeedback {
 
                 // Bottom right
                 if (targetSphere.transform.position.y - feedbackAvatar_joint.position.y >= 0 && feedbackAvatar_joint.position.x - targetSphere.transform.position.x >= 0)
-                {                    
+                {
                     Debug.Log("Now bottom right ");
                     feedbackCylinder.GetComponent<Renderer>().material.SetTextureScale("_MainTex", new Vector2(1, 1));
                     Quaternion upRotation = Quaternion.FromToRotation(feedbackCylinder.transform.forward, eulerOrientation) * Quaternion.Euler(0, 180, 0);
-                    feedbackCylinder.transform.rotation = Quaternion.Slerp(feedbackCylinder.transform.rotation, upRotation, Time.deltaTime * 20); 
+                    feedbackCylinder.transform.rotation = Quaternion.Slerp(feedbackCylinder.transform.rotation, upRotation, Time.deltaTime * 20);
                 }
 
                 // Activate cylinder
                 feedbackCylinder.SetActive(true);
             }
         }
-        
-        // Within tolerance
+
+
+        // Not active
         else
         {
             // Deactivate sphere and arrow
             targetSphere.SetActive(false);
             arrow3D.SetActive(false);
             feedbackCylinder.SetActive(false);
-        }        
+        }
 
         // Update Camera position
         UpdateCameraPosition();
 
         // Update the end point of the 3D line according to the new position of the joint
         rend.SetPosition(1, connectingJoint.position);
-	}
+
+    }
 
     void UpdateCameraPosition()
     {
@@ -243,6 +232,6 @@ public class CameraFeedback : InseilFeedback {
 
         //feedbackCamera.position = arrow3D.transform.position - camNormal.normalized * camDistance;
         //feedbackCamera.transform.LookAt(feedbackAvatar_joint.transform.position);
-        feedbackCamera.transform.position = feedbackAvatar_joint.transform.position + camDistance * Vector3.forward;
+        feedbackCamera.transform.position = feedbackAvatar_joint.transform.position + camDistance * -Vector3.forward;
     }
 }

@@ -37,7 +37,7 @@ MeshRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 176790}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_Materials:
@@ -85,13 +85,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 866702fa97a41e44dba778890f0e4b35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 3
   camDistance: .75
   feedbackCamera: {fileID: 0}
   feedbackAvatar_hip: {fileID: 0}
   feedbackAvatar_joint: {fileID: 0}
   connectingJoint: {fileID: 0}
-  relTargetPos: {x: -.150000006, y: .150000006, z: -.200000003}
+  positions: []
   tolerance: .200000003
   cameraFeedbackMode: 1
   targetSpherePrefab: {fileID: 162198, guid: 4d932e12d8da59746990cd4af1135d9d, type: 2}

@@ -55,8 +55,8 @@ public class InseilExercise : MonoBehaviour {
     private List<MotionJoint> motionjoints;
 
     // Feedback
-    public FeedbackType enabledFeedBackType;
-    private List<FeedbackType> feedbackTypes = new List<FeedbackType>();
+    public ExerciseExplanation enabledFeedBackType;
+    private List<ExerciseExplanation> feedbackTypes = new List<ExerciseExplanation>();
     private Dictionary<InseilFeedback, StreamWriter> feedbackList = new Dictionary<InseilFeedback, StreamWriter>();
     private BoneMap avatar;
     private Vector2 minDimension, maxDimension;
@@ -83,7 +83,7 @@ public class InseilExercise : MonoBehaviour {
             maxDimension + new Vector2(coordinatesRelToJoint.position.x, coordinatesRelToJoint.position.y), minZ + coordinatesRelToJoint.position.z, coordinatesRelToJoint);*/
     }
 
-    public void InitExercise(string exerciseName, ExerciseInfo info, List<FeedbackType> feedbackTypes, float bodyHeight, Transform relTo, BoneMap avatar)
+    public void InitExercise(string exerciseName, ExerciseInfo info, List<ExerciseExplanation> feedbackTypes, float bodyHeight, Transform relTo, BoneMap avatar)
     {
         this.exerciseName = exerciseName;
         this.feedbackTypes = feedbackTypes;
@@ -152,16 +152,23 @@ public class InseilExercise : MonoBehaviour {
         }
 
         InitAndSpawnFeedback();
+        InitPostureCorrection();
     }
 
-    
+    private void InitPostureCorrection()
+    {
+        for (int i = 0; i < staticjoints.Count; i++)
+        {
+            CorrectionManager.instance.AddJointToObserve(staticjoints[i]);
+        }
+    }
 
     // Init and spawn all feedback interesting for this exercise here as child of this exercise 
-    public void InitAndSpawnFeedback()
+    private void InitAndSpawnFeedback()
     {
 
         // Init every type
-        foreach (FeedbackType feedbackType in feedbackTypes)
+        foreach (ExerciseExplanation feedbackType in feedbackTypes)
         {
             // Spawn category object in hierarchy
             GameObject feedbackTypeObject = new GameObject(feedbackType.ToString());
@@ -346,7 +353,7 @@ public class InseilExercise : MonoBehaviour {
                 iFB.gameObject.SetActive(true);
 
                 // Print ballFeedback info
-                if (iFB.type == FeedbackType.BallFeedback)
+                if (iFB.type == ExerciseExplanation.BallFeedback)
                 {
                     BallFeedback targetBall = (BallFeedback)iFB;
 
@@ -357,23 +364,6 @@ public class InseilExercise : MonoBehaviour {
                     }
                 }
 
-                // Print areaFeedback info
-                if (iFB.type == FeedbackType.AreaFeedback)
-                {
-                    AreaFeedback area = (AreaFeedback)iFB;
-
-                    // ToDo: Print Info
-                    PrintExerciseInfo(area, feedbackList[iFB]);
-                }
-
-                // Print imageFeedback info
-                if (iFB.type == FeedbackType.ImageFeedback3D)
-                {
-                    ImageFeedback3D image = (ImageFeedback3D)iFB;
-
-                    // ToDO: Print Info
-                    PrintExerciseInfo(image, feedbackList[iFB]);
-                }
             }
 
             else
