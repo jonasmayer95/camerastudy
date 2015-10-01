@@ -3,6 +3,7 @@ using System.Collections;
 using NetMQ;
 using NetMQ.Sockets;
 using FullSerializer;
+using SimpleJSON;
 
 public class ServerCommunication : MonoBehaviour
 {
@@ -33,9 +34,9 @@ public class ServerCommunication : MonoBehaviour
         {
             //assuming we get everything in a single frame
             json = serverMessage.First.ConvertToString();
-            im.measurement.data.Clear();
-            Deserialize<InseilMessage>(json, ref im);
-
+            im.measurement.data.Clear(); //move this into deserialize
+            //Deserialize<InseilMessage>(json, ref im);
+            Deserialize(json, ref im);
             //Debug.Log(message.measurement.data["spinebase"].ToString());
 
             //uncomment as soon as the code is ubitrack-ready
@@ -115,5 +116,27 @@ public class ServerCommunication : MonoBehaviour
 
         //change this to AssertSuccess to disable exception handling
         serializer.TryDeserialize<T>(data, ref instance).AssertSuccessWithoutWarnings();
+    }
+
+    private void Deserialize(string json, ref InseilMessage msg)
+    {
+        var jsonObj = JSON.Parse(json);
+        msg.version = uint.Parse(jsonObj["protocol_version"].Value);
+        msg.id = jsonObj["id"].Value;
+        msg.sendtime = ulong.Parse(jsonObj["sendtime"].Value);
+
+        msg.measurement.timestamp = ulong.Parse(jsonObj["measurement"]["timestamp"].Value);
+
+        InseilJoint tmp = new InseilJoint();
+        JSONNode joints = jsonObj["measurement"]["data"];
+
+        foreach (var child in joints.Childs)
+        {
+
+            var p = new InseilPosition(child["position"]["x"].AsDouble, child["position"]["y"].AsDouble, child["position"]["z"].AsDouble);
+            var r = new InseilRotation(child["position"]["x"].AsDouble, child["position"]["y"].AsDouble, child["position"]["z"].AsDouble, child["position"]["w"].AsDouble);
+        }
+
+        //alright, since there is no proper way to get the key of a node
     }
 }

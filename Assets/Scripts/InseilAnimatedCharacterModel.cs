@@ -46,7 +46,7 @@ public class InseilAnimatedCharacterModel : MonoBehaviour
     public Transform model_root;
 
     // Dictionaries containing reference information
-    private Dictionary<string, Transform> model_Joints = new Dictionary<string, Transform>();                       // Contains model rigg
+    private Dictionary<string, Transform> model_Joints = new Dictionary<string, Transform>();                       // Contains model rig
     private Dictionary<string, Vector3> model_InitialJointPositions = new Dictionary<string, Vector3>();            // Used to calculate orientation of spinebase
     private Dictionary<string, Quaternion> model_InitialJointOrientations = new Dictionary<string, Quaternion>();   // Used to calculate new joint orientations (for reference)
     protected Dictionary<string, Vector3> model_InitialJointDirections = new Dictionary<string, Vector3>();         // Used to calculate new joint orientations    

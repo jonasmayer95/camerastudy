@@ -13,6 +13,13 @@ using FullSerializer;
 
 public struct InseilPosition
 {
+    public InseilPosition(double x, double y, double z)
+    {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
     public double x;
     public double y;
     public double z;
@@ -26,6 +33,14 @@ public struct InseilPosition
 
 public struct InseilRotation
 {
+    public InseilRotation(double x, double y, double z, double w)
+    {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.w = w;
+    }
+
     public double x;
     public double y;
     public double z;
