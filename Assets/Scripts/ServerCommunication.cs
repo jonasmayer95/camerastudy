@@ -34,7 +34,7 @@ public class ServerCommunication : MonoBehaviour
         {
             //assuming we get everything in a single frame
             json = serverMessage.First.ConvertToString();
-            im.measurement.data.Clear(); //move this into deserialize
+            
             //Deserialize<InseilMessage>(json, ref im);
             Deserialize(json, ref im);
             //Debug.Log(message.measurement.data["spinebase"].ToString());
@@ -120,23 +120,26 @@ public class ServerCommunication : MonoBehaviour
 
     private void Deserialize(string json, ref InseilMessage msg)
     {
+        msg.measurement.data.Clear();
+
         var jsonObj = JSON.Parse(json);
         msg.version = uint.Parse(jsonObj["protocol_version"].Value);
         msg.id = jsonObj["id"].Value;
-        msg.sendtime = ulong.Parse(jsonObj["sendtime"].Value);
+        msg.sendtime = (ulong)jsonObj["sendtime"].AsDouble;
 
-        msg.measurement.timestamp = ulong.Parse(jsonObj["measurement"]["timestamp"].Value);
+        msg.measurement.timestamp = (ulong)jsonObj["measurement"]["timestamp"].AsDouble;
 
-        InseilJoint tmp = new InseilJoint();
+        //InseilJoint tmp = new InseilJoint();
         JSONNode joints = jsonObj["measurement"]["data"];
 
-        foreach (var child in joints.Childs)
+        foreach (var key in joints.Keys)
         {
+            //nice and simple thanks to http://answers.unity3d.com/questions/648066/how-to-get-the-keys-of-a-dictionary-.html
 
-            var p = new InseilPosition(child["position"]["x"].AsDouble, child["position"]["y"].AsDouble, child["position"]["z"].AsDouble);
-            var r = new InseilRotation(child["position"]["x"].AsDouble, child["position"]["y"].AsDouble, child["position"]["z"].AsDouble, child["position"]["w"].AsDouble);
+            var joint = new InseilJoint(joints[key]["p"]["x"].AsDouble, joints[key]["p"]["y"].AsDouble, joints[key]["p"]["z"].AsDouble,
+                joints[key]["r"]["x"].AsDouble, joints[key]["r"]["y"].AsDouble, joints[key]["r"]["z"].AsDouble, joints[key]["r"]["w"].AsDouble);
+            
+            msg.measurement.data.Add(key, joint);
         }
-
-        //alright, since there is no proper way to get the key of a node
     }
 }
