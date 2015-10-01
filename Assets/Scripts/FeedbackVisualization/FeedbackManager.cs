@@ -119,6 +119,7 @@ public class FeedbackManager : MonoBehaviour {
             exercises[index].gameObject.SetActive(false);
             index = id;
             exercises[index].gameObject.SetActive(true);
+            InseilMainCamera.instance.ResetCamera();
         }
     }
 

@@ -13,6 +13,7 @@ public class InseilMainCamera : MonoBehaviour {
     private Transform relTo;
     Vector3 closePos = Vector3.zero;
     private bool following = false;
+    private Vector3 startPos;
 
     void Awake()
     {
@@ -23,6 +24,7 @@ public class InseilMainCamera : MonoBehaviour {
 	void Start () {
 
         cam = GetComponent<Camera>();
+        startPos = transform.position;
 	}
 	
 	// Update is called once per frame
@@ -44,6 +46,12 @@ public class InseilMainCamera : MonoBehaviour {
         this.maxPositions = maxPositions;
         this.minZ = minZ;
         this.relTo = relTo;
+    }
+
+    public void ResetCamera()
+    {
+        transform.position = startPos;
+        following = false;
     }
 
     private void UpdateCameraPosition()
