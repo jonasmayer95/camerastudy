@@ -3,7 +3,7 @@ using System.Collections;
 using NetMQ;
 using NetMQ.Sockets;
 using FullSerializer;
-using SimpleJSON;
+using NetJSON;
 
 public class ServerCommunication : MonoBehaviour
 {
@@ -24,6 +24,8 @@ public class ServerCommunication : MonoBehaviour
     {
         instance = this;
         im = new InseilMessage();
+        NetJSON.NetJSON.IncludeFields = true;
+        NetJSON.NetJSON.SkipDefaultValue = false;
     }
 
     void Update()
@@ -36,12 +38,13 @@ public class ServerCommunication : MonoBehaviour
             json = serverMessage.First.ConvertToString();
             
             //Deserialize<InseilMessage>(json, ref im);
-            Deserialize(json, ref im);
-            //Debug.Log(message.measurement.data["spinebase"].ToString());
+            //Deserialize(json, ref im);
+            im = NetJSON.NetJSON.Deserialize<InseilMessage>(json);
 
             //uncomment as soon as the code is ubitrack-ready
-            UbitrackManager.instance.UpdateInseilMeasurement(im.measurement);
-            UbitrackManager.instance.recievedData = true;
+            //UbitrackManager.instance.UpdateInseilMeasurement(im.measurement);
+            //UbitrackManager.instance.recievedData = true;
+            UbitrackManager.instance.GenerateBodyData(im.measurement);
         }
     }
 
@@ -104,42 +107,44 @@ public class ServerCommunication : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Deserializes a JSON string into an instance of the passed type.
-    /// </summary>
-    /// <typeparam name="T">The type into which to deserialize</typeparam>
-    /// <param name="instance">An instance of T</param>
-    /// <param name="json">The JSON string to deserialize</param>
-    private void Deserialize<T>(string json, ref T instance)
-    {
-        fsData data = fsJsonParser.Parse(json);
+    ///// <summary>
+    ///// Deserializes a JSON string into an instance of the passed type.
+    ///// </summary>
+    ///// <typeparam name="T">The type into which to deserialize</typeparam>
+    ///// <param name="instance">An instance of T</param>
+    ///// <param name="json">The JSON string to deserialize</param>
+    //private void Deserialize<T>(string json, ref T instance)
+    //{
+    //    fsData data = fsJsonParser.Parse(json);
 
-        //change this to AssertSuccess to disable exception handling
-        serializer.TryDeserialize<T>(data, ref instance).AssertSuccessWithoutWarnings();
-    }
+    //    //change this to AssertSuccess to disable exception handling
+    //    serializer.TryDeserialize<T>(data, ref instance).AssertSuccessWithoutWarnings();
+    //}
 
-    private void Deserialize(string json, ref InseilMessage msg)
-    {
-        msg.measurement.data.Clear();
 
-        var jsonObj = JSON.Parse(json);
-        msg.version = uint.Parse(jsonObj["protocol_version"].Value);
-        msg.id = jsonObj["id"].Value;
-        msg.sendtime = (ulong)jsonObj["sendtime"].AsDouble;
 
-        msg.measurement.timestamp = (ulong)jsonObj["measurement"]["timestamp"].AsDouble;
+    //private void Deserialize(string json, ref InseilMessage msg)
+    //{
+    //    msg.measurement.data.Clear();
 
-        //InseilJoint tmp = new InseilJoint();
-        JSONNode joints = jsonObj["measurement"]["data"];
+    //    var jsonObj = JSON.Parse(json);
+    //    msg.version = uint.Parse(jsonObj["protocol_version"].Value);
+    //    msg.id = jsonObj["id"].Value;
+    //    msg.sendtime = (ulong)jsonObj["sendtime"].AsDouble;
 
-        foreach (var key in joints.Keys)
-        {
-            //nice and simple thanks to http://answers.unity3d.com/questions/648066/how-to-get-the-keys-of-a-dictionary-.html
+    //    msg.measurement.timestamp = (ulong)jsonObj["measurement"]["timestamp"].AsDouble;
 
-            var joint = new InseilJoint(joints[key]["p"]["x"].AsDouble, joints[key]["p"]["y"].AsDouble, joints[key]["p"]["z"].AsDouble,
-                joints[key]["r"]["x"].AsDouble, joints[key]["r"]["y"].AsDouble, joints[key]["r"]["z"].AsDouble, joints[key]["r"]["w"].AsDouble);
+    //    //InseilJoint tmp = new InseilJoint();
+    //    JSONNode joints = jsonObj["measurement"]["data"];
+
+    //    foreach (var key in joints.Keys)
+    //    {
+    //        //nice and simple thanks to http://answers.unity3d.com/questions/648066/how-to-get-the-keys-of-a-dictionary-.html
+
+    //        var joint = new InseilJoint(joints[key]["p"]["x"].AsDouble, joints[key]["p"]["y"].AsDouble, joints[key]["p"]["z"].AsDouble,
+    //            joints[key]["r"]["x"].AsDouble, joints[key]["r"]["y"].AsDouble, joints[key]["r"]["z"].AsDouble, joints[key]["r"]["w"].AsDouble);
             
-            msg.measurement.data.Add(key, joint);
-        }
-    }
+    //        msg.measurement.data.Add(key, joint);
+    //    }
+    //}
 }

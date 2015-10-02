@@ -52,29 +52,35 @@ public struct InseilRotation
     }
 }
 
-[fsObject(Converter = typeof(InseilJointConverter))]
+//[fsObject(Converter = typeof(InseilJointConverter))]
 public struct InseilJoint
 {
     public InseilJoint(double px, double py, double pz, double rx, double ry, double rz, double rw)
     {
-        position = new InseilPosition();
-        position.x = px;
-        position.y = py;
-        position.z = pz;
+        p = new InseilPosition();
+        p.x = px;
+        p.y = py;
+        p.z = pz;
 
-        rotation = new InseilRotation();
-        rotation.x = rx;
-        rotation.y = ry;
-        rotation.z = rz;
-        rotation.w = rw;
+        r = new InseilRotation();
+        r.x = rx;
+        r.y = ry;
+        r.z = rz;
+        r.w = rw;
     }
 
-    public InseilPosition position;
-    public InseilRotation rotation;
+    //public InseilJoint()
+    //{
+    //    position = new InseilPosition();
+    //    rotation = new InseilRotation();
+    //}
+
+    public InseilPosition p;
+    public InseilRotation r;
 
     public override string ToString()
     {
-        return string.Concat(position.ToString(), rotation.ToString());
+        return string.Concat(p.ToString(), r.ToString());
     }
 }
 
@@ -195,7 +201,7 @@ public class InseilMeasurement
 }
 public class InseilMessage
 {
-    public UInt32 version;
+    public UInt32 protocol_version;
     public string id;
     public InseilMeasurement measurement;
     public UInt64 sendtime;
@@ -208,7 +214,7 @@ public class InseilMessage
     public override string ToString()
     {
         StringBuilder sb = new StringBuilder();
-        sb.Append(string.Concat(version.ToString(), "\n"));
+        sb.Append(string.Concat(protocol_version.ToString(), "\n"));
         sb.Append(string.Concat(id, "\n"));
         sb.Append(string.Concat(measurement.ToString(), "\n"));
         sb.Append(string.Concat(sendtime, "\n"));

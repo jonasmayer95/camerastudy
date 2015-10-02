@@ -47,14 +47,14 @@ class UbitrackManager : MonoBehaviour
        
     }
 
-    void Update()
-    {
-        if(measurement != null && recievedData)
-        {
-            recievedData = false;
-            GenerateBodyData(measurement);
-        }
-    }
+    //void Update()
+    //{
+        //if(measurement != null && recievedData)
+        //{
+        //    recievedData = false;
+        //    GenerateBodyData(measurement);
+        //}
+    //}
 
     public void UpdateInseilMeasurement(InseilMeasurement m)
     {
@@ -96,9 +96,9 @@ class UbitrackManager : MonoBehaviour
 
             if (type == JointType.FloorPlane)
             {
-                Vector3 rot = new Vector3((float)joint.Value.rotation.x, (float)joint.Value.rotation.y, (float)joint.Value.rotation.z);
+                Vector3 rot = new Vector3((float)joint.Value.r.x, (float)joint.Value.r.y, (float)joint.Value.r.z);
                 Quaternion sensorRotDetected = Quaternion.FromToRotation(rot, Vector3.up);
-                float sensorHgtDetected = (float)joint.Value.rotation.w;
+                float sensorHgtDetected = (float)joint.Value.r.w;
 
                 float angle = sensorRotDetected.eulerAngles.x;
                 angle = angle > 180f ? (angle - 360f) : angle;
@@ -111,7 +111,7 @@ class UbitrackManager : MonoBehaviour
             //set its position and orientation
             UTJointData jointData = new UTJointData();
             jointData.jointType = type;
-            jointData.kinectPos = new Vector3((float)joint.Value.position.x, (float)joint.Value.position.y, (float)joint.Value.position.z);
+            jointData.kinectPos = new Vector3((float)joint.Value.p.x, (float)joint.Value.p.y, (float)joint.Value.p.z);
             jointData.position = kinectToWorld.MultiplyPoint3x4(jointData.kinectPos);
 
             //for some reason orientations from the sensor interface are not used, hence the 'deprecated' comment

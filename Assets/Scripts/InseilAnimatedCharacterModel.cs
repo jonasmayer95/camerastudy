@@ -132,10 +132,10 @@ public class InseilAnimatedCharacterModel : MonoBehaviour
                 continue;
 
             // Fetch new position data
-            model_CurrentJointPositions[joint.Key] = new Vector3((float)(joint.Value.position.x), (float)(joint.Value.position.y), (float)(joint.Value.position.z));
+            model_CurrentJointPositions[joint.Key] = new Vector3((float)(joint.Value.p.x), (float)(joint.Value.p.y), (float)(joint.Value.p.z));
 
             // Fetch new rotation data
-            model_CurrentJointOrientations[joint.Key] = Quaternion.Euler(new Vector3((float)(joint.Value.rotation.x), (float)(joint.Value.rotation.y), (float)(joint.Value.rotation.z)));
+            model_CurrentJointOrientations[joint.Key] = Quaternion.Euler(new Vector3((float)(joint.Value.r.x), (float)(joint.Value.r.y), (float)(joint.Value.r.z)));
 
             // the applyRelativeRotationChange function returns the new "local rotation" relative to the RootTransform Rotation...
             Quaternion localRotTowardsRootTransform = applyRelativeRotationChange(joint.Key, model_InitialJointOrientations[joint.Key]);
@@ -148,7 +148,7 @@ public class InseilAnimatedCharacterModel : MonoBehaviour
             // debug: show computed rotatations
             //----->model_Joints[joint.Key].rotation = applyRelativeRotationChange(joint.Key, Quaternion.identity);
 
-            Debug.Log(string.Format("{0} {1} {2}\n", joint.Key, joint.Value.position, model_CurrentJointPositions[joint.Key]));
+            Debug.Log(string.Format("{0} {1} {2}\n", joint.Key, joint.Value.p, model_CurrentJointPositions[joint.Key]));
         }
 
         // additional operations for not default joints
