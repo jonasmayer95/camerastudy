@@ -74,9 +74,10 @@ public class BoneMap : MonoBehaviour {
                 case "shoulderleft":
                     return "LeftShoulder";
                 case "elbowleft":
-                    return "LeftArm";
-                case "wristleft":
                     return "LeftForeArm";
+                //    return "LeftArm";
+                //case "wristleft":
+                //    return "LeftForeArm";
                 case "handleft":
                     return "LeftHand";
                 case "fingersleft":
@@ -86,9 +87,10 @@ public class BoneMap : MonoBehaviour {
                 case "shoulderright":
                     return "RightShoulder";
                 case "elbowright":
-                    return "RightArm";
-                case "wristright":
                     return "RightForeArm";
+                //    return "RightArm";
+                //case "wristright":
+                //    return "RightForeArm";
                 case "handright":
                     return "RightHand";
                 case "fingersright":
@@ -135,9 +137,10 @@ public class BoneMap : MonoBehaviour {
                 case "shoulderleft":
                     return "RightShoulder";
                 case "elbowleft":
-                    return "RightArm";
-                case "wristleft":
                     return "RightForeArm";
+                //    return "RightArm";
+                //case "wristleft":
+                //    return "RightForeArm";
                 case "handleft":
                     return "RightHand";
                 case "fingersleft":
