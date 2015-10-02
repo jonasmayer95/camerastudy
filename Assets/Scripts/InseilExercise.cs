@@ -13,6 +13,7 @@ public class ExerciseInfo
 
 public abstract class ExerciseJoint
 {
+    public float tolerance;
 }
 
 public class StaticJoint : ExerciseJoint
@@ -20,8 +21,9 @@ public class StaticJoint : ExerciseJoint
     public Vector3 targetPosition;
     public string joint;
 
-    public StaticJoint(Vector3 targetPosition, string joint)
+    public StaticJoint(Vector3 targetPosition, string joint, float tolerance)
     {
+        this.tolerance = tolerance;
         this.targetPosition = targetPosition;
         this.joint = joint;
     }
@@ -32,8 +34,9 @@ public class MotionJoint : ExerciseJoint
     public Vector3 endPosition;
     public string joint;
 
-    public MotionJoint(Vector3 startPosition, Vector3 endPosition, string joint)
+    public MotionJoint(Vector3 startPosition, Vector3 endPosition, string joint, float tolerance)
     {
+        this.tolerance = tolerance;
         this.startPosition = startPosition;
         this.endPosition = endPosition;
         this.joint = joint;
@@ -110,7 +113,7 @@ public class InseilExercise : MonoBehaviour {
         {
             if(exerciseConstraints[i].type == "static")
             {
-                staticjoints.Add(new StaticJoint(exerciseConstraints[i].position * bodyHeight, exerciseConstraints[i].joint));
+                staticjoints.Add(new StaticJoint(exerciseConstraints[i].position * bodyHeight, exerciseConstraints[i].joint, exerciseConstraints[i].tolerance));
             }
             else
             {
@@ -118,11 +121,11 @@ public class InseilExercise : MonoBehaviour {
                 {
                     if (exerciseConstraints[i].type == "motion_start")
                     {
-                        motionjoints.Add(new MotionJoint(exerciseConstraints[i].position * bodyHeight, Vector3.zero, exerciseConstraints[i].joint));
+                        motionjoints.Add(new MotionJoint(exerciseConstraints[i].position * bodyHeight, Vector3.zero, exerciseConstraints[i].joint, exerciseConstraints[i].tolerance));
                     }
                     else
                     {
-                        motionjoints.Add(new MotionJoint(Vector3.zero, exerciseConstraints[i].position * bodyHeight, exerciseConstraints[i].joint));
+                        motionjoints.Add(new MotionJoint(Vector3.zero, exerciseConstraints[i].position * bodyHeight, exerciseConstraints[i].joint, exerciseConstraints[i].tolerance));
                     }
                 }
                 else if (ContainsJointName(exerciseConstraints[i].joint))
