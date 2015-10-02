@@ -94,7 +94,7 @@ public class CorrectionManager : MonoBehaviour {
         foreach (PostureError error in postureErrors.Values)
         {
             error.errorDistance = Vector3.Distance(relTo.position + error.staticJoint.targetPosition, error.joint.position);
-            Debug.Log("Error: " + error.errorDistance + " Name: " + error.staticJoint.joint + " Transform: " + error.joint.name);
+            //Debug.Log("Error: " + error.errorDistance + " Name: " + error.staticJoint.joint + " Transform: " + error.joint.name);
         }
     }
 
@@ -115,7 +115,7 @@ public class CorrectionManager : MonoBehaviour {
         {
             cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar);
             cameraFeedback.cameraFeedbackMode = mode;
-            Debug.Log("greatest error: " + postureErrors[joint].errorDistance + " Name: " + postureErrors[joint].staticJoint.joint);
+            //Debug.Log("greatest error: " + postureErrors[joint].errorDistance + " Name: " + postureErrors[joint].staticJoint.joint);
             correcting = true;
         }
 

@@ -79,6 +79,8 @@ public class CameraFeedback : MonoBehaviour {
         //throw new System.NotImplementedException();
         positions.Add(joint.targetPosition);
 
+        Debug.Log(joint.joint);
+
         Transform bone;
         avatar.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint, avatar.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
         connectingJoint = bone;
@@ -91,7 +93,7 @@ public class CameraFeedback : MonoBehaviour {
         feedbackCamera = avatar.feedbackCamera;
 
         initialized = true;
-
+        
         UpdateCameraPosition();
     }
 
