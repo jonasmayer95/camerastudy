@@ -75,23 +75,24 @@ public class CameraFeedback : MonoBehaviour {
         positions.Add(Vector3.zero);
     }
 
-    public void InitCorrectionWindow(StaticJoint joint, FeedbackCamera_Avatar avatar)
+    public void InitCorrectionWindow(StaticJoint joint, FeedbackCamera_Avatar cameraAvatar, BoneMap basicAvatar, Vector3 windowPosition)
     {
         //throw new System.NotImplementedException();
         positions[0] = joint.targetPosition;
 
-        Debug.Log(joint.joint);
-
         Transform bone;
-        avatar.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint, avatar.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
+        basicAvatar.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint, basicAvatar.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
         connectingJoint = bone;
-        avatar.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint, avatar.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
+
+        cameraAvatar.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey(joint.joint, cameraAvatar.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
         feedbackAvatar_joint = bone;
 
-        avatar.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey("spinebase", avatar.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
+        cameraAvatar.GetBoneMap().TryGetValue(BoneMap.GetBoneMapKey("spinebase", cameraAvatar.gameObject.GetComponent<AvatarController>().mirroredMovement), out bone);
         feedbackAvatar_hip = bone;
 
-        feedbackCamera = avatar.feedbackCamera;
+        feedbackCamera = cameraAvatar.feedbackCamera;
+
+        rend.SetPosition(0, windowPosition);
 
         initialized = true;
         
@@ -234,6 +235,6 @@ public class CameraFeedback : MonoBehaviour {
 
         //feedbackCamera.position = arrow3D.transform.position - camNormal.normalized * camDistance;
         //feedbackCamera.transform.LookAt(feedbackAvatar_joint.transform.position);
-        feedbackCamera.transform.position = feedbackAvatar_joint.transform.position + camDistance * -Vector3.forward;
+        feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * -Vector3.forward;
     }
 }

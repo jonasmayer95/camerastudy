@@ -20,18 +20,23 @@ public class PostureError
 
 public class CorrectionManager : MonoBehaviour {
 
+    public Vector2 relativeRectPos;
     public static CorrectionManager instance;
     public CameraFeedbackMode mode;
     public float tolerance;
     public Camera correctionCamera;
     public GameObject cameraFeedbackPrefab;
     public FeedbackCamera_Avatar correctionAvatar;
+    public BoneMap avatar;
     public Transform relTo;
     public RenderTexture cameraImageRenderTexture;
     private CameraFeedback cameraFeedback;
     private Rect feedbackWindow;
     private Dictionary<Transform, PostureError> postureErrors = new Dictionary<Transform,PostureError>();
     private bool correcting = false;
+    private Vector2 rectPos;
+    private Camera mainCam;
+    private Vector2 rectSize;
 
 
     void Awake()
@@ -43,6 +48,7 @@ public class CorrectionManager : MonoBehaviour {
 	void Start ()
     {
         SpawnCorrectionWindow();
+        mainCam = InseilMainCamera.instance.GetComponent<Camera>();
 	}
 	
 	// Update is called once per frame
@@ -81,11 +87,10 @@ public class CorrectionManager : MonoBehaviour {
     {
         if (correcting)
         {
-            Camera mainCam = InseilMainCamera.instance.GetComponent<Camera>();
-            Vector2 rectPos = new Vector2(Screen.width * 0.1f, Screen.height * 0.25f);
-            Vector2 rectSize = new Vector2(Screen.width * 0.2f, Screen.width * 0.2f);
+            rectPos = new Vector2(Screen.width * relativeRectPos.x, Screen.height * relativeRectPos.y);
+            rectSize = new Vector2(Screen.width * 0.2f, Screen.width * 0.2f);
             feedbackWindow = new Rect(rectPos.x, rectPos.y, rectSize.x, rectSize.y);
-            GUI.DrawTexture(feedbackWindow, cameraImageRenderTexture);
+            GUI.DrawTexture(feedbackWindow, cameraImageRenderTexture, ScaleMode.ScaleToFit, false);
         }
     }
 
@@ -113,7 +118,11 @@ public class CorrectionManager : MonoBehaviour {
 
         if (joint != null)
         {
-            cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar);
+            Ray ray = mainCam.ScreenPointToRay(new Vector2((rectPos + new Vector2(rectSize.x / 2, rectSize.y / 2)).x, Screen.height -(rectPos + new Vector2(rectSize.x / 2, rectSize.y / 2)).y));
+            Debug.Log(new Vector2((rectPos + new Vector2(rectSize.x / 2, rectSize.y / 2)).x, Screen.height -(rectPos + new Vector2(rectSize.x / 2, rectSize.y / 2)).y));
+            Physics.Raycast(ray, 10.0f);
+            Vector3 RectWorldPos = ray.origin + ray.direction * -(mainCam.transform.position.z + mainCam.nearClipPlane);
+            cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar, avatar, RectWorldPos);
             cameraFeedback.cameraFeedbackMode = mode;
             //Debug.Log("greatest error: " + postureErrors[joint].errorDistance + " Name: " + postureErrors[joint].staticJoint.joint);
             correcting = true;

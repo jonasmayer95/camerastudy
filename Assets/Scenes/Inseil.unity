@@ -1211,11 +1211,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 346f7e30b6d4206429ed43561b21831b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  relativeRectPos: {x: .100000001, y: .25}
   mode: 0
   tolerance: .150000006
   correctionCamera: {fileID: 1926261477}
   cameraFeedbackPrefab: {fileID: 176790, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
   correctionAvatar: {fileID: 30069700}
+  avatar: {fileID: 932762127}
   relTo: {fileID: 30069646}
   cameraImageRenderTexture: {fileID: 8400000, guid: 65c3cc919aa935245bb28b8f9a4cf0f4,
     type: 2}
@@ -4420,8 +4422,8 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: .300000012
-  far clip plane: 1000
+  near clip plane: .100000001
+  far clip plane: 10
   field of view: 60
   orthographic: 0
   orthographic size: 5
