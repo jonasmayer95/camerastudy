@@ -72,12 +72,13 @@ public class CameraFeedback : MonoBehaviour {
 
         // Init camera position
         //UpdateCameraPosition();
+        positions.Add(Vector3.zero);
     }
 
     public void InitCorrectionWindow(StaticJoint joint, FeedbackCamera_Avatar avatar)
     {
         //throw new System.NotImplementedException();
-        positions.Add(joint.targetPosition);
+        positions[0] = joint.targetPosition;
 
         Debug.Log(joint.joint);
 
@@ -115,7 +116,6 @@ public class CameraFeedback : MonoBehaviour {
     {
         if (initialized)
         {
-            Debug.Log("Enabled");
             // Show sphere at target position (for debugging)
             targetSphere.SetActive(true);
             targetSphere.transform.position = feedbackAvatar_hip.position + positions[index];
