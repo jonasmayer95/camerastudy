@@ -12,6 +12,7 @@ public class CameraFeedback : MonoBehaviour {
     // Camera Setup
     public float camDistance;
     public Camera feedbackCamera;
+    private bool showingWindow = false;
 
     // Joint setup
     public Transform feedbackAvatar_hip;
@@ -75,8 +76,9 @@ public class CameraFeedback : MonoBehaviour {
         positions.Add(Vector3.zero);
     }
 
-    public void InitCorrectionWindow(StaticJoint joint, FeedbackCamera_Avatar cameraAvatar, BoneMap basicAvatar, Vector3 windowPosition)
+    public void InitCorrectionWindow(StaticJoint joint, FeedbackCamera_Avatar cameraAvatar, BoneMap basicAvatar, Vector3 windowPosition, bool enabled)
     {
+        showingWindow = enabled;
         //throw new System.NotImplementedException();
         positions[0] = joint.targetPosition;
 
@@ -211,7 +213,15 @@ public class CameraFeedback : MonoBehaviour {
         UpdateCameraPosition();
 
         // Update the end point of the 3D line according to the new position of the joint
-        rend.SetPosition(1, connectingJoint.position);
+        if (showingWindow)
+        {
+            rend.enabled = true;
+            rend.SetPosition(1, connectingJoint.position);
+        }
+        else
+        {
+            rend.enabled = false;
+        }
 
     }
 

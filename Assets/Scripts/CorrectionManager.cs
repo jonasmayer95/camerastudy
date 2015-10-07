@@ -18,6 +18,16 @@ public class PostureError
     }
 }
 
+public enum WindowPosition
+{
+    Left, Right
+}
+
+public enum WindowMode
+{
+    Jumping, Moving
+}
+
 public class CorrectionManager : MonoBehaviour {
 
     public Vector2 relativeRectPos;
@@ -37,6 +47,9 @@ public class CorrectionManager : MonoBehaviour {
     private Vector2 rectPos;
     private Camera mainCam;
     private Vector2 rectSize;
+    private WindowPosition windowPos;
+    public WindowMode windowMode;
+    private bool showWindow;
 
 
     void Awake()
@@ -49,13 +62,40 @@ public class CorrectionManager : MonoBehaviour {
     {
         SpawnCorrectionWindow();
         mainCam = InseilMainCamera.instance.GetComponent<Camera>();
+
+        rectPos = new Vector2(Screen.width * relativeRectPos.x, Screen.height * relativeRectPos.y);
 	}
 	
 	// Update is called once per frame
 	void Update () 
     {
         CalculatePostureErrors();
-        HandleErrors();	
+        HandleErrors();
+
+        if (windowPos == WindowPosition.Left)
+        {
+            if (windowMode == WindowMode.Moving)
+            {
+                rectPos = Vector2.Lerp(rectPos, new Vector2(Screen.width * relativeRectPos.x, Screen.height * relativeRectPos.y), Time.deltaTime * 2);
+            }
+
+            else
+            {
+                rectPos = new Vector2(Screen.width * relativeRectPos.x, Screen.height * relativeRectPos.y);
+            }
+        }
+        else
+        {
+            if (windowMode == WindowMode.Moving)
+            {
+                rectPos = Vector2.Lerp(rectPos, new Vector2(Screen.width * (1 - relativeRectPos.x) - rectSize.x, Screen.height * relativeRectPos.y), Time.deltaTime * 2);
+            }
+
+            else
+            {
+                rectPos = new Vector2(Screen.width * (1 - relativeRectPos.x) - rectSize.x, Screen.height * relativeRectPos.y);
+            }
+        }
 	}
 
     public void AddJointToObserve(StaticJoint staticJoint)
@@ -70,6 +110,11 @@ public class CorrectionManager : MonoBehaviour {
             postureErrors.Add(joint, error);
             
         }
+    }
+
+    public void Reset()
+    {
+        postureErrors.Clear();
     }
 
     private void SpawnCorrectionWindow()
@@ -87,10 +132,14 @@ public class CorrectionManager : MonoBehaviour {
     {
         if (correcting)
         {
-            rectPos = new Vector2(Screen.width * relativeRectPos.x, Screen.height * relativeRectPos.y);
-            rectSize = new Vector2(Screen.width * 0.2f, Screen.width * 0.2f);
+            rectSize = new Vector2(Screen.width * 0.2f, Screen.width * 0.2f);            
+           
             feedbackWindow = new Rect(rectPos.x, rectPos.y, rectSize.x, rectSize.y);
-            GUI.DrawTexture(feedbackWindow, cameraImageRenderTexture, ScaleMode.ScaleToFit, false);
+
+            if (showWindow)
+            {
+                GUI.DrawTexture(feedbackWindow, cameraImageRenderTexture, ScaleMode.ScaleToFit, false);
+            }
         }
     }
 
@@ -107,6 +156,8 @@ public class CorrectionManager : MonoBehaviour {
     {
         float maxErrorDistance = 0;
         Transform joint = null;
+        showWindow = false;
+
         foreach (PostureError error in postureErrors.Values)
         {
             if (error.errorDistance > maxErrorDistance)
@@ -119,13 +170,29 @@ public class CorrectionManager : MonoBehaviour {
         if (joint != null)
         {
             Ray ray = mainCam.ScreenPointToRay(new Vector2((rectPos + new Vector2(rectSize.x / 2, rectSize.y / 2)).x, Screen.height -(rectPos + new Vector2(rectSize.x / 2, rectSize.y / 2)).y));
-            Debug.Log(new Vector2((rectPos + new Vector2(rectSize.x / 2, rectSize.y / 2)).x, Screen.height -(rectPos + new Vector2(rectSize.x / 2, rectSize.y / 2)).y));
+            //Debug.Log(new Vector2((rectPos + new Vector2(rectSize.x / 2, rectSize.y / 2)).x, Screen.height -(rectPos + new Vector2(rectSize.x / 2, rectSize.y / 2)).y));
             Physics.Raycast(ray, 10.0f);
             Vector3 RectWorldPos = ray.origin + ray.direction * -(mainCam.transform.position.z + mainCam.nearClipPlane);
-            cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar, avatar, RectWorldPos);
+            
             cameraFeedback.cameraFeedbackMode = mode;
             //Debug.Log("greatest error: " + postureErrors[joint].errorDistance + " Name: " + postureErrors[joint].staticJoint.joint);
+            cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar, avatar, RectWorldPos, false);
             correcting = true;
+            
+
+            if (postureErrors[joint].staticJoint.targetPosition.x > 0 && postureErrors[joint].errorDistance > tolerance)
+            {
+                windowPos = WindowPosition.Right;
+                cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar, avatar, RectWorldPos, true);
+                showWindow = true;
+            }
+            else if (postureErrors[joint].errorDistance > tolerance)
+            {
+                windowPos = WindowPosition.Left;
+                cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar, avatar, RectWorldPos, true);
+                showWindow = true;
+            }
+           
         }
 
         else
