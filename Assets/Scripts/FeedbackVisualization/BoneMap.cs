@@ -39,6 +39,20 @@ public class BoneMap : MonoBehaviour {
         return boneMap;
     }
 
+
+    /// <summary>
+    /// Search for bone with this name
+    /// </summary>
+    /// <param name="name"></param>
+    /// <returns></returns>
+    public Transform GetBone(string name)
+    {
+        return bones.Find(delegate(Transform bone)
+        {
+            return bone.gameObject.name == name;
+        });
+    }
+
     public static string GetBoneMapKey(string jointName, bool mirrored)
     {
         if (mirrored)
@@ -76,12 +90,12 @@ public class BoneMap : MonoBehaviour {
                 case "elbowleft":
                     return "LeftForeArm";
                 //    return "LeftArm";
-                //case "wristleft":
-                //    return "LeftForeArm";
-                case "handleft":
+                case "wristleft":
                     return "LeftHand";
+                //case "handleft":
+                //    return "LeftHand";
                 case "fingersleft":
-                    return "LeftFingers";
+                    return "LeftHand";
                 case "thumbleft":
                     return "LeftThumb";
                 case "shoulderright":
@@ -89,10 +103,10 @@ public class BoneMap : MonoBehaviour {
                 case "elbowright":
                     return "RightForeArm";
                 //    return "RightArm";
-                //case "wristright":
-                //    return "RightForeArm";
-                case "handright":
+                case "wristright":
                     return "RightHand";
+                //case "handright":
+                //    return "RightHand";
                 case "fingersright":
                     return "RightFingers";
                 case "thumbright":
@@ -165,6 +179,102 @@ public class BoneMap : MonoBehaviour {
                     return "Head_end";
                 default: return "not found";
             }
+        }
+    }
+
+    public static string KinectJointToInseiJointName(string name)
+    {
+        switch (name)
+        {
+            case "SpineBase":
+                return "spinebase";
+            case "SpineMid":
+                return "spinemid";
+            case "Neck":
+                return "neck";
+            case "Head":
+                return "head";
+            case "ShoulderLeft":
+                return "shoulderleft";
+            case "ElbowLeft":
+                return "elbowleft";
+            case "WristLeft":
+                return "handleft";
+            case "HandLeft":
+                return "fingersleft";
+            case "ElbowRight":
+                return "elbowright";
+            case "WristRight":
+                return "handright";
+            case "HandRight":
+                return "fingersright";
+            case "HipLeft":
+                return "hipleft";
+            case "KneeLeft":
+                return "kneeleft";
+            case "AnkleLeft":
+                return "ankleleft";
+            case "FootLeft":
+                return "footleft";
+            case "HipRight":
+                return "hipright";
+            case "KneeRight":
+                return "kneeright";
+            case "AnkleRight":
+                return "ankleright";
+            case "FootRight":
+                return "footright";
+            case "SpineShoulder":
+                return "spineshoulder";
+            default: return "not found";
+        }
+    }
+
+    public static string TransformNameToKinectName(string name)
+    {
+        switch (name)
+        {
+            case "Spine":
+                return "SpineBase";
+            case "Spine.001":
+                return "SpineMid";
+            case "Neck":
+                return "SpineShoulder";
+            case "Head":
+                return "Neck";
+            case "Head_end":
+                return "Head";
+            case "LeftArm":
+                return "ShoulderLeft";
+            case "LeftForeArm":
+                return "ElbowLeft";
+            case "LeftHand":
+                return "WristLeft";
+            case "LeftFingers":
+                return "HandLeft";
+            case "RightForeArm":
+                return "ElbowRight";
+            case "RightHand":
+                return "WristRight";
+            case "RightFingers":
+                return "HandRight";
+            case "LeftHip":
+                return "HipLeft";
+            case "LeftLeg":
+                return "KneeLeft";
+            case "LeftLowerLeg":
+                return "AnkleLeft";
+            case "LeftFoot":
+                return "FootLeft";
+            case "RightHip":
+                return "HipRight";
+            case "RightLeg":
+                return "KneeRight";
+            case "RightLowerLeg":
+                return "AnkleRight";
+            case "RightFoot":
+                return "FootRight";
+            default: return "not found";
         }
     }
 }

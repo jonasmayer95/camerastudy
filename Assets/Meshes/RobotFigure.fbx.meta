@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: dce90974431e53e49a402b3debce9dfc
-timeCreated: 1442496898
+timeCreated: 1444309929
 licenseType: Free
 ModelImporter:
   serializedVersion: 18
@@ -285,6 +285,22 @@ ModelImporter:
         value: {x: 0, y: 0, z: 0}
         length: 0
         modified: 0
+    - boneName: LeftFoot_end
+      humanName: LeftToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
+    - boneName: RightFoot_end
+      humanName: RightToes
+      limit:
+        min: {x: 0, y: 0, z: 0}
+        max: {x: 0, y: 0, z: 0}
+        value: {x: 0, y: 0, z: 0}
+        length: 0
+        modified: 0
     skeleton:
     - name: RobotFigure(Clone)
       position: {x: 0, y: 0, z: 0}
@@ -307,9 +323,9 @@ ModelImporter:
       scale: {x: .99999994, y: .99999994, z: 1}
       transformModified: 1
     - name: LeftLeg
-      position: {x: -1.18743626e-09, y: .0999715775, z: 1.30400735e-16}
-      rotation: {x: .0217984393, y: .0265824366, z: -.634935319, w: .771800101}
-      scale: {x: .999999821, y: 1, z: 1}
+      position: {x: -.0054999073, y: .115199462, z: -.0166997127}
+      rotation: {x: -.01926535, y: .004835092, z: .640134394, w: -.768006206}
+      scale: {x: 1, y: 1, z: 1}
       transformModified: 1
     - name: LeftLowerLeg
       position: {x: 5.16295229e-09, y: .480986089, z: 9.64791913e-10}
@@ -356,21 +372,6 @@ ModelImporter:
       rotation: {x: 0, y: 0, z: 0, w: 1}
       scale: {x: 1, y: 1, z: 1}
       transformModified: 1
-    - name: Neck
-      position: {x: -0, y: .32313481, z: 0}
-      rotation: {x: 0, y: -1.19209275e-07, z: -0, w: 1}
-      scale: {x: 1, y: .99999994, z: 1}
-      transformModified: 1
-    - name: Head
-      position: {x: -0, y: .0397508405, z: 0}
-      rotation: {x: 0, y: 1.19209275e-07, z: -0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-      transformModified: 1
-    - name: Head_end
-      position: {x: -0, y: .284293324, z: 0}
-      rotation: {x: 0, y: 0, z: 0, w: 1}
-      scale: {x: 1, y: 1, z: 1}
-      transformModified: 1
     - name: LeftShoulder
       position: {x: -0, y: .32313481, z: 0}
       rotation: {x: .52826345, y: -.470040143, z: -.52826333, w: -.470040232}
@@ -411,6 +412,21 @@ ModelImporter:
       rotation: {x: 0, y: 0, z: 0, w: 1}
       scale: {x: 1, y: 1, z: 1}
       transformModified: 1
+    - name: Neck
+      position: {x: -0, y: .32313481, z: 0}
+      rotation: {x: 0, y: -1.19209275e-07, z: -0, w: 1}
+      scale: {x: 1, y: .99999994, z: 1}
+      transformModified: 1
+    - name: Head
+      position: {x: -0, y: .0397508405, z: 0}
+      rotation: {x: 0, y: 1.19209275e-07, z: -0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
+    - name: Head_end
+      position: {x: -0, y: .284293324, z: 0}
+      rotation: {x: 0, y: 0, z: 0, w: 1}
+      scale: {x: 1, y: 1, z: 1}
+      transformModified: 1
     - name: RightShoulder
       position: {x: -0, y: .32313481, z: 0}
       rotation: {x: .51841259, y: .480882943, z: -.51841253, w: .480882972}
@@ -422,8 +438,8 @@ ModelImporter:
       scale: {x: 1, y: 1, z: .999999881}
       transformModified: 1
     - name: RightForeArm
-      position: {x: 3.58602028e-15, y: .342648208, z: 3.48314622e-08}
-      rotation: {x: -.0218111146, y: 1.4901163e-08, z: 1.4901163e-08, w: .999762118}
+      position: {x: -7.37523067e-07, y: .342640489, z: 1.257658e-05}
+      rotation: {x: -.0138409585, y: .000238787863, z: .00128613471, w: .99990344}
       scale: {x: 1, y: 1, z: 1}
       transformModified: 1
     - name: RightHand

@@ -20,6 +20,9 @@ public class AvatarController : MonoBehaviour
 	// Bool that determines whether the avatar is allowed to do vertical movement
 	public bool verticalMovement = false;
 	
+    // Scale the avatar with tracking data or not
+    public bool scaling;
+
 	// Rate at which avatar will move through the scene.
 	public float moveRate = 1f;
 	
@@ -60,7 +63,9 @@ public class AvatarController : MonoBehaviour
 	
 	// private instance of the KinectManager
 	protected KinectManager kinectManager;
-
+    
+    
+    private BoneMap bonemap;
 
 	// returns the number of bone transforms (array length)
 	public int GetBoneTransformCount()
@@ -116,6 +121,7 @@ public class AvatarController : MonoBehaviour
 
 		// if parent transform uses physics
 		isRigidBody = gameObject.GetComponent<Rigidbody>();
+        bonemap = gameObject.GetComponent<BoneMap>();
 	}
 	
 	// Update the avatar each frame.
@@ -600,6 +606,60 @@ public class AvatarController : MonoBehaviour
 		{25, new List<KinectInterop.JointType> {KinectInterop.JointType.ShoulderRight, KinectInterop.JointType.SpineShoulder} },
 		{26, new List<KinectInterop.JointType> {KinectInterop.JointType.ShoulderLeft, KinectInterop.JointType.SpineShoulder} },
 	};
-	
+
+    public void ScaleBone(string name, float scale)
+    {
+        if (name != "SpineBase" && !name.Contains("Thumb") && !name.Contains("Tip") && name != "not found")
+        {
+            string jointName = BoneMap.KinectJointToInseiJointName(name);
+            if (BoneMap.GetBoneMapKey(jointName, mirroredMovement) != "not found")
+            {
+                GameObject joint = bonemap.GetBone(BoneMap.GetBoneMapKey(jointName, mirroredMovement)).gameObject;
+                float parentScaleFactor = GetAllParentScales(joint.transform);
+                float scaleFactor = scale / ((joint.transform.position - joint.transform.parent.transform.position).magnitude * parentScaleFactor);
+                Vector3 scaleVec = new Vector3(joint.transform.localScale.x, joint.transform.localScale.y * scaleFactor, joint.transform.localScale.z);
+                if (joint.name == "LeftLeg" || joint.name == "RightLeg")
+                {
+                    parentScaleFactor = GetAllParentScales(joint.transform.parent.transform);
+                    scaleFactor = scale / ((joint.transform.position - joint.transform.parent.transform.parent.transform.position).magnitude * parentScaleFactor);
+                    scaleVec = new Vector3(joint.transform.localScale.x, joint.transform.localScale.y * scaleFactor /3.0f, joint.transform.localScale.z);
+                }
+                joint.transform.localScale = scaleVec;
+            }
+        }
+    }
+
+    public void ScaleAvatar(Dictionary<string, float> boneScales)
+    {
+        if (scaling)
+        {
+            ScaleChildren(bonemap.GetBone("Spine"), boneScales);
+            bonemap.GetBone("Spine").transform.position = new Vector3(bonemap.GetBone("Spine").transform.position.x, bonemap.GetBone("Spine").transform.position.y - bonemap.GetBone("LeftFoot").transform.position.y + 0.05f, bonemap.GetBone("Spine").transform.position.z);
+        }
+    }
+
+    private void ScaleChildren(Transform parent, Dictionary<string,float> boneScales)
+    {
+        if (BoneMap.TransformNameToKinectName(parent.transform.name) != "not found" && !parent.name.Contains("Hip") && !parent.name.Contains("Thumb") && !parent.name.Contains("Finger") && !parent.name.Contains("Neck") && !parent.name.Contains("Head") && !parent.name.Contains("Foot"))
+        {
+            ScaleBone(BoneMap.TransformNameToKinectName(parent.transform.name), boneScales[BoneMap.TransformNameToKinectName(parent.transform.name)]);
+        }
+        for (int i = 0; i < parent.childCount; i++)
+        {
+            if(!parent.GetChild(i).name.Contains("Tip") && !parent.GetChild(i).name.Contains("Thumb"))
+            ScaleChildren(parent.GetChild(i), boneScales);
+        }
+    }
+
+    private float GetAllParentScales(Transform joint)
+    {
+        float scaleFactor = 1;
+        while (joint.parent.name != "Spine")
+        {
+            scaleFactor *= joint.parent.localScale.y;
+            joint = joint.parent;
+        }
+        return scaleFactor;
+    }
 }
 

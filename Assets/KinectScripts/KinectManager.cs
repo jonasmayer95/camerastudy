@@ -162,6 +162,8 @@ public class KinectManager : MonoBehaviour
 	private BoneOrientationsConstraint boneConstraintsFilter = null;
 	//private BoneOrientationsFilter boneOrientationFilter = null;
 
+    private bool characterScaled = false;
+
 	// returns the single KinectManager instance
     public static KinectManager Instance
     {
@@ -2255,6 +2257,13 @@ public class KinectManager : MonoBehaviour
 				// calculate world orientations of the body joints
 				CalculateJointOrients(ref bodyData);
 
+                if(!characterScaled)
+                {
+                    // scale bones to tracked user specific values
+                    ScaleBodyAndBones();
+                    characterScaled = true;
+                }
+
 				if(sensorData != null && sensorData.sensorInterface != null)
 				{
 					// do sensor-specific fixes of joint positions and orientations
@@ -2985,6 +2994,24 @@ public class KinectManager : MonoBehaviour
 
 		return false;
 	}
+
+    private void ScaleBodyAndBones()
+    {
+        Dictionary<string, float> jointScales = new Dictionary<string, float>();
+        for(int i = 0; i < bodyFrame.bodyData.Length; i++)
+        {            
+            for (int k = 0; k < bodyFrame.bodyData[i].joint.Length; k++)
+            {
+                KinectInterop.JointType parent = GetParentJoint(bodyFrame.bodyData[i].joint[i].jointType);
+                float scale = (bodyFrame.bodyData[i].joint[k].position - bodyFrame.bodyData[i].joint[(int)parent].position).magnitude;
+                if (!jointScales.ContainsKey(bodyFrame.bodyData[i].joint[k].jointType.ToString()) && !bodyFrame.bodyData[i].joint[k].jointType.ToString().Contains("Tip") && !bodyFrame.bodyData[i].joint[k].jointType.ToString().Contains("Thumb"))
+                {
+                    jointScales.Add(bodyFrame.bodyData[i].joint[k].jointType.ToString(), scale);
+                }
+            }
+        }
+        avatarControllers[0].ScaleAvatar(jointScales);
+    }
 	
 }
 
