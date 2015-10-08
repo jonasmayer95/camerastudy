@@ -47,7 +47,7 @@ public class InseilMainCamera : MonoBehaviour {
         this.minZ = minZ;
         this.relTo = relTo;
 
-        Debug.Log(minPositions + " MinPos " + maxPositions + " MaxPos");
+       // Debug.Log(minPositions + " MinPos " + maxPositions + " MaxPos " + minZ);
     }
 
     public void ResetCamera()
