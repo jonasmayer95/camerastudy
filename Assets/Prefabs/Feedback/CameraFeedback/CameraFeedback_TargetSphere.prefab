@@ -11,7 +11,7 @@ GameObject:
   - 33: {fileID: 3361792}
   - 135: {fileID: 13553460}
   - 23: {fileID: 2387738}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: CameraFeedback_TargetSphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -79,7 +79,11 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 162198}

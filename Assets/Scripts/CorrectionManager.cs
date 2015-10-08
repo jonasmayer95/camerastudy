@@ -7,7 +7,8 @@ public class PostureError
     public Transform joint;
     public StaticJoint staticJoint;
     public float errorDistance;
-    public float tolerance;    
+    public float tolerance;
+    public float errorTime;
 
     public PostureError(Transform joint, StaticJoint staticJoint, float errorDistance, float tolerance)
     {
@@ -28,18 +29,26 @@ public enum WindowMode
     Jumping, Moving
 }
 
+public enum FadeState
+{
+    FadeIn, FadeOut
+}
+
 public class CorrectionManager : MonoBehaviour {
 
     public Vector2 relativeRectPos;
     public static CorrectionManager instance;
     public CameraFeedbackMode mode;
     public float tolerance;
+    public float errorDurationUntilCorrection;
     public Camera correctionCamera;
     public GameObject cameraFeedbackPrefab;
     public FeedbackCamera_Avatar correctionAvatar;
     public BoneMap avatar;
     public Transform relTo;
     public RenderTexture cameraImageRenderTexture;
+    public RenderTexture cameraImageRenderTextureArrow;
+    private GUITexture tex1;
     private CameraFeedback cameraFeedback;
     private Rect feedbackWindow;
     private Dictionary<Transform, PostureError> postureErrors = new Dictionary<Transform,PostureError>();
@@ -49,7 +58,13 @@ public class CorrectionManager : MonoBehaviour {
     private Vector2 rectSize;
     private WindowPosition windowPos;
     public WindowMode windowMode;
-    private bool showWindow;
+    private bool showWindow = false;
+    private float guiAlpha = 0;
+    private float fadeInTime;
+    private float fadeOutTime;
+    Transform joint = null;
+    Transform newJoint = null;
+    private FadeState fadeState;
 
 
     void Awake()
@@ -64,6 +79,10 @@ public class CorrectionManager : MonoBehaviour {
         mainCam = InseilMainCamera.instance.GetComponent<Camera>();
 
         rectPos = new Vector2(Screen.width * relativeRectPos.x, Screen.height * relativeRectPos.y);
+
+        GUI.color = new Color(GUI.color.r, GUI.color.g, GUI.color.b, 0);
+
+        fadeState = FadeState.FadeOut;
 	}
 	
 	// Update is called once per frame
@@ -71,6 +90,24 @@ public class CorrectionManager : MonoBehaviour {
     {
         CalculatePostureErrors();
         HandleErrors();
+
+        UpdateGUIWindow();        
+	}
+
+    private void UpdateGUIWindow()
+    {
+        if (showWindow)
+        {
+            guiAlpha = Mathf.Clamp01(Time.time - fadeInTime);
+           
+            fadeOutTime = Time.time;
+        }
+        else
+        {
+            guiAlpha = Mathf.Clamp01(1 - (Time.time - fadeOutTime));
+            
+            fadeInTime = Time.time;
+        }
 
         if (windowPos == WindowPosition.Left)
         {
@@ -96,7 +133,7 @@ public class CorrectionManager : MonoBehaviour {
                 rectPos = new Vector2(Screen.width * (1 - relativeRectPos.x) - rectSize.x, Screen.height * relativeRectPos.y);
             }
         }
-	}
+    }
 
     public void AddJointToObserve(StaticJoint staticJoint)
     {
@@ -132,14 +169,14 @@ public class CorrectionManager : MonoBehaviour {
     {
         if (correcting)
         {
-            rectSize = new Vector2(Screen.width * 0.2f, Screen.width * 0.2f);            
-           
+            rectSize = new Vector2(Screen.width * 0.2f, Screen.width * 0.2f);
+
             feedbackWindow = new Rect(rectPos.x, rectPos.y, rectSize.x, rectSize.y);
 
-            if (showWindow)
-            {
-                GUI.DrawTexture(feedbackWindow, cameraImageRenderTexture, ScaleMode.ScaleToFit, false);
-            }
+            GUI.color = new Color(GUI.color.r, GUI.color.g, GUI.color.b, guiAlpha);
+            GUI.DrawTexture(feedbackWindow, cameraImageRenderTexture, ScaleMode.ScaleToFit, false);
+            GUI.DrawTexture(feedbackWindow, cameraImageRenderTextureArrow, ScaleMode.ScaleToFit, true);
+
         }
     }
 
@@ -155,44 +192,69 @@ public class CorrectionManager : MonoBehaviour {
     private void HandleErrors()
     {
         float maxErrorDistance = 0;
-        Transform joint = null;
+        //Transform joint = null;
         showWindow = false;
 
         foreach (PostureError error in postureErrors.Values)
         {
             if (error.errorDistance > maxErrorDistance)
             {
-                joint = error.joint;
+                // Get new error joint
+                newJoint = error.joint;
                 maxErrorDistance = error.errorDistance;
             }
         }
 
+        // Increasing error time
+        postureErrors[newJoint].errorTime += Time.deltaTime;
+
+        // Switch to new error
+        if (postureErrors[newJoint].errorTime >= errorDurationUntilCorrection)
+        {
+            if (joint != null && newJoint != joint)
+            {
+                Debug.Log("Reset");
+                postureErrors[joint].errorTime = 0;
+            }
+
+            joint = newJoint;
+            showWindow = true;
+        }
+
+
         if (joint != null)
         {
-            Ray ray = mainCam.ScreenPointToRay(new Vector2((rectPos + new Vector2(rectSize.x / 2, rectSize.y / 2)).x, Screen.height -(rectPos + new Vector2(rectSize.x / 2, rectSize.y / 2)).y));
+            Ray ray = mainCam.ScreenPointToRay(new Vector2((rectPos + new Vector2(rectSize.x / 2, rectSize.y / 2)).x, Screen.height - (rectPos + new Vector2(rectSize.x / 2, rectSize.y / 2)).y));
             //Debug.Log(new Vector2((rectPos + new Vector2(rectSize.x / 2, rectSize.y / 2)).x, Screen.height -(rectPos + new Vector2(rectSize.x / 2, rectSize.y / 2)).y));
             Physics.Raycast(ray, 10.0f);
             Vector3 RectWorldPos = ray.origin + ray.direction * -(mainCam.transform.position.z + mainCam.nearClipPlane);
-            
+
             cameraFeedback.cameraFeedbackMode = mode;
             //Debug.Log("greatest error: " + postureErrors[joint].errorDistance + " Name: " + postureErrors[joint].staticJoint.joint);
-            cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar, avatar, RectWorldPos, false);
+            cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar, avatar, RectWorldPos, false, guiAlpha);
             correcting = true;
-            
 
-            if (postureErrors[joint].staticJoint.targetPosition.x > 0 && postureErrors[joint].errorDistance > tolerance)
+            if (postureErrors[joint].staticJoint.targetPosition.x > 0)
             {
-                windowPos = WindowPosition.Right;
-                cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar, avatar, RectWorldPos, true);
-                showWindow = true;
+                if (postureErrors[joint].errorDistance > tolerance)
+                {
+                    windowPos = WindowPosition.Right;
+                    cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar, avatar, RectWorldPos, true, guiAlpha);
+
+                    
+                }
             }
-            else if (postureErrors[joint].errorDistance > tolerance)
+            else
             {
-                windowPos = WindowPosition.Left;
-                cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar, avatar, RectWorldPos, true);
-                showWindow = true;
+                Debug.Log("Left " + postureErrors[joint].errorTime + "Name " + joint.name);
+                if (postureErrors[joint].errorDistance > tolerance)
+                {
+                    windowPos = WindowPosition.Left;
+                    cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar, avatar, RectWorldPos, true, guiAlpha);
+
+                    
+                }
             }
-           
         }
 
         else

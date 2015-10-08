@@ -18,6 +18,7 @@ public class CameraFeedback : MonoBehaviour {
     public Transform feedbackAvatar_hip;
     public Transform feedbackAvatar_joint;
     public Transform connectingJoint;
+    private float lineAlpha;
 
     // Target position and tolerance
     public List<Vector3> positions = new List<Vector3>();
@@ -76,9 +77,11 @@ public class CameraFeedback : MonoBehaviour {
         positions.Add(Vector3.zero);
     }
 
-    public void InitCorrectionWindow(StaticJoint joint, FeedbackCamera_Avatar cameraAvatar, BoneMap basicAvatar, Vector3 windowPosition, bool enabled)
+    public void InitCorrectionWindow(StaticJoint joint, FeedbackCamera_Avatar cameraAvatar, BoneMap basicAvatar, Vector3 windowPosition, bool enabled, float lineAlpha)
     {
         showingWindow = enabled;
+        this.lineAlpha = lineAlpha;
+
         //throw new System.NotImplementedException();
         positions[0] = joint.targetPosition;
 
@@ -108,7 +111,7 @@ public class CameraFeedback : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject == feedbackAvatar_joint)
+        if (initialized && other.gameObject == feedbackAvatar_joint)
         {
             index = (index + 1) % positions.Count;
         }
@@ -148,7 +151,7 @@ public class CameraFeedback : MonoBehaviour {
 
                 // Update position and size
                 feedbackCylinder.transform.position = feedbackAvatar_joint.position + ((feedbackAvatar_hip.position + positions[index]) - feedbackAvatar_joint.position) / 2.0f;
-                float radius = Vector3.Distance(targetSphere.transform.position, feedbackAvatar_joint.position) / 2.0f;
+                float radius = Vector3.Distance(targetSphere.transform.position, feedbackAvatar_joint.position) / 1.5f;
                 feedbackCylinder.transform.localScale = new Vector3(radius, radius, radius);
 
                 // Update orientation
@@ -162,8 +165,8 @@ public class CameraFeedback : MonoBehaviour {
                     feedbackCylinder.GetComponent<Renderer>().material.SetTextureScale("_MainTex", new Vector2(-1, 1));
                     //Debug.Log("Now upper left ");
 
-                    Quaternion upRotation = Quaternion.FromToRotation(-feedbackCylinder.transform.forward, eulerOrientation);
-                    feedbackCylinder.transform.rotation = Quaternion.Slerp(feedbackCylinder.transform.rotation, upRotation, Time.deltaTime * 20);
+                    Quaternion upRotation = Quaternion.FromToRotation(-feedbackCylinder.transform.forward, eulerOrientation);// ;
+                    feedbackCylinder.transform.rotation = Quaternion.Slerp(feedbackCylinder.transform.rotation, upRotation * Quaternion.AngleAxis(35, Vector3.forward), Time.deltaTime * 20);
                 }
 
                 // Bottom Left
@@ -182,7 +185,7 @@ public class CameraFeedback : MonoBehaviour {
                     //Debug.Log("Now upper right ");
                     feedbackCylinder.GetComponent<Renderer>().material.SetTextureScale("_MainTex", new Vector2(1, 1));
                     Quaternion upRotation = Quaternion.FromToRotation(feedbackCylinder.transform.forward, eulerOrientation) * Quaternion.Euler(0, 0, 180);
-                    feedbackCylinder.transform.rotation = Quaternion.Slerp(feedbackCylinder.transform.rotation, upRotation, Time.deltaTime * 20);
+                    feedbackCylinder.transform.rotation = Quaternion.Slerp(feedbackCylinder.transform.rotation, upRotation * Quaternion.AngleAxis(-35, Vector3.forward), Time.deltaTime * 20);
                 }
 
                 // Bottom right
@@ -213,7 +216,7 @@ public class CameraFeedback : MonoBehaviour {
         UpdateCameraPosition();
 
         // Update the end point of the 3D line according to the new position of the joint
-        if (showingWindow)
+        if (showingWindow && lineAlpha == 1)
         {
             rend.enabled = true;
             rend.SetPosition(1, connectingJoint.position);
@@ -225,26 +228,31 @@ public class CameraFeedback : MonoBehaviour {
 
     }
 
+
+
     void UpdateCameraPosition()
     {
-        // Calculate vector of arrow
-        Vector3 arrowVector = targetSphere.transform.position - feedbackAvatar_joint.position;
-        arrowVector = arrowVector.normalized;
+        if (initialized)
+        {
+            // Calculate vector of arrow
+            Vector3 arrowVector = targetSphere.transform.position - feedbackAvatar_joint.position;
+            arrowVector = arrowVector.normalized;
 
-        // Calculate middled vector
-        Vector3 boneVectorA = feedbackAvatar_joint.GetChild(0).transform.position - feedbackAvatar_joint.position;
-        boneVectorA = boneVectorA.normalized;
+            // Calculate middled vector
+            Vector3 boneVectorA = feedbackAvatar_joint.GetChild(0).transform.position - feedbackAvatar_joint.position;
+            boneVectorA = boneVectorA.normalized;
 
-        Transform parent = feedbackAvatar_joint.parent.transform;
-        Vector3 boneVectorB = parent.position - feedbackAvatar_joint.position;
-        boneVectorB = boneVectorB.normalized;        
+            Transform parent = feedbackAvatar_joint.parent.transform;
+            Vector3 boneVectorB = parent.position - feedbackAvatar_joint.position;
+            boneVectorB = boneVectorB.normalized;
 
-        // Calculate normal for camera
-        // Vector3 camNormal = Vector3.Cross(arrowVector, ((boneVectorA + boneVectorB) - feedbackAvatar_joint.position).normalized);
-        //Vector3 camNormal = Vector3.Cross(boneVectorA, boneVectorB);
+            // Calculate normal for camera
+            // Vector3 camNormal = Vector3.Cross(arrowVector, ((boneVectorA + boneVectorB) - feedbackAvatar_joint.position).normalized);
+            //Vector3 camNormal = Vector3.Cross(boneVectorA, boneVectorB);
 
-        //feedbackCamera.position = arrow3D.transform.position - camNormal.normalized * camDistance;
-        //feedbackCamera.transform.LookAt(feedbackAvatar_joint.transform.position);
-        feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * -Vector3.forward;
+            //feedbackCamera.position = arrow3D.transform.position - camNormal.normalized * camDistance;
+            //feedbackCamera.transform.LookAt(feedbackAvatar_joint.transform.position);
+            feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * -Vector3.forward;
+        }
     }
 }
