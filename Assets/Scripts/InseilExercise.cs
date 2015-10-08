@@ -64,6 +64,7 @@ public class InseilExercise : MonoBehaviour {
     private BoneMap avatar;
     private Vector2 minDimension, maxDimension;
     private float minZ;
+    private bool initialized = false;
 
 
     // Use this for initialization
@@ -84,6 +85,11 @@ public class InseilExercise : MonoBehaviour {
     {
 /*        InseilMainCamera.instance.UpdateExerciseDimensions(minDimension + new Vector2(coordinatesRelToJoint.position.x, coordinatesRelToJoint.position.y),
             maxDimension + new Vector2(coordinatesRelToJoint.position.x, coordinatesRelToJoint.position.y), minZ + coordinatesRelToJoint.position.z, coordinatesRelToJoint);*/
+        if (initialized)
+        {
+            CorrectionManager.instance.Reset();
+            InitPostureCorrection();
+        }
     }
 
     public void InitExercise(string exerciseName, ExerciseInfo info, List<ExerciseExplanation> feedbackTypes, float bodyHeight, Transform relTo, BoneMap avatar)
@@ -155,7 +161,7 @@ public class InseilExercise : MonoBehaviour {
         }
 
         InitAndSpawnFeedback();
-        InitPostureCorrection();
+        initialized = true;
     }
 
     private void InitPostureCorrection()
