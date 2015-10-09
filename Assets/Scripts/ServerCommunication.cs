@@ -2,33 +2,35 @@
 using System.Collections;
 using NetMQ;
 using NetMQ.Sockets;
-using FullSerializer;
 using NetJSON;
+using System.Threading;
 
 public class ServerCommunication : MonoBehaviour
 {
     private static NetMQContext ctx;
     private static SubscriberSocket client;
+    private static PairSocket threadCommSocket;
     private NetMQMessage serverMessage;
     private InseilMessage im;
     private string json;
     private bool recv;
 
-    private static readonly fsSerializer serializer = new fsSerializer();
-
-    public static ServerCommunication instance;
-    
-
+    private static Thread commThread;
+    private static volatile bool terminate;
 
     void Awake()
     {
-        instance = this;
+        //instance = this;
         im = new InseilMessage();
         NetJSON.NetJSON.IncludeFields = true;
         NetJSON.NetJSON.SkipDefaultValue = false;
+
+        //alright, we need another inproc socket pair and a thread. server comm, deserialization and
+        //sending the deserialized byte buffer should be run in that thread. that means we need to set up
+        //when waking up and getting rid of Update().
     }
 
-    void Update()
+    void ServerUpdate()
     {
         recv = client.TryReceiveMultipartMessage(ref serverMessage);
 
@@ -36,7 +38,7 @@ public class ServerCommunication : MonoBehaviour
         {
             //assuming we get everything in a single frame
             json = serverMessage.First.ConvertToString();
-            
+
             //Deserialize<InseilMessage>(json, ref im);
             //Deserialize(json, ref im);
             im = NetJSON.NetJSON.Deserialize<InseilMessage>(json);
@@ -44,7 +46,9 @@ public class ServerCommunication : MonoBehaviour
             //uncomment as soon as the code is ubitrack-ready
             //UbitrackManager.instance.UpdateInseilMeasurement(im.measurement);
             //UbitrackManager.instance.recievedData = true;
-            UbitrackManager.instance.GenerateBodyData(im.measurement);
+            //UbitrackManager.instance.GenerateBodyData(im.measurement);
+
+            //send a giant byte buffer down the inproc socket
         }
     }
 
@@ -53,16 +57,63 @@ public class ServerCommunication : MonoBehaviour
         Shutdown();
     }
 
+    private static void Run(string topic, string url)
+    {
+        terminate = false;
+
+        if (client == null)
+        {
+            client = ctx.CreateSubscriberSocket();
+        }
+
+        client.Options.ReceiveHighWatermark = 1000;
+        string addr = string.Concat("tcp://", url);
+        Debug.Log(addr);
+        client.Connect(addr);
+        client.Subscribe(topic);
+
+        if (threadCommSocket == null)
+        {
+            threadCommSocket = ctx.CreatePairSocket();
+        }
+
+        threadCommSocket.Bind("inproc://avatarupdate");
+
+        while (!terminate)
+        {
+            //do communication here. i still need a solution for static/instance members,
+            //as this is quite messy and i could use some instance members in here. maybe i should
+            //refactor some classes a bit.
+        }
+
+        //clean up sockets here
+        if (client != null)
+        {
+            client.Dispose();
+            Debug.Log("client disposed");
+        }
+
+        if (threadCommSocket != null)
+        {
+            threadCommSocket.Dispose();
+            Debug.Log("threadcommsocket disposed");
+        }
+    }
+
     /// <summary>
     /// Sets up NetMQ context and SUB socket, then connects and subscribes to the
     /// given topic. Returns true on success and false if any NetMQ method throws
-    /// an exception.
+    /// an exception. Static because otherwise Unity UI wouldn't be able to call
+    /// this when the parent object is disabled.
     /// </summary>
     /// <param name="topic">The topic to subscribe to.</param>
     /// <param name="url">The publisher's IP and port.</param>
     /// <returns></returns>
     public static bool ClientConnect(string topic, string url)
     {
+        //write passed params to instance members, create context and let awake do the rest.
+        //should work better with instance members and comm.
+
         try
         {
             if (ctx == null)
@@ -70,16 +121,11 @@ public class ServerCommunication : MonoBehaviour
                 ctx = NetMQContext.Create();
             }
 
-            if (client == null)
+            if (commThread == null)
             {
-                client = ctx.CreateSubscriberSocket();
+                commThread = new Thread(() => Run(topic, url));
             }
-
-            client.Options.ReceiveHighWatermark = 1000;
-            string addr = string.Concat("tcp://", url);
-            Debug.Log(addr);
-            client.Connect(addr);
-            client.Subscribe(topic);
+            commThread.Start();
 
             return true;
         }
@@ -94,10 +140,13 @@ public class ServerCommunication : MonoBehaviour
     /// </summary>
     public static void Shutdown()
     {
-        if (client != null)
+        
+        terminate = true;
+
+        //wait for other thread to dispose of its sockets
+        while (commThread.IsAlive)
         {
-            client.Dispose();
-            Debug.Log("client disposed");
+            Thread.Sleep(1);
         }
 
         if (ctx != null)
@@ -106,45 +155,4 @@ public class ServerCommunication : MonoBehaviour
             Debug.Log("context disposed");
         }
     }
-
-    ///// <summary>
-    ///// Deserializes a JSON string into an instance of the passed type.
-    ///// </summary>
-    ///// <typeparam name="T">The type into which to deserialize</typeparam>
-    ///// <param name="instance">An instance of T</param>
-    ///// <param name="json">The JSON string to deserialize</param>
-    //private void Deserialize<T>(string json, ref T instance)
-    //{
-    //    fsData data = fsJsonParser.Parse(json);
-
-    //    //change this to AssertSuccess to disable exception handling
-    //    serializer.TryDeserialize<T>(data, ref instance).AssertSuccessWithoutWarnings();
-    //}
-
-
-
-    //private void Deserialize(string json, ref InseilMessage msg)
-    //{
-    //    msg.measurement.data.Clear();
-
-    //    var jsonObj = JSON.Parse(json);
-    //    msg.version = uint.Parse(jsonObj["protocol_version"].Value);
-    //    msg.id = jsonObj["id"].Value;
-    //    msg.sendtime = (ulong)jsonObj["sendtime"].AsDouble;
-
-    //    msg.measurement.timestamp = (ulong)jsonObj["measurement"]["timestamp"].AsDouble;
-
-    //    //InseilJoint tmp = new InseilJoint();
-    //    JSONNode joints = jsonObj["measurement"]["data"];
-
-    //    foreach (var key in joints.Keys)
-    //    {
-    //        //nice and simple thanks to http://answers.unity3d.com/questions/648066/how-to-get-the-keys-of-a-dictionary-.html
-
-    //        var joint = new InseilJoint(joints[key]["p"]["x"].AsDouble, joints[key]["p"]["y"].AsDouble, joints[key]["p"]["z"].AsDouble,
-    //            joints[key]["r"]["x"].AsDouble, joints[key]["r"]["y"].AsDouble, joints[key]["r"]["z"].AsDouble, joints[key]["r"]["w"].AsDouble);
-            
-    //        msg.measurement.data.Add(key, joint);
-    //    }
-    //}
 }
