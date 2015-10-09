@@ -16,8 +16,6 @@ public class ConnectUI : MonoBehaviour
 
     public void Connect()
     {
-        //check both strings for correct formatting and pass them on
-        //as args for ServerCommunication
         string topic = topicInput.text;
         string url = addressInput.text;
 

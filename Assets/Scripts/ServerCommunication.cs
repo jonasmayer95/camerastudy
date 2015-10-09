@@ -8,22 +8,31 @@ using System.Threading;
 public class ServerCommunication : MonoBehaviour
 {
     private static NetMQContext ctx;
-    private static SubscriberSocket client;
-    private static PairSocket threadCommSocket;
+    private SubscriberSocket client;
+    private PairSocket threadCommSocket;
     private NetMQMessage serverMessage;
     private InseilMessage im;
     private string json;
     private bool recv;
+
+    private static string serverTopic;
+    private static string serverUrl;
 
     private static Thread commThread;
     private static volatile bool terminate;
 
     void Awake()
     {
-        //instance = this;
+
         im = new InseilMessage();
         NetJSON.NetJSON.IncludeFields = true;
         NetJSON.NetJSON.SkipDefaultValue = false;
+
+        if (commThread == null)
+        {
+            commThread = new Thread(() => Run());
+        }
+        commThread.Start();
 
         //alright, we need another inproc socket pair and a thread. server comm, deserialization and
         //sending the deserialized byte buffer should be run in that thread. that means we need to set up
@@ -57,8 +66,9 @@ public class ServerCommunication : MonoBehaviour
         Shutdown();
     }
 
-    private static void Run(string topic, string url)
+    private void Run()
     {
+        Debug.Log("started servercomm thread");
         terminate = false;
 
         if (client == null)
@@ -67,10 +77,10 @@ public class ServerCommunication : MonoBehaviour
         }
 
         client.Options.ReceiveHighWatermark = 1000;
-        string addr = string.Concat("tcp://", url);
+        string addr = string.Concat("tcp://", serverUrl);
         Debug.Log(addr);
         client.Connect(addr);
-        client.Subscribe(topic);
+        client.Subscribe(serverTopic);
 
         if (threadCommSocket == null)
         {
@@ -81,9 +91,7 @@ public class ServerCommunication : MonoBehaviour
 
         while (!terminate)
         {
-            //do communication here. i still need a solution for static/instance members,
-            //as this is quite messy and i could use some instance members in here. maybe i should
-            //refactor some classes a bit.
+            ServerUpdate();
         }
 
         //clean up sockets here
@@ -111,8 +119,6 @@ public class ServerCommunication : MonoBehaviour
     /// <returns></returns>
     public static bool ClientConnect(string topic, string url)
     {
-        //write passed params to instance members, create context and let awake do the rest.
-        //should work better with instance members and comm.
 
         try
         {
@@ -121,11 +127,10 @@ public class ServerCommunication : MonoBehaviour
                 ctx = NetMQContext.Create();
             }
 
-            if (commThread == null)
-            {
-                commThread = new Thread(() => Run(topic, url));
-            }
-            commThread.Start();
+            //do error checking here and return false if something's wrong so the UI
+            //doesn't disappear
+            serverTopic = topic;
+            serverUrl = url;
 
             return true;
         }
