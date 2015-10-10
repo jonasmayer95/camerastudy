@@ -246,7 +246,6 @@ public class CorrectionManager : MonoBehaviour {
             }
             else
             {
-                Debug.Log("Left " + postureErrors[joint].errorTime + "Name " + joint.name);
                 if (postureErrors[joint].errorDistance > tolerance)
                 {
                     windowPos = WindowPosition.Left;

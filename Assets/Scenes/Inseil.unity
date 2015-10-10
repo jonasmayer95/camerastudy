@@ -475,6 +475,7 @@ MonoBehaviour:
   playerIndex: 0
   mirroredMovement: 1
   verticalMovement: 0
+  scaling: 0
   moveRate: 1
   smoothFactor: 5
   offsetNode: {fileID: 0}
@@ -990,6 +991,7 @@ MonoBehaviour:
   playerIndex: 0
   mirroredMovement: 0
   verticalMovement: 0
+  scaling: 0
   moveRate: 1
   smoothFactor: 5
   offsetNode: {fileID: 0}
@@ -1150,6 +1152,7 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 254fad50c8ad95048bdb0c1955e617d2, type: 2}
   m_TargetDisplay: 0
+  m_TargetEye: 3
   m_HDR: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
@@ -1409,7 +1412,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   relativeRectPos: {x: .100000001, y: .25}
-  mode: 1
+  mode: 2
   tolerance: .150000006
   errorDurationUntilCorrection: 1
   correctionCamera: {fileID: 1926261477}
@@ -2030,6 +2033,7 @@ MonoBehaviour:
   playerIndex: 0
   mirroredMovement: 0
   verticalMovement: 0
+  scaling: 0
   moveRate: 1
   smoothFactor: 5
   offsetNode: {fileID: 0}
@@ -2814,6 +2818,7 @@ MonoBehaviour:
   playerIndex: 0
   mirroredMovement: 1
   verticalMovement: 0
+  scaling: 0
   moveRate: 1
   smoothFactor: 5
   offsetNode: {fileID: 0}
@@ -3049,6 +3054,7 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
+  m_TargetEye: 3
   m_HDR: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
@@ -4699,6 +4705,7 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 65c3cc919aa935245bb28b8f9a4cf0f4, type: 2}
   m_TargetDisplay: 0
+  m_TargetEye: 3
   m_HDR: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10

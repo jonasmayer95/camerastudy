@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public enum CameraFeedbackMode
 {
-    LinearArrow, Cylinder
+    LinearArrow, Cylinder, RigedArrow
 }
 
 public class CameraFeedback : MonoBehaviour {
@@ -34,13 +34,17 @@ public class CameraFeedback : MonoBehaviour {
     public GameObject arrow3DPrefab;
     public GameObject cylinderPrefab;    
     public GameObject line3DPrefab;
+    public GameObject rigedArrowPrefab;
     
+   
     // Variables used for referencing
     private GameObject feedbackCylinder;    
     private GameObject targetSphere;
     private GameObject arrow3D;
     private GameObject line3D;
     private LineRenderer rend;
+    private GameObject rigedArrow;
+    private Transform rootBoneArrow;
 
     private bool initialized = false;
 
@@ -71,6 +75,13 @@ public class CameraFeedback : MonoBehaviour {
         feedbackCylinder = Instantiate(cylinderPrefab, Vector3.zero, Quaternion.identity) as GameObject;
         feedbackCylinder.transform.parent = transform;
         feedbackCylinder.SetActive(false);
+
+        // Spawn a riged Arrow which can be bent during runtime
+        rigedArrow = Instantiate(rigedArrowPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+        rigedArrow.transform.parent = transform;
+        rootBoneArrow = rigedArrow.transform.GetChild(0).GetChild(0);
+        BendArrow(180);
+        rigedArrow.SetActive(false);
 
         // Init camera position
         //UpdateCameraPosition();
@@ -131,6 +142,7 @@ public class CameraFeedback : MonoBehaviour {
             {
                 // Deactivate the cylinder
                 feedbackCylinder.SetActive(false);
+                rigedArrow.SetActive(false);
 
                 float radius = Vector3.Distance(targetSphere.transform.position, feedbackAvatar_joint.position) / 2.0f;
                 arrow3D.transform.localScale = new Vector3(radius, radius, radius);
@@ -143,11 +155,35 @@ public class CameraFeedback : MonoBehaviour {
                 arrow3D.SetActive(true);
             }
 
+            if (cameraFeedbackMode == CameraFeedbackMode.RigedArrow)
+            {
+                // Deactivate the 3D arrow
+                arrow3D.SetActive(false);
+                feedbackCylinder.SetActive(false);
+
+                // Update position and size
+                rigedArrow.transform.position = feedbackAvatar_joint.position + ((feedbackAvatar_hip.position + positions[index]) - feedbackAvatar_joint.position) / 2.0f;
+                float radius = Vector3.Distance(targetSphere.transform.position, feedbackAvatar_joint.position) / 1.5f;
+                rigedArrow.transform.localScale = new Vector3(radius, radius, radius);
+
+                // Update orientation
+                Vector2 projectedErrorVector;
+                projectedErrorVector = (targetSphere.transform.position - feedbackAvatar_joint.position).normalized;
+                Vector3 eulerOrientation = Vector3.Cross(projectedErrorVector, feedbackCamera.transform.forward.normalized);
+
+                Quaternion upRotation = Quaternion.FromToRotation(-rigedArrow.transform.up, eulerOrientation);
+                rigedArrow.transform.rotation = Quaternion.Slerp(rigedArrow.transform.rotation, upRotation, Time.deltaTime * 20);
+
+                // Activate riged Arrow
+                rigedArrow.SetActive(true);
+            }
+
             // Update the position size and orientation of the cylinder showing a bent arrow
             if (cameraFeedbackMode == CameraFeedbackMode.Cylinder)
             {
                 // Deactivate the 3D arrow
                 arrow3D.SetActive(false);
+                rigedArrow.SetActive(false);
 
                 // Update position and size
                 feedbackCylinder.transform.position = feedbackAvatar_joint.position + ((feedbackAvatar_hip.position + positions[index]) - feedbackAvatar_joint.position) / 2.0f;
@@ -210,6 +246,7 @@ public class CameraFeedback : MonoBehaviour {
             targetSphere.SetActive(false);
             arrow3D.SetActive(false);
             feedbackCylinder.SetActive(false);
+            rigedArrow.SetActive(false);
         }
 
         // Update Camera position
@@ -227,8 +264,6 @@ public class CameraFeedback : MonoBehaviour {
         }
 
     }
-
-
 
     void UpdateCameraPosition()
     {
@@ -253,6 +288,26 @@ public class CameraFeedback : MonoBehaviour {
             //feedbackCamera.position = arrow3D.transform.position - camNormal.normalized * camDistance;
             //feedbackCamera.transform.LookAt(feedbackAvatar_joint.transform.position);
             feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * -Vector3.forward;
+        }
+    }
+
+    void BendArrow(float angle)
+    {
+        int boneCount = 0;
+        Transform child = rootBoneArrow;
+        while(child.childCount > 0)
+        {
+            boneCount++;
+            child = child.GetChild(0);
+        }
+        boneCount -= 1;
+        float boneAngle = angle / boneCount;
+        child = rootBoneArrow;
+        while(boneCount != 0)
+        {
+            child.localRotation = Quaternion.Euler(0, 0, boneAngle);
+            child = child.GetChild(0);
+            boneCount--;
         }
     }
 }
