@@ -144,14 +144,23 @@ public class CorrectionManager : MonoBehaviour {
         
         if (!postureErrors.ContainsKey(joint))
         {
-            postureErrors.Add(joint, error);
-            
+            postureErrors.Add(joint, error);            
         }
     }
 
     public void Reset()
     {
         postureErrors.Clear();
+        if (cameraFeedback != null)
+        {
+            cameraFeedback.ResetWindow();
+        }
+        joint = null;
+    }
+
+    public void SwitchCorrectionMethod(int method)
+    {
+        mode = (CameraFeedbackMode) method;
     }
 
     private void SpawnCorrectionWindow()
@@ -213,12 +222,15 @@ public class CorrectionManager : MonoBehaviour {
         {
             if (joint != null && newJoint != joint)
             {
-                Debug.Log("Reset");
                 postureErrors[joint].errorTime = 0;
             }
 
             joint = newJoint;
-            showWindow = true;
+
+            if (postureErrors[joint].errorDistance > tolerance)
+            {
+                showWindow = true;
+            }
         }
 
 
@@ -231,7 +243,7 @@ public class CorrectionManager : MonoBehaviour {
 
             cameraFeedback.cameraFeedbackMode = mode;
             //Debug.Log("greatest error: " + postureErrors[joint].errorDistance + " Name: " + postureErrors[joint].staticJoint.joint);
-            cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar, avatar, RectWorldPos, false, guiAlpha);
+            cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar, avatar, RectWorldPos, false, guiAlpha, true);
             correcting = true;
 
             if (postureErrors[joint].staticJoint.targetPosition.x > 0)
@@ -239,7 +251,7 @@ public class CorrectionManager : MonoBehaviour {
                 if (postureErrors[joint].errorDistance > tolerance)
                 {
                     windowPos = WindowPosition.Right;
-                    cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar, avatar, RectWorldPos, true, guiAlpha);
+                    cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar, avatar, RectWorldPos, true, guiAlpha, false);
 
                     
                 }
@@ -249,7 +261,7 @@ public class CorrectionManager : MonoBehaviour {
                 if (postureErrors[joint].errorDistance > tolerance)
                 {
                     windowPos = WindowPosition.Left;
-                    cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar, avatar, RectWorldPos, true, guiAlpha);
+                    cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar, avatar, RectWorldPos, true, guiAlpha, true);
 
                     
                 }

@@ -47,6 +47,7 @@ public class CameraFeedback : MonoBehaviour {
     private Transform rootBoneArrow;
 
     private bool initialized = false;
+    private bool left;
 
 
 	// Use this for initialization
@@ -79,8 +80,8 @@ public class CameraFeedback : MonoBehaviour {
         // Spawn a riged Arrow which can be bent during runtime
         rigedArrow = Instantiate(rigedArrowPrefab, Vector3.zero, Quaternion.identity) as GameObject;
         rigedArrow.transform.parent = transform;
-        rootBoneArrow = rigedArrow.transform.GetChild(0).GetChild(0);
-        BendArrow(180);
+        //rootBoneArrow = rigedArrow.transform.GetChild(0).GetChild(0);
+        //BendArrow(180);
         rigedArrow.SetActive(false);
 
         // Init camera position
@@ -88,10 +89,17 @@ public class CameraFeedback : MonoBehaviour {
         positions.Add(Vector3.zero);
     }
 
-    public void InitCorrectionWindow(StaticJoint joint, FeedbackCamera_Avatar cameraAvatar, BoneMap basicAvatar, Vector3 windowPosition, bool enabled, float lineAlpha)
+    public void ResetWindow()
+    {
+        showingWindow = false;
+    }
+
+    public void InitCorrectionWindow(StaticJoint joint, FeedbackCamera_Avatar cameraAvatar, BoneMap basicAvatar, Vector3 windowPosition, bool enabled, float lineAlpha, bool left)
     {
         showingWindow = enabled;
         this.lineAlpha = lineAlpha;
+
+        this.left = left;
 
         //throw new System.NotImplementedException();
         positions[0] = joint.targetPosition;
@@ -161,18 +169,15 @@ public class CameraFeedback : MonoBehaviour {
                 arrow3D.SetActive(false);
                 feedbackCylinder.SetActive(false);
 
-                // Update position and size
+                // Update and activate the riged 3D arrow
                 rigedArrow.transform.position = feedbackAvatar_joint.position + ((feedbackAvatar_hip.position + positions[index]) - feedbackAvatar_joint.position) / 2.0f;
-                float radius = Vector3.Distance(targetSphere.transform.position, feedbackAvatar_joint.position) / 1.5f;
-                rigedArrow.transform.localScale = new Vector3(radius, radius, radius);
 
-                // Update orientation
-                Vector2 projectedErrorVector;
-                projectedErrorVector = (targetSphere.transform.position - feedbackAvatar_joint.position).normalized;
-                Vector3 eulerOrientation = Vector3.Cross(projectedErrorVector, feedbackCamera.transform.forward.normalized);
+                rigedArrow.transform.LookAt(targetSphere.transform.position);
+                Quaternion baseRot = rigedArrow.transform.rotation;
+                rigedArrow.transform.rotation = baseRot * Quaternion.Euler(-90, 0, 0);
 
-                Quaternion upRotation = Quaternion.FromToRotation(-rigedArrow.transform.up, eulerOrientation);
-                rigedArrow.transform.rotation = Quaternion.Slerp(rigedArrow.transform.rotation, upRotation, Time.deltaTime * 20);
+                float radius = Vector3.Distance(targetSphere.transform.position, feedbackAvatar_joint.position) / 2.0f;
+                rigedArrow.transform.localScale = new Vector3(radius , radius , radius );
 
                 // Activate riged Arrow
                 rigedArrow.SetActive(true);

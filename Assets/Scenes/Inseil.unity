@@ -674,12 +674,12 @@ GameObject:
   - 114: {fileID: 35846273}
   - 114: {fileID: 35846272}
   m_Layer: 5
-  m_Name: ImageFeedback
+  m_Name: Curved Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &35846271
 RectTransform:
   m_ObjectHideFlags: 0
@@ -739,8 +739,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 290775171}
-        m_MethodName: ShowFeedback
+      - m_Target: {fileID: 290775172}
+        m_MethodName: SwitchCorrectionMethod
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -793,7 +793,7 @@ GameObject:
   - 114: {fileID: 41248136}
   - 114: {fileID: 41248135}
   m_Layer: 5
-  m_Name: AreaFeedback
+  m_Name: Curved Planar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -858,8 +858,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 290775171}
-        m_MethodName: ShowFeedback
+      - m_Target: {fileID: 290775172}
+        m_MethodName: SwitchCorrectionMethod
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -961,7 +961,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Ball Feedback
+  m_Text: Linear 3D Arrow
 --- !u!222 &42403166
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1152,7 +1152,6 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 254fad50c8ad95048bdb0c1955e617d2, type: 2}
   m_TargetDisplay: 0
-  m_TargetEye: 3
   m_HDR: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
@@ -1412,8 +1411,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   relativeRectPos: {x: .100000001, y: .25}
-  mode: 2
-  tolerance: .150000006
+  mode: 1
+  tolerance: .200000003
   errorDurationUntilCorrection: 1
   correctionCamera: {fileID: 1926261477}
   cameraFeedbackPrefab: {fileID: 176790, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
@@ -1555,7 +1554,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Image Feedback
+  m_Text: Curved  Arrow
 --- !u!222 &382074216
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3054,7 +3053,6 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
-  m_TargetEye: 3
   m_HDR: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
@@ -3196,12 +3194,12 @@ GameObject:
   - 114: {fileID: 1062762267}
   - 114: {fileID: 1062762266}
   m_Layer: 5
-  m_Name: BallFeedback
+  m_Name: Linear
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1062762265
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3261,8 +3259,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 290775171}
-        m_MethodName: ShowFeedback
+      - m_Target: {fileID: 290775172}
+        m_MethodName: SwitchCorrectionMethod
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3627,7 +3625,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Area Feedback
+  m_Text: Curved Flat Arrow
 --- !u!222 &1147637923
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -3643,6 +3641,7 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 1148159912}
+  - 114: {fileID: 1148159913}
   m_Layer: 0
   m_Name: GUI
   m_TagString: Untagged
@@ -3664,6 +3663,22 @@ Transform:
   - {fileID: 685273789}
   m_Father: {fileID: 0}
   m_RootOrder: 5
+--- !u!114 &1148159913
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1148159911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d03d234ed9f5844ea24351ba863da64, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttons:
+  - {fileID: 1062762264}
+  - {fileID: 283615318}
+  - {fileID: 35846270}
+  showUI: 1
 --- !u!1001 &1166522932
 Prefab:
   m_ObjectHideFlags: 0
@@ -4705,7 +4720,6 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 65c3cc919aa935245bb28b8f9a4cf0f4, type: 2}
   m_TargetDisplay: 0
-  m_TargetEye: 3
   m_HDR: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10

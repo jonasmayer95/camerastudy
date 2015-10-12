@@ -98,7 +98,7 @@ MonoBehaviour:
   arrow3DPrefab: {fileID: 172930, guid: 980ad7de033d3874e8cc8e1e180ae89b, type: 2}
   cylinderPrefab: {fileID: 196840, guid: a9662b23a7174fc4990e1e88eaea2b23, type: 2}
   line3DPrefab: {fileID: 117850, guid: a2fa034be53b9b344b686e6b8f94ff86, type: 2}
-  rigedArrowPrefab: {fileID: 170830, guid: 2f313a92d7ecc24459e301a9398b879f, type: 2}
+  rigedArrowPrefab: {fileID: 196840, guid: a9662b23a7174fc4990e1e88eaea2b23, type: 2}
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -113,7 +113,7 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: rigedArrowPrefab
       value: 
-      objectReference: {fileID: 170830, guid: 2f313a92d7ecc24459e301a9398b879f, type: 2}
+      objectReference: {fileID: 196840, guid: a9662b23a7174fc4990e1e88eaea2b23, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 176790}
