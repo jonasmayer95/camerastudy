@@ -7,9 +7,18 @@ using System.Threading;
 
 public class ServerCommunication : MonoBehaviour
 {
+    public static NetMQContext Context
+    { 
+        get { return ctx; } 
+    }
+
+    public GameObject utObject;
+    private UbitrackManager utManager;
+
     private static NetMQContext ctx;
     private SubscriberSocket client;
     private PairSocket threadCommSocket;
+
     private NetMQMessage serverMessage;
     private InseilMessage im;
     private string json;
@@ -17,9 +26,11 @@ public class ServerCommunication : MonoBehaviour
 
     private static string serverTopic;
     private static string serverUrl;
+    private string inprocAddress = "inproc://avatarupdate";
 
     private static Thread commThread;
-    private static volatile bool terminate;
+    private static volatile bool terminate = false;
+    private volatile bool setupComplete = false;
 
     void Awake()
     {
@@ -27,6 +38,17 @@ public class ServerCommunication : MonoBehaviour
         im = new InseilMessage();
         NetJSON.NetJSON.IncludeFields = true;
         NetJSON.NetJSON.SkipDefaultValue = false;
+
+        utManager = utObject.GetComponent<UbitrackManager>();
+        if (utManager != null)
+        {
+            //we need to wait for bind before we can connect. that means waiting
+            //for the second thread to set up its socket.
+            while (!setupComplete)
+                Thread.Sleep(1);
+
+            utManager.SetupSocket(inprocAddress);
+        }
 
         if (commThread == null)
         {
@@ -48,16 +70,9 @@ public class ServerCommunication : MonoBehaviour
             //assuming we get everything in a single frame
             json = serverMessage.First.ConvertToString();
 
-            //Deserialize<InseilMessage>(json, ref im);
-            //Deserialize(json, ref im);
             im = NetJSON.NetJSON.Deserialize<InseilMessage>(json);
 
-            //uncomment as soon as the code is ubitrack-ready
-            //UbitrackManager.instance.UpdateInseilMeasurement(im.measurement);
-            //UbitrackManager.instance.recievedData = true;
-            //UbitrackManager.instance.GenerateBodyData(im.measurement);
-
-            //send a giant byte buffer down the inproc socket
+            //convert inseilmessage to byte buffer and send it down the inproc socket
         }
     }
 
@@ -87,7 +102,8 @@ public class ServerCommunication : MonoBehaviour
             threadCommSocket = ctx.CreatePairSocket();
         }
 
-        threadCommSocket.Bind("inproc://avatarupdate");
+        threadCommSocket.Bind(inprocAddress);
+        setupComplete = true;
 
         while (!terminate)
         {

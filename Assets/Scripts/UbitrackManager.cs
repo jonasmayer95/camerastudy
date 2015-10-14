@@ -1,6 +1,8 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
+using NetMQ;
+using NetMQ.Sockets;
 
 
 class UbitrackManager : MonoBehaviour
@@ -15,9 +17,11 @@ class UbitrackManager : MonoBehaviour
     public static UbitrackManager instance;
     public InseilMeasurement measurement = new InseilMeasurement();
 
-    public GameObject avatar;
+    public GameObject avatar = null;
     private InseilAvatarController avatarController;
     public bool recievedData = false;
+
+    private PairSocket socket;
 
     void Awake()
     {
@@ -47,14 +51,32 @@ class UbitrackManager : MonoBehaviour
        
     }
 
-    //void Update()
-    //{
-        //if(measurement != null && recievedData)
-        //{
-        //    recievedData = false;
-        //    GenerateBodyData(measurement);
-        //}
-    //}
+    void Update()
+    {
+        //TODO: get rid of this check by making sure the socket exists before calling update for the first time
+        if (socket != null)
+        {
+            
+        }
+    }
+
+    /// <summary>
+    /// Sets up a pair socket to get joint updates for the avatar.
+    /// Needs to be called from outside as the context might not exist yet
+    /// when the avatar is created.
+    /// </summary>
+    public void SetupSocket(string address)
+    {
+        if (ServerCommunication.Context != null)
+        {
+            socket = ServerCommunication.Context.CreatePairSocket();
+            socket.Connect(address);
+        }
+        else
+        {
+            Debug.Log("servercommunication has not set up its netmqcontext yet");
+        }
+    }
 
     public void UpdateInseilMeasurement(InseilMeasurement m)
     {
