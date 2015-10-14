@@ -39,6 +39,14 @@ public class ServerCommunication : MonoBehaviour
         NetJSON.NetJSON.IncludeFields = true;
         NetJSON.NetJSON.SkipDefaultValue = false;
 
+
+        if (commThread == null)
+        {
+            commThread = new Thread(() => Run());
+        }
+        commThread.Start();
+
+
         utManager = utObject.GetComponent<UbitrackManager>();
         if (utManager != null)
         {
@@ -49,16 +57,6 @@ public class ServerCommunication : MonoBehaviour
 
             utManager.SetupSocket(inprocAddress);
         }
-
-        if (commThread == null)
-        {
-            commThread = new Thread(() => Run());
-        }
-        commThread.Start();
-
-        //alright, we need another inproc socket pair and a thread. server comm, deserialization and
-        //sending the deserialized byte buffer should be run in that thread. that means we need to set up
-        //when waking up and getting rid of Update().
     }
 
     void ServerUpdate()
@@ -73,12 +71,14 @@ public class ServerCommunication : MonoBehaviour
             im = NetJSON.NetJSON.Deserialize<InseilMessage>(json);
 
             //convert inseilmessage to byte buffer and send it down the inproc socket
-            threadCommSocket.Send(im.measurement.ToByteArray());
+            var data = im.measurement.ToByteArray();
+            threadCommSocket.Send(data);
         }
     }
 
     void OnApplicationQuit()
     {
+        utManager.SocketShutdown();
         Shutdown();
     }
 
@@ -166,9 +166,12 @@ public class ServerCommunication : MonoBehaviour
         terminate = true;
 
         //wait for other thread to dispose of its sockets
-        while (commThread.IsAlive)
+        if (commThread != null)
         {
-            Thread.Sleep(1);
+            while (commThread.IsAlive)
+            {
+                Thread.Sleep(1);
+            }
         }
 
         if (ctx != null)

@@ -71,7 +71,7 @@ class UbitrackManager : MonoBehaviour
         }
     }
 
-    void OnApplicationQuit()
+    public void SocketShutdown()
     {
         if (socket != null)
         {

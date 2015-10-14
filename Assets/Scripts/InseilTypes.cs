@@ -129,7 +129,7 @@ public class InseilMeasurement
     {
         InseilMeasurement retVal = new InseilMeasurement();
 
-        using (MemoryStream stream = new MemoryStream())
+        using (MemoryStream stream = new MemoryStream(data))
         {
             using (BinaryReader reader = new BinaryReader(stream))
             {
