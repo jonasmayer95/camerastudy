@@ -73,6 +73,7 @@ public class ServerCommunication : MonoBehaviour
             im = NetJSON.NetJSON.Deserialize<InseilMessage>(json);
 
             //convert inseilmessage to byte buffer and send it down the inproc socket
+            threadCommSocket.Send(im.measurement.ToByteArray());
         }
     }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.IO;
 
 /// <summary>
 /// Plain old data types that directly map to the JSON data
@@ -96,6 +97,63 @@ public class InseilMeasurement
         //TODO: use http://stackoverflow.com/questions/3639094/most-efficient-dictionaryk-v-tostring-with-formatting
         //to get a debug print of the dictionary
         return data.ToString() + "\n" + timestamp.ToString() + "\n";
+    }
+
+
+    //actually I only need this for measurement...
+    public byte[] ToByteArray()
+    {
+        using (MemoryStream stream = new MemoryStream())
+        {
+            using (BinaryWriter writer = new BinaryWriter(stream))
+            {
+                writer.Write(data.Count);
+                foreach (var joint in data)
+                {
+                    writer.Write(joint.Key);
+                    writer.Write(joint.Value.p.x);
+                    writer.Write(joint.Value.p.y);
+                    writer.Write(joint.Value.p.z);
+                    writer.Write(joint.Value.r.x);
+                    writer.Write(joint.Value.r.y);
+                    writer.Write(joint.Value.r.z);
+                    writer.Write(joint.Value.r.w);
+                }
+            }
+
+            return stream.ToArray();
+        }
+    }
+
+    public static InseilMeasurement FromByteArray(byte[] data)
+    {
+        InseilMeasurement retVal = new InseilMeasurement();
+
+        using (MemoryStream stream = new MemoryStream())
+        {
+            using (BinaryReader reader = new BinaryReader(stream))
+            {
+                int count = reader.ReadInt32();
+                string key = "";
+                double px, py, pz, rx, ry, rz, rw;
+
+                for (int i = 0; i < count; ++i)
+                {
+                    key = reader.ReadString();
+                    px = reader.ReadDouble();
+                    py = reader.ReadDouble();
+                    pz = reader.ReadDouble();
+                    rx = reader.ReadDouble();
+                    ry = reader.ReadDouble();
+                    rz = reader.ReadDouble();
+                    rw = reader.ReadDouble();
+
+                    var joint = new InseilJoint(px, py, pz, rx, ry, rz, rw);
+                    retVal.data.Add(key, joint);
+                }
+            }
+        }
+        return retVal;
     }
 }
 public class InseilMessage

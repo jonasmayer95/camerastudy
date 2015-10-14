@@ -22,6 +22,8 @@ class UbitrackManager : MonoBehaviour
     public bool recievedData = false;
 
     private PairSocket socket;
+    private byte[] msgBytes;
+    private bool recv;
 
     void Awake()
     {
@@ -56,7 +58,25 @@ class UbitrackManager : MonoBehaviour
         //TODO: get rid of this check by making sure the socket exists before calling update for the first time
         if (socket != null)
         {
-            
+            recv = socket.TryReceiveFrameBytes(out msgBytes);
+
+            if (recv)
+            {
+                //get data, convert it and update the avatar
+                //TODO: modify FromByteArray to work on the same object instead
+                //of allocating new instances on every call
+                InseilMeasurement m = InseilMeasurement.FromByteArray(msgBytes);
+                GenerateBodyData(m);
+            }
+        }
+    }
+
+    void OnApplicationQuit()
+    {
+        if (socket != null)
+        {
+            socket.Dispose();
+            Debug.Log("UbitrackManager: disposed of inproc socket");
         }
     }
 
