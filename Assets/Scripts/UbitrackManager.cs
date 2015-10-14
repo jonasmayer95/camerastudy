@@ -37,16 +37,6 @@ class UbitrackManager : MonoBehaviour
 
     void Start()
     {
-        // Get and init avatar controller
-        //MonoBehaviour[] monoScripts = FindObjectsOfType(typeof(MonoBehaviour)) as MonoBehaviour[];
-        //foreach (MonoBehaviour monoScript in monoScripts)
-        //{
-        //    if (typeof(AvatarController).IsAssignableFrom(monoScript.GetType()))
-        //    {
-        //        AvatarController avatar = (AvatarController)monoScript;
-        //        avatarControllers.Add(avatar);
-        //    }
-        //}
 
         Quaternion quatTiltAngle = Quaternion.Euler(-sensorAngle, 0.0f, 0.0f);
         kinectToWorld.SetTRS(new Vector3(0.0f, sensorHeight, 0.0f), quatTiltAngle, Vector3.one);
@@ -72,6 +62,7 @@ class UbitrackManager : MonoBehaviour
 
     public void SocketShutdown()
     {
+
         if (socket != null)
         {
             socket.Dispose();
@@ -93,7 +84,7 @@ class UbitrackManager : MonoBehaviour
         }
         else
         {
-            Debug.Log("servercommunication has not set up its netmqcontext yet");
+            Debug.Log("UbitrackManager: NetMQContext is null");
         }
     }
 

@@ -33,7 +33,7 @@ public class ServerCommunication : MonoBehaviour
     private static volatile bool terminate = false;
     private volatile bool setupComplete = false;
 
-    private Stopwatch sw = new Stopwatch();
+    //private Stopwatch sw = new Stopwatch();
 
     void Awake()
     {
@@ -82,6 +82,7 @@ public class ServerCommunication : MonoBehaviour
             //UnityEngine.Debug.Log(sw.ElapsedMilliseconds);
             threadCommSocket.Send(data);
         }
+        else Thread.Sleep(0);
 
         //sw.Reset();
     }
@@ -94,7 +95,7 @@ public class ServerCommunication : MonoBehaviour
 
     private void Run()
     {
-        UnityEngine.Debug.Log("started servercomm thread");
+        UnityEngine.Debug.Log("ServerCommunication: started servercomm thread");
         terminate = false;
 
         if (client == null)
@@ -122,16 +123,16 @@ public class ServerCommunication : MonoBehaviour
         }
 
         //clean up sockets here
-        if (client != null)
-        {
-            client.Dispose();
-            UnityEngine.Debug.Log("client disposed");
-        }
-
         if (threadCommSocket != null)
         {
             threadCommSocket.Dispose();
-            UnityEngine.Debug.Log("threadcommsocket disposed");
+            UnityEngine.Debug.Log("ServerCommunication: threadCommSocket disposed");
+        }
+
+        if (client != null)
+        {
+            client.Dispose();
+            UnityEngine.Debug.Log("ServerCommunication: client disposed");
         }
     }
 
@@ -187,7 +188,7 @@ public class ServerCommunication : MonoBehaviour
         if (ctx != null)
         {
             ctx.Dispose();
-            UnityEngine.Debug.Log("context disposed");
+            UnityEngine.Debug.Log("ServerCommunication: context disposed");
         }
     }
 }
