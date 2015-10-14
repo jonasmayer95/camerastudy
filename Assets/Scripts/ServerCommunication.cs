@@ -4,6 +4,7 @@ using NetMQ;
 using NetMQ.Sockets;
 using NetJSON;
 using System.Threading;
+using System.Diagnostics;
 
 public class ServerCommunication : MonoBehaviour
 {
@@ -31,6 +32,8 @@ public class ServerCommunication : MonoBehaviour
     private static Thread commThread;
     private static volatile bool terminate = false;
     private volatile bool setupComplete = false;
+
+    private Stopwatch sw = new Stopwatch();
 
     void Awake()
     {
@@ -61,19 +64,26 @@ public class ServerCommunication : MonoBehaviour
 
     void ServerUpdate()
     {
+        
         recv = client.TryReceiveMultipartMessage(ref serverMessage);
 
         if (recv)
         {
+            //sw.Start();
+
             //assuming we get everything in a single frame
             json = serverMessage.First.ConvertToString();
 
             im = NetJSON.NetJSON.Deserialize<InseilMessage>(json);
+            //sw.Stop();
 
             //convert inseilmessage to byte buffer and send it down the inproc socket
             var data = im.measurement.ToByteArray();
+            //UnityEngine.Debug.Log(sw.ElapsedMilliseconds);
             threadCommSocket.Send(data);
         }
+
+        //sw.Reset();
     }
 
     void OnApplicationQuit()
@@ -84,7 +94,7 @@ public class ServerCommunication : MonoBehaviour
 
     private void Run()
     {
-        Debug.Log("started servercomm thread");
+        UnityEngine.Debug.Log("started servercomm thread");
         terminate = false;
 
         if (client == null)
@@ -94,7 +104,7 @@ public class ServerCommunication : MonoBehaviour
 
         client.Options.ReceiveHighWatermark = 1000;
         string addr = string.Concat("tcp://", serverUrl);
-        Debug.Log(addr);
+        UnityEngine.Debug.Log(addr);
         client.Connect(addr);
         client.Subscribe(serverTopic);
 
@@ -115,13 +125,13 @@ public class ServerCommunication : MonoBehaviour
         if (client != null)
         {
             client.Dispose();
-            Debug.Log("client disposed");
+            UnityEngine.Debug.Log("client disposed");
         }
 
         if (threadCommSocket != null)
         {
             threadCommSocket.Dispose();
-            Debug.Log("threadcommsocket disposed");
+            UnityEngine.Debug.Log("threadcommsocket disposed");
         }
     }
 
@@ -177,7 +187,7 @@ public class ServerCommunication : MonoBehaviour
         if (ctx != null)
         {
             ctx.Dispose();
-            Debug.Log("context disposed");
+            UnityEngine.Debug.Log("context disposed");
         }
     }
 }

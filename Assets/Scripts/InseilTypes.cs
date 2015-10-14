@@ -125,9 +125,10 @@ public class InseilMeasurement
         }
     }
 
-    public static InseilMeasurement FromByteArray(byte[] data)
+    public void FromByteArray(byte[] data)
     {
-        InseilMeasurement retVal = new InseilMeasurement();
+        //InseilMeasurement retVal = new InseilMeasurement();
+        this.data.Clear();
 
         using (MemoryStream stream = new MemoryStream(data))
         {
@@ -149,11 +150,11 @@ public class InseilMeasurement
                     rw = reader.ReadDouble();
 
                     var joint = new InseilJoint(px, py, pz, rx, ry, rz, rw);
-                    retVal.data.Add(key, joint);
+                    this.data.Add(key, joint);
                 }
             }
         }
-        return retVal;
+        //return retVal;
     }
 }
 public class InseilMessage

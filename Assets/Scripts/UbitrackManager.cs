@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using NetMQ;
 using NetMQ.Sockets;
@@ -19,7 +20,6 @@ class UbitrackManager : MonoBehaviour
 
     public GameObject avatar = null;
     private InseilAvatarController avatarController;
-    public bool recievedData = false;
 
     private PairSocket socket;
     private byte[] msgBytes;
@@ -63,12 +63,11 @@ class UbitrackManager : MonoBehaviour
             if (recv)
             {
                 //get data, convert it and update the avatar
-                //TODO: modify FromByteArray to work on the same object instead
-                //of allocating new instances on every call
-                InseilMeasurement m = InseilMeasurement.FromByteArray(msgBytes);
-                GenerateBodyData(m);
+                measurement.FromByteArray(msgBytes);
+                GenerateBodyData(measurement);
             }
         }
+        
     }
 
     public void SocketShutdown()
@@ -96,11 +95,6 @@ class UbitrackManager : MonoBehaviour
         {
             Debug.Log("servercommunication has not set up its netmqcontext yet");
         }
-    }
-
-    public void UpdateInseilMeasurement(InseilMeasurement m)
-    {
-        measurement = m;
     }
 
     /// <summary>
