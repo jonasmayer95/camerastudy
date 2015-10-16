@@ -11,7 +11,7 @@ public class InseilMainCamera : MonoBehaviour {
     private Vector2 maxPositions;
     private float minZ;
     private Transform relTo;
-    Vector3 closePos = Vector3.zero;
+    private Vector3 closePos = new Vector3();
     private bool following = false;
     private Vector3 startPos;
 
@@ -25,6 +25,8 @@ public class InseilMainCamera : MonoBehaviour {
 
         cam = GetComponent<Camera>();
         startPos = transform.position;
+        closePos = Vector3.zero;
+        Debug.Log(startPos);
 	}
 	
 	// Update is called once per frame
@@ -70,7 +72,7 @@ public class InseilMainCamera : MonoBehaviour {
             {
                 transform.position =  new Vector3((minPositions.x + maxPositions.x) / 2.0f, (minPositions.y + maxPositions.y) / 2.0f, transform.position.z);
                 transform.Translate(Vector3.forward * speed * Time.deltaTime);
-                closePos = transform.position - relTo.position;
+                //closePos = transform.position - relTo.position;    There was a null reference here so check functions disabled this line.
             }
         }
 
