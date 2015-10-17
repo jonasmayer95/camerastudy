@@ -99,6 +99,9 @@ MonoBehaviour:
   cylinderPrefab: {fileID: 196840, guid: a9662b23a7174fc4990e1e88eaea2b23, type: 2}
   line3DPrefab: {fileID: 117850, guid: a2fa034be53b9b344b686e6b8f94ff86, type: 2}
   rigedArrowPrefab: {fileID: 196840, guid: a9662b23a7174fc4990e1e88eaea2b23, type: 2}
+  dockingArrow2DPrefab: {fileID: 190220, guid: 2c23d32700d99754dbc83fb167b3bff7, type: 2}
+  arrowDock2DPrefab: {fileID: 121718, guid: 32ab1fe5d0e57684e92e29616a2a96e7, type: 2}
+  spriteDistance: .300000012
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -114,6 +117,18 @@ Prefab:
       propertyPath: rigedArrowPrefab
       value: 
       objectReference: {fileID: 196840, guid: a9662b23a7174fc4990e1e88eaea2b23, type: 2}
+    - target: {fileID: 0}
+      propertyPath: dockingArrow2DPrefab
+      value: 
+      objectReference: {fileID: 190220, guid: 2c23d32700d99754dbc83fb167b3bff7, type: 2}
+    - target: {fileID: 0}
+      propertyPath: arrowDock2DPrefab
+      value: 
+      objectReference: {fileID: 121718, guid: 32ab1fe5d0e57684e92e29616a2a96e7, type: 2}
+    - target: {fileID: 0}
+      propertyPath: spriteDistance
+      value: .300000012
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 176790}
