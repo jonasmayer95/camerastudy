@@ -77,8 +77,7 @@ public class InseilExercise : MonoBehaviour {
     void Update()
     {
         PrintExersiceInfo();
-        InseilMainCamera.instance.UpdateExerciseDimensions(minDimension + new Vector2(coordinatesRelToJoint.position.x, coordinatesRelToJoint.position.y),
-            maxDimension + new Vector2(coordinatesRelToJoint.position.x, coordinatesRelToJoint.position.y), minZ + coordinatesRelToJoint.position.z, coordinatesRelToJoint);
+        CameraExerciseSwitch(); //Also updates camera position
     }
 
     void OnEnable()
@@ -468,5 +467,11 @@ public class InseilExercise : MonoBehaviour {
         {
             exerciseConstraints[i].position.z *= -1;
         }
+    }
+
+    public void CameraExerciseSwitch()
+    {
+        InseilMainCamera.instance.UpdateExerciseDimensions(minDimension + new Vector2(coordinatesRelToJoint.position.x, coordinatesRelToJoint.position.y),
+            maxDimension + new Vector2(coordinatesRelToJoint.position.x, coordinatesRelToJoint.position.y), minZ + coordinatesRelToJoint.position.z, coordinatesRelToJoint);
     }
 }

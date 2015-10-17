@@ -18,15 +18,15 @@ public class InseilMainCamera : MonoBehaviour {
     void Awake()
     {
         instance = this;
+        startPos = transform.position;
     }
 
 	// Use this for initialization
 	void Start () {
 
-        cam = GetComponent<Camera>();
-        startPos = transform.position;
+        cam = GetComponent<Camera>();        
         closePos = Vector3.zero;
-        Debug.Log(startPos);
+        
 	}
 	
 	// Update is called once per frame
@@ -48,15 +48,13 @@ public class InseilMainCamera : MonoBehaviour {
         this.maxPositions = maxPositions;
         this.minZ = minZ;
         this.relTo = relTo;
-
+       // Debug.Log(minPositions + " Min" + " " + maxPositions + " max");
        // Debug.Log(minPositions + " MinPos " + maxPositions + " MaxPos " + minZ);
     }
 
     public void ResetCamera()
     {
         minZ = 0;
-        minPositions = Vector2.zero;
-        maxPositions = Vector2.zero;
         following = false;
         transform.position = startPos;
     }
@@ -68,11 +66,11 @@ public class InseilMainCamera : MonoBehaviour {
             cam.WorldToScreenPoint(new Vector3(0, minPositions.y, minZ)).y > cam.pixelHeight * border && cam.WorldToScreenPoint(new Vector3(0, maxPositions.y, minZ)).y < cam.pixelHeight * (1 - border) &&
             transform.position.z <= minZ)
         {
-            if (following == false)
+            if (following == false && relTo != null)
             {
                 transform.position =  new Vector3((minPositions.x + maxPositions.x) / 2.0f, (minPositions.y + maxPositions.y) / 2.0f, transform.position.z);
                 transform.Translate(Vector3.forward * speed * Time.deltaTime);
-                //closePos = transform.position - relTo.position;    There was a null reference here so check functions disabled this line.
+                closePos = transform.position - relTo.position;//    There was a null reference here so check functions disabled this line.
             }
         }
 

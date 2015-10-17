@@ -78,6 +78,7 @@ public class FeedbackManager : MonoBehaviour {
 
         // Activate first exercise
         exercises[index].gameObject.SetActive(true);
+        exercises[index].CameraExerciseSwitch();
 	}
 	
 	// Update is called once per frame
@@ -120,6 +121,7 @@ public class FeedbackManager : MonoBehaviour {
             index = id;
             exercises[index].gameObject.SetActive(true);
             InseilMainCamera.instance.ResetCamera();
+            exercises[index].CameraExerciseSwitch();
         }
     }
 

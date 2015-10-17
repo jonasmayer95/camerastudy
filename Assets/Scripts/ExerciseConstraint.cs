@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ExerciseConstraint : MonoBehaviour {
+public class ExerciseConstraint{
     
     public Vector3 position;
     public string joint;

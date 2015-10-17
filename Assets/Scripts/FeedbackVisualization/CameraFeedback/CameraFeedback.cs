@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public enum CameraFeedbackMode
 {
-    LinearArrow, Cylinder, RigedArrow
+    LinearArrow, Cylinder, RigedArrow, DockingArrow2D
 }
 
 public class CameraFeedback : MonoBehaviour {
@@ -35,7 +35,8 @@ public class CameraFeedback : MonoBehaviour {
     public GameObject cylinderPrefab;    
     public GameObject line3DPrefab;
     public GameObject rigedArrowPrefab;
-    
+    public GameObject dockingArrow2DPrefab;
+    public GameObject arrowDock2DPrefab;
    
     // Variables used for referencing
     private GameObject feedbackCylinder;    
@@ -45,7 +46,10 @@ public class CameraFeedback : MonoBehaviour {
     private LineRenderer rend;
     private GameObject rigedArrow;
     private Transform rootBoneArrow;
-
+    private GameObject dockingArrow2D;
+    private GameObject arrowDock2D;
+    private Renderer targetSphereRenderer;
+    public float spriteDistance;
     private bool initialized = false;
     private bool left;
 
@@ -55,7 +59,8 @@ public class CameraFeedback : MonoBehaviour {
     {
         // Spawn a sphere to show the target position for debugging
         targetSphere = Instantiate(targetSpherePrefab, Vector3.zero, Quaternion.identity) as GameObject;
-        targetSphere.GetComponent<Renderer>().material.color = targetSphereColor;
+        targetSphereRenderer = targetSphere.GetComponent<Renderer>();
+        targetSphereRenderer.material.color = targetSphereColor;
         targetSphere.transform.parent = transform;
         targetSphere.SetActive(false);
 
@@ -83,6 +88,17 @@ public class CameraFeedback : MonoBehaviour {
         //rootBoneArrow = rigedArrow.transform.GetChild(0).GetChild(0);
         //BendArrow(180);
         rigedArrow.SetActive(false);
+
+
+        // Spawn a dockingStation to show the target position for debugging
+        arrowDock2D = Instantiate(arrowDock2DPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+        arrowDock2D.transform.parent = transform;
+        arrowDock2D.SetActive(false);
+
+        // Spawn a dockingArrow pointing from the joint to the dock
+        dockingArrow2D = Instantiate(dockingArrow2DPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+        dockingArrow2D.transform.parent = transform;
+        dockingArrow2D.SetActive(false);
 
         // Init camera position
         //UpdateCameraPosition();
@@ -151,6 +167,8 @@ public class CameraFeedback : MonoBehaviour {
                 // Deactivate the cylinder
                 feedbackCylinder.SetActive(false);
                 rigedArrow.SetActive(false);
+                dockingArrow2D.SetActive(false);
+                arrowDock2D.SetActive(false);
 
                 float radius = Vector3.Distance(targetSphere.transform.position, feedbackAvatar_joint.position) / 2.0f;
                 arrow3D.transform.localScale = new Vector3(radius, radius, radius);
@@ -161,6 +179,7 @@ public class CameraFeedback : MonoBehaviour {
 
                 // Activate the 3D arrow
                 arrow3D.SetActive(true);
+                targetSphereRenderer.enabled = true;
             }
 
             if (cameraFeedbackMode == CameraFeedbackMode.RigedArrow)
@@ -168,6 +187,8 @@ public class CameraFeedback : MonoBehaviour {
                 // Deactivate the 3D arrow
                 arrow3D.SetActive(false);
                 feedbackCylinder.SetActive(false);
+                dockingArrow2D.SetActive(false);
+                arrowDock2D.SetActive(false);
 
                 // Update and activate the riged 3D arrow
                 rigedArrow.transform.position = feedbackAvatar_joint.position + ((feedbackAvatar_hip.position + positions[index]) - feedbackAvatar_joint.position) / 2.0f;
@@ -181,6 +202,7 @@ public class CameraFeedback : MonoBehaviour {
 
                 // Activate riged Arrow
                 rigedArrow.SetActive(true);
+                targetSphereRenderer.enabled = true;
             }
 
             // Update the position size and orientation of the cylinder showing a bent arrow
@@ -189,6 +211,9 @@ public class CameraFeedback : MonoBehaviour {
                 // Deactivate the 3D arrow
                 arrow3D.SetActive(false);
                 rigedArrow.SetActive(false);
+                dockingArrow2D.SetActive(false);
+                arrowDock2D.SetActive(false);
+
 
                 // Update position and size
                 feedbackCylinder.transform.position = feedbackAvatar_joint.position + ((feedbackAvatar_hip.position + positions[index]) - feedbackAvatar_joint.position) / 2.0f;
@@ -240,6 +265,32 @@ public class CameraFeedback : MonoBehaviour {
 
                 // Activate cylinder
                 feedbackCylinder.SetActive(true);
+                targetSphereRenderer.enabled = true;
+            }
+
+            // Update the position and orientation of the 3D arrow
+            if (cameraFeedbackMode == CameraFeedbackMode.DockingArrow2D)
+            {
+                // Deactivate the 3D arrow
+                arrow3D.SetActive(false);
+                rigedArrow.SetActive(false);
+                feedbackCylinder.SetActive(false);
+                targetSphereRenderer.enabled = false;
+
+                dockingArrow2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.position - feedbackCamera.transform.position).normalized;
+                arrowDock2D.transform.position = feedbackCamera.transform.position + spriteDistance * (targetSphere.transform.position - feedbackCamera.transform.position).normalized;
+
+                Vector2 dir = arrowDock2D.transform.position - dockingArrow2D.transform.position;
+                dir.Normalize();
+                Quaternion arrowRot = Quaternion.FromToRotation(Vector3.right, dir);
+                dockingArrow2D.transform.rotation = Quaternion.Slerp(dockingArrow2D.transform.rotation, arrowRot, Time.deltaTime * 20);
+
+                Quaternion dockRot = Quaternion.FromToRotation(Vector3.left, -dir);
+                arrowDock2D.transform.rotation = Quaternion.Slerp(arrowDock2D.transform.rotation, dockRot, Time.deltaTime * 20);
+
+                //Activate the Dock and arrow 
+                dockingArrow2D.SetActive(true);
+                arrowDock2D.SetActive(true);
             }
         }
 
@@ -252,6 +303,8 @@ public class CameraFeedback : MonoBehaviour {
             arrow3D.SetActive(false);
             feedbackCylinder.SetActive(false);
             rigedArrow.SetActive(false);
+            dockingArrow2D.SetActive(false);
+            arrowDock2D.SetActive(false);
         }
 
         // Update Camera position
