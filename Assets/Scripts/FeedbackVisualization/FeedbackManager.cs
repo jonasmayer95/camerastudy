@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.UI;
 
 public enum ExerciseExplanation
 {
@@ -41,6 +42,12 @@ public class FeedbackManager : MonoBehaviour {
     // Index of active exercise
     private int index = 0;
 
+    // UI variables
+    public GameObject exerciseButtonPrefab;
+    private List<GameObject> exerciseButtons;
+    public GameObject exerciseUI;
+    public GameObject feedbackUI;
+
     // Called before Start
     void Awake()
     {
@@ -79,6 +86,8 @@ public class FeedbackManager : MonoBehaviour {
         // Activate first exercise
         exercises[index].gameObject.SetActive(true);
         exercises[index].CameraExerciseSwitch();
+
+        InitExerciseUI();
 	}
 	
 	// Update is called once per frame
@@ -112,7 +121,7 @@ public class FeedbackManager : MonoBehaviour {
     }
 
     // Called by GUI
-    private void SwitchExercise(int id)
+    public void SwitchExercise(int id)
     {
         // Deactivate old exercise and activate new one
         if (id >= 0 && id < exercises.Count && exercises.Count > 0)
@@ -129,5 +138,33 @@ public class FeedbackManager : MonoBehaviour {
     public void NextExercise()
     {
         SwitchExercise((index + 1) % exercises.Count);
+    }
+
+    private void InitExerciseUI()
+    {
+        // Init the buttons
+        exerciseButtons = new List<GameObject>();
+        int index = 0;
+        foreach(InseilExercise exercise in exercises)
+        {
+            GameObject button = Instantiate(exerciseButtonPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+            exerciseButtons.Add(button);
+            button.transform.SetParent(exerciseUI.transform);
+            button.GetComponent<ExerciseButton>().InitButton(exercise.gameObject.name, index, Vector2.one);
+            index++;
+        }
+        DisableExerciseUI();
+    }
+
+    public void LoadExerciseUI()
+    {
+        exerciseUI.SetActive(true);
+        feedbackUI.SetActive(false);
+    }
+
+    public void DisableExerciseUI()
+    {
+        exerciseUI.SetActive(false);
+        feedbackUI.SetActive(true);
     }
 }
