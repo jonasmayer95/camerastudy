@@ -47,6 +47,7 @@ public class FeedbackManager : MonoBehaviour {
     private List<GameObject> exerciseButtons;
     public GameObject exerciseUI;
     public GameObject feedbackUI;
+    public GameObject backButton;
 
     // Called before Start
     void Awake()
@@ -160,11 +161,13 @@ public class FeedbackManager : MonoBehaviour {
     {
         exerciseUI.SetActive(true);
         feedbackUI.SetActive(false);
+        backButton.SetActive(true);
     }
 
     public void DisableExerciseUI()
     {
         exerciseUI.SetActive(false);
         feedbackUI.SetActive(true);
+        backButton.SetActive(false);
     }
 }

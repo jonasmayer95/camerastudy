@@ -1161,7 +1161,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hand: {fileID: 932762095}
   relativeBone: {fileID: 932762097}
-  selectionTime: 1
+  selectionTime: 2
   eventSystem: {fileID: 913078694}
   slider: {fileID: 1943406625}
 --- !u!114 &251440960
@@ -1201,11 +1201,11 @@ Rigidbody2D:
   m_Mass: 1
   m_LinearDrag: 0
   m_AngularDrag: .0500000007
-  m_GravityScale: 1
-  m_IsKinematic: 0
+  m_GravityScale: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 0
 --- !u!58 &251440963
 CircleCollider2D:
@@ -1215,7 +1215,7 @@ CircleCollider2D:
   m_GameObject: {fileID: 251440957}
   m_Enabled: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
@@ -1276,7 +1276,6 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 254fad50c8ad95048bdb0c1955e617d2, type: 2}
   m_TargetDisplay: 0
-  m_TargetEye: 3
   m_HDR: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
@@ -1554,6 +1553,7 @@ MonoBehaviour:
   exerciseButtonPrefab: {fileID: 140356, guid: 1661b6e28517c7c4c841959ab1f4a058, type: 2}
   exerciseUI: {fileID: 425671178}
   feedbackUI: {fileID: 596734522}
+  backButton: {fileID: 874106522}
 --- !u!114 &290775172
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2850,7 +2850,7 @@ MonoBehaviour:
   playerIndex: 0
   mirroredMovement: 1
   verticalMovement: 0
-  scaling: 1
+  scaling: 0
   moveRate: 1
   smoothFactor: 5
   offsetNode: {fileID: 0}
@@ -2928,7 +2928,6 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
-  m_TargetEye: 3
   m_HDR: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
@@ -4493,7 +4492,6 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 65c3cc919aa935245bb28b8f9a4cf0f4, type: 2}
   m_TargetDisplay: 0
-  m_TargetEye: 3
   m_HDR: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
@@ -4564,7 +4562,7 @@ MonoBehaviour:
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
-  m_FillAmount: 1
+  m_FillAmount: 0
   m_FillClockwise: 1
   m_FillOrigin: 2
 --- !u!222 &1943406627
