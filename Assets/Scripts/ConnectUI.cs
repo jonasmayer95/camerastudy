@@ -4,7 +4,7 @@ using System.Collections;
 
 public class ConnectUI : MonoBehaviour
 {
-    public GameObject commObj;
+    public GameObject serverCommunicationObject;
     private Text addressInput;
     private Text topicInput;
 
@@ -22,7 +22,7 @@ public class ConnectUI : MonoBehaviour
 
         if (ServerCommunication.ClientConnect(topic, url))
         {
-            commObj.SetActive(true);
+            serverCommunicationObject.SetActive(true);
             this.gameObject.SetActive(false);
         }
         else
