@@ -92,7 +92,9 @@ MonoBehaviour:
   connectingJoint: {fileID: 0}
   positions: []
   tolerance: .200000003
-  cameraFeedbackMode: 1
+  cameraFeedbackMode: 2
+  cameraPerspective: 0
+  cameraMotion: 0
   targetSpherePrefab: {fileID: 162198, guid: 4d932e12d8da59746990cd4af1135d9d, type: 2}
   targetSphereColor: {r: 0, g: .503448486, b: 1, a: 0}
   arrow3DPrefab: {fileID: 172930, guid: 980ad7de033d3874e8cc8e1e180ae89b, type: 2}
@@ -128,6 +130,10 @@ Prefab:
     - target: {fileID: 0}
       propertyPath: spriteDistance
       value: .300000012
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: cameraFeedbackMode
+      value: 2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
