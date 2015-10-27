@@ -48,6 +48,7 @@ public class FeedbackManager : MonoBehaviour {
     public GameObject exerciseUI;
     public GameObject feedbackUI;
     public GameObject backButton;
+    public GameObject canvas;
 
     // Called before Start
     void Awake()
@@ -97,6 +98,12 @@ public class FeedbackManager : MonoBehaviour {
         if(Input.GetKeyDown(KeyCode.Space))
         {
             SwitchExercise((index + 1) % exercises.Count);
+        }
+
+        // Hide/unhide UI
+        if(Input.GetKeyDown("h"))
+        {
+            EnableUI(!canvas.activeInHierarchy);
         }
 
         // Print exercise Info into external files
@@ -169,5 +176,10 @@ public class FeedbackManager : MonoBehaviour {
         exerciseUI.SetActive(false);
         feedbackUI.SetActive(true);
         backButton.SetActive(false);
+    }
+
+    public void EnableUI(bool enable)
+    {
+        canvas.SetActive(enable);
     }
 }
