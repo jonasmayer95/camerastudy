@@ -137,7 +137,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 100062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 100032, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
       propertyPath: m_Layer
@@ -1101,11 +1101,19 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 189928, guid: a20b0690bd5ead244bbd194d4072f37e, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 189928, guid: a20b0690bd5ead244bbd194d4072f37e, type: 2}
       propertyPath: m_Name
       value: NetworkedAvatar
+      objectReference: {fileID: 0}
+    - target: {fileID: 11483456, guid: a20b0690bd5ead244bbd194d4072f37e, type: 2}
+      propertyPath: filePath
+      value: C:\Users\far\Desktop\RecordingTest
+      objectReference: {fileID: 0}
+    - target: {fileID: 11483456, guid: a20b0690bd5ead244bbd194d4072f37e, type: 2}
+      propertyPath: recordMovement
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: a20b0690bd5ead244bbd194d4072f37e, type: 2}
@@ -1517,7 +1525,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &290775170
 Transform:
   m_ObjectHideFlags: 0
@@ -1554,6 +1562,7 @@ MonoBehaviour:
   exerciseUI: {fileID: 425671178}
   feedbackUI: {fileID: 596734522}
   backButton: {fileID: 874106522}
+  canvas: {fileID: 0}
 --- !u!114 &290775172
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2057,10 +2066,14 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 101132, guid: 4b64bc4955672ba499c102d2594026cd, type: 2}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 11446522, guid: 4b64bc4955672ba499c102d2594026cd, type: 2}
       propertyPath: commObj
+      value: 
+      objectReference: {fileID: 272343340}
+    - target: {fileID: 11446522, guid: 4b64bc4955672ba499c102d2594026cd, type: 2}
+      propertyPath: serverCommunicationObject
       value: 
       objectReference: {fileID: 272343340}
     m_RemovedComponents: []
@@ -2648,7 +2661,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 100062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 100002, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
       propertyPath: m_StaticEditorFlags
@@ -2997,7 +3010,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1059045175}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6b531f336dfee5f438f94ed501caefc7, type: 3}
   m_Name: 
@@ -3037,7 +3050,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1059045175}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ecf9a849381e69f43acccbeb10396d51, type: 3}
   m_Name: 

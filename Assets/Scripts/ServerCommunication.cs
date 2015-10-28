@@ -14,7 +14,7 @@ public class ServerCommunication : MonoBehaviour
     }
 
     public GameObject utObject;
-    private UbitrackManager utManager;
+    private NetworkedKinectManager utManager;
 
     private static NetMQContext ctx;
     private SubscriberSocket client;
@@ -50,7 +50,7 @@ public class ServerCommunication : MonoBehaviour
         commThread.Start();
 
 
-        utManager = utObject.GetComponent<UbitrackManager>();
+        utManager = utObject.GetComponent<NetworkedKinectManager>();
         if (utManager != null)
         {
             //we need to wait for bind before we can connect. that means waiting
