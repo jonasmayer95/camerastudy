@@ -221,7 +221,7 @@ public class InseilAvatarController : MonoBehaviour
                 if (recordMovement)
                 {
                     //write some stuff to a file
-                    writer.WriteLine("{0}: pos: {1}, rot: {2}", joint.ToString(), bones[boneIndex].position.ToString(), bones[boneIndex].rotation.ToString());
+                    writer.Write("{0}: pos: {1}, rot: {2}, time: {3} ", joint.ToString(), bones[boneIndex].position.ToString(), bones[boneIndex].rotation.ToString(), DateTime.UtcNow);
                 }
             }
             else if (specIndex2JointMap.ContainsKey(boneIndex))

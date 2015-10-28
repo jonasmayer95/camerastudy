@@ -4,6 +4,7 @@ using System.Collections;
 public class UIManager : MonoBehaviour {
 
     public GameObject[] buttons;
+    public GameObject userStudyUi;
     public bool showUI;
 
 	// Use this for initialization
@@ -35,6 +36,22 @@ public class UIManager : MonoBehaviour {
 
                 showUI = false;
             }
+        }
+
+        if (Input.GetButtonUp("UserStudyButton"))
+        {
+            if (userStudyUi != null)
+            {
+                if (userStudyUi.activeSelf == false)
+                {
+                    userStudyUi.SetActive(true);
+                }
+                else
+                {
+                    userStudyUi.SetActive(false);
+                }
+            }
+            
         }
 	
 	}
