@@ -26,7 +26,7 @@ public enum WindowPosition
 
 public enum WindowMode
 {
-    Jumping, Moving
+    Jumping, Moving, HideWindow
 }
 
 public enum FadeState
@@ -176,7 +176,7 @@ public class CorrectionManager : MonoBehaviour {
 
     void OnGUI()
     {
-        if (correcting)
+        if (correcting && windowMode != WindowMode.HideWindow)
         {
             rectSize = new Vector2(Screen.width * 0.2f, Screen.width * 0.2f);
 
@@ -272,5 +272,37 @@ public class CorrectionManager : MonoBehaviour {
         {
             correcting = false;
         }
+    }
+
+    public void SwitchCameraMode(CameraPerspectives perspective)
+    {
+        cameraFeedback.cameraPerspective = perspective;
+    }
+
+    public Vector3 CalculateRandomOrbPosition(bool righthanded)
+    {
+        Vector3 pos;
+        Transform rootBone;
+        float distance = 0;
+        if(righthanded)
+        {
+            rootBone = avatar.GetBone("RightArm");
+            Transform joint = rootBone;
+            while(joint.GetChild(0).name != "HandRight")
+            {
+                distance += (joint.GetChild(0).position - joint.transform.position).magnitude;
+            }
+        }
+        else
+        {
+            rootBone = avatar.GetBone("LeftArm");
+            while (joint.GetChild(0).name != "LeftHand")
+            {
+                distance += (joint.GetChild(0).position - joint.transform.position).magnitude;
+            }
+            
+        }
+        pos = Random.onUnitSphere * distance;
+        return pos;
     }
 }

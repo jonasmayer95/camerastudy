@@ -10,7 +10,7 @@ GameObject:
   - 4: {fileID: 423094}
   - 33: {fileID: 3378888}
   - 23: {fileID: 2361330}
-  m_Layer: 12
+  m_Layer: 0
   m_Name: FeedbackCylinder
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -73,7 +73,7 @@ Prefab:
       objectReference: {fileID: 2100000, guid: cb4e4f53296027f4eabd72d51e215d4a, type: 2}
     - target: {fileID: 0}
       propertyPath: m_Layer
-      value: 12
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: m_LocalRotation.x

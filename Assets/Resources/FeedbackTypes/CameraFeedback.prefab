@@ -85,7 +85,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 866702fa97a41e44dba778890f0e4b35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camDistance: .5
+  camDistance: 1
   feedbackCamera: {fileID: 0}
   feedbackAvatar_hip: {fileID: 0}
   feedbackAvatar_joint: {fileID: 0}
@@ -103,7 +103,7 @@ MonoBehaviour:
   rigedArrowPrefab: {fileID: 196840, guid: a9662b23a7174fc4990e1e88eaea2b23, type: 2}
   dockingArrow2DPrefab: {fileID: 190220, guid: 2c23d32700d99754dbc83fb167b3bff7, type: 2}
   arrowDock2DPrefab: {fileID: 121718, guid: 32ab1fe5d0e57684e92e29616a2a96e7, type: 2}
-  spriteDistance: .300000012
+  spriteDistance: .310000002
 --- !u!1001 &100100000
 Prefab:
   m_ObjectHideFlags: 1
@@ -113,7 +113,7 @@ Prefab:
     m_Modifications:
     - target: {fileID: 0}
       propertyPath: camDistance
-      value: .5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: rigedArrowPrefab
@@ -129,11 +129,15 @@ Prefab:
       objectReference: {fileID: 121718, guid: 32ab1fe5d0e57684e92e29616a2a96e7, type: 2}
     - target: {fileID: 0}
       propertyPath: spriteDistance
-      value: .300000012
+      value: .310000002
       objectReference: {fileID: 0}
     - target: {fileID: 0}
       propertyPath: cameraFeedbackMode
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: cameraPerspective
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}

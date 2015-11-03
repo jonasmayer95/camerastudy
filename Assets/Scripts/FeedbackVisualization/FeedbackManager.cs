@@ -101,7 +101,7 @@ public class FeedbackManager : MonoBehaviour {
         }
 
         // Hide/unhide UI
-        if(Input.GetKeyDown("h"))
+        if(Input.GetKeyDown("h") || Input.GetKeyDown(KeyCode.Tab))
         {
             EnableUI(!canvas.activeInHierarchy);
         }

@@ -9,7 +9,12 @@ public enum CameraFeedbackMode
 
 public enum CameraPerspectives
 {
-    Front, Up, Left, Right, Behind, Normal
+    Front, Up, Side, Behind, Normal
+}
+
+public enum CameraSide
+{
+    Left, Right
 }
 
 public enum CameraMotionStates
@@ -39,6 +44,7 @@ public class CameraFeedback : MonoBehaviour {
     public CameraFeedbackMode cameraFeedbackMode = CameraFeedbackMode.RigedArrow;
     public CameraPerspectives cameraPerspective = CameraPerspectives.Front;
     public CameraMotionStates cameraMotion = CameraMotionStates.Jumping;
+    public CameraSide cameraSide = CameraSide.Left;
 
     // Prefabs
     public GameObject targetSpherePrefab;
@@ -344,21 +350,21 @@ public class CameraFeedback : MonoBehaviour {
             // Calculate vector of arrow
             Vector3 arrowVector = targetSphere.transform.position - feedbackAvatar_joint.position;
             arrowVector = arrowVector.normalized;
-
+            /*
             if (Mathf.Abs(arrowVector.x) > Mathf.Abs(arrowVector.z))
             {
                 cameraPerspective = CameraPerspectives.Front;
             }
-
-            else
+            */
+            //else
             {
                 if (left)
                 {
-                    cameraPerspective = CameraPerspectives.Left;
+                    cameraSide = CameraSide.Left;
                 }
                 else
                 {
-                    cameraPerspective = CameraPerspectives.Right;
+                    cameraSide = CameraSide.Right;
                 }
             }
 
@@ -391,13 +397,13 @@ public class CameraFeedback : MonoBehaviour {
                     feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.forward;
                 }
 
-                if (cameraPerspective == CameraPerspectives.Left)
+                if (cameraPerspective == CameraPerspectives.Side && cameraSide == CameraSide.Left)
                 {
                     feedbackCamera.transform.rotation = Quaternion.Euler(0, 90, 0);
                     feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.left;
                 }
 
-                if (cameraPerspective == CameraPerspectives.Right)
+                if (cameraPerspective == CameraPerspectives.Side && cameraSide == CameraSide.Right)
                 {
                     feedbackCamera.transform.rotation = Quaternion.Euler(0, -90, 0);
                     feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.right;
@@ -405,12 +411,23 @@ public class CameraFeedback : MonoBehaviour {
 
                 if (cameraPerspective == CameraPerspectives.Up)
                 {
-
+                    feedbackCamera.transform.rotation = Quaternion.Euler(90,0,0);
+                    feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.up;
                 }
 
                 if (cameraPerspective == CameraPerspectives.Normal)
                 {
-
+                    if (cameraSide == CameraSide.Left)
+                    {
+                        feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized;
+                        feedbackCamera.transform.LookAt((targetSphere.transform.position + feedbackAvatar_joint.position) * 0.5f);
+                    }
+                    else
+                    {
+                        feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * -Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized;
+                        feedbackCamera.transform.LookAt((targetSphere.transform.position + feedbackAvatar_joint.position) * 0.5f);
+                    
+                    }
                 }
             }
 
@@ -428,13 +445,13 @@ public class CameraFeedback : MonoBehaviour {
                     feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.forward, Time.deltaTime * 1);
                 }
 
-                if (cameraPerspective == CameraPerspectives.Left)
+                if (cameraPerspective == CameraPerspectives.Side && cameraSide == CameraSide.Left)
                 {
                     feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation,Quaternion.Euler(0, 90, 0), Time.deltaTime * 1);
                     feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.left, Time.deltaTime * 1);
                 }
 
-                if (cameraPerspective == CameraPerspectives.Right)
+                if (cameraPerspective == CameraPerspectives.Side && cameraSide == CameraSide.Right)
                 {
                     feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(0, -90, 0), Time.deltaTime * 1);
                     feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.right, Time.deltaTime * 1);
@@ -442,12 +459,24 @@ public class CameraFeedback : MonoBehaviour {
 
                 if (cameraPerspective == CameraPerspectives.Up)
                 {
-
+                    feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(90,0,0), Time.deltaTime * 1);
+                    feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.up, Time.deltaTime * 1);
                 }
 
                 if (cameraPerspective == CameraPerspectives.Normal)
                 {
-
+                    if (cameraSide == CameraSide.Left)
+                    {
+                        feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized, Time.deltaTime * 1);
+                        //feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, , Time.deltaTime * 1);                      
+                        feedbackCamera.transform.LookAt((targetSphere.transform.position + feedbackAvatar_joint.position) * 0.5f);
+                    }
+                    else
+                    {
+                        feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * -Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized, Time.deltaTime * 1);
+                        //feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, , Time.deltaTime * 1);
+                        feedbackCamera.transform.LookAt((targetSphere.transform.position + feedbackAvatar_joint.position) * 0.5f);
+                    }
                 }
             }
         }
