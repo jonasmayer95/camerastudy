@@ -33,6 +33,12 @@ public class InseilAvatarController : MonoBehaviour
     // to be equal to the user's position, relative to the sensor (optional)
     public Camera posRelativeToCamera;
 
+    // If enabled, records position/rotation of each bone per frame and writes it to a file
+    public bool recordMovement;
+    public string filePath;
+    public string fileName;
+    private StreamWriter writer;
+    private static uint frameCount;
 
     // The body root node
     protected Transform bodyRoot;
@@ -118,6 +124,33 @@ public class InseilAvatarController : MonoBehaviour
 
         // if parent transform uses physics
         isRigidBody = gameObject.GetComponent<Rigidbody>();
+
+        if (recordMovement)
+        {
+
+            //validate path
+            //if (Uri.IsWellFormedUriString(filePath, UriKind.RelativeOrAbsolute))
+            //{
+            var date = DateTime.Now;
+            filePath = filePath + date.Second.ToString() + date.Minute.ToString() +
+                date.Hour.ToString() + date.Day.ToString() + date.Month.ToString() + date.Year.ToString() + fileName;
+            writer = new StreamWriter(filePath);
+            //}
+            //else
+            //{
+            //    Debug.Log("InseilAvatarController: recordMovement is true, but filepath is invalid.");
+            //    recordMovement = false;
+            //}
+        }
+    }
+
+    void OnApplicationQuit()
+    {
+        if (writer != null)
+        {
+            writer.Flush();
+            writer.Dispose();
+        }
     }
 
     // Update the avatar each frame.
@@ -164,10 +197,15 @@ public class InseilAvatarController : MonoBehaviour
     public void UpdateInseilAvatar(ref UTBodyData kinectData)
     {
         if (!gameObject.activeInHierarchy)
-            return;       
+            return;
 
         // move the avatar to its Kinect position
         MoveInseilAvatar(ref kinectData);
+
+        if (recordMovement)
+        {
+            writer.WriteLine(frameCount);
+        }
 
         for (var boneIndex = 0; boneIndex < bones.Length; boneIndex++)
         {
@@ -178,11 +216,13 @@ public class InseilAvatarController : MonoBehaviour
             {
                 KinectInterop.JointType joint = !mirroredMovement ? boneIndex2JointMap[boneIndex] : boneIndex2MirrorJointMap[boneIndex];
 
-                //TODO: clean up this mess
-                //int dirtyHack = (int)joint;
-                //InseilJoint j = kinectData.data[UbitrackManager.instance.GetJointName((JointType)dirtyHack)];
-
                 TransformInseilBone(joint, boneIndex, mirroredMovement, ref kinectData);
+
+                if (recordMovement)
+                {
+                    //write some stuff to a file
+                    writer.Write("{0}: pos: {1}, rot: {2}, time: {3} ", joint.ToString(), bones[boneIndex].position.ToString(), bones[boneIndex].rotation.ToString(), DateTime.UtcNow);
+                }
             }
             else if (specIndex2JointMap.ContainsKey(boneIndex))
             {
@@ -194,9 +234,16 @@ public class InseilAvatarController : MonoBehaviour
                     //Debug.Log(alJoints[0].ToString());
                     Vector3 baseDir = alJoints[0].ToString().EndsWith("Left") ? Vector3.left : Vector3.right;
                     TransformInseilSpecialBone(alJoints[0], alJoints[1], boneIndex, baseDir, mirroredMovement);
+
+                    if (recordMovement)
+                    {
+                        writer.WriteLine("{0}-{1}: pos: {2}, rot: {3}", alJoints[0], alJoints[1], bones[boneIndex].position.ToString(), bones[boneIndex].rotation.ToString());
+                    }
                 }
             }
         }
+
+        ++frameCount;
     }
 
     // Set bones to their initial positions and rotations.
@@ -292,7 +339,7 @@ public class InseilAvatarController : MonoBehaviour
 
         // Get Kinect joint orientation
         Quaternion jointRotation = !flip ? bodyData.joints[iJoint].normalRotation : bodyData.joints[iJoint].mirroredRotation; //TODO: check for flip and return mirrored if needed
-            
+
         if (jointRotation == Quaternion.identity)
             return;
 
@@ -359,8 +406,8 @@ public class InseilAvatarController : MonoBehaviour
         if (flip)
         {
             Vector3 mirroredAngles = jointRotation.eulerAngles;
-           // mirroredAngles.y = -mirroredAngles.y;
-           // mirroredAngles.z = -mirroredAngles.z;
+            // mirroredAngles.y = -mirroredAngles.y;
+            // mirroredAngles.z = -mirroredAngles.z;
 
             jointRotation = Quaternion.Euler(mirroredAngles);
         }
@@ -552,7 +599,7 @@ public class InseilAvatarController : MonoBehaviour
         {
             if (!boneIndex2MecanimMap.ContainsKey(boneIndex))
                 continue;
-            
+
             bones[boneIndex] = animatorComponent.GetBoneTransform(boneIndex2MecanimMap[boneIndex]);
         }
     }

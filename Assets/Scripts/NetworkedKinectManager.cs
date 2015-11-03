@@ -6,16 +6,15 @@ using NetMQ;
 using NetMQ.Sockets;
 
 
-class UbitrackManager : MonoBehaviour
+class NetworkedKinectManager : MonoBehaviour
 {
     private Matrix4x4 kinectToWorld = Matrix4x4.identity;
     private float sensorAngle;
     private float sensorHeight = 1.0f;
-    //private List<AvatarController> avatarControllers = new List<AvatarController>();
     
     private const int kinectJointCount = 26;
     private UTBodyData bodyData = new UTBodyData(kinectJointCount);
-    public static UbitrackManager instance;
+    public static NetworkedKinectManager instance;
     public InseilMeasurement measurement = new InseilMeasurement();
 
     public GameObject avatar = null;
@@ -89,10 +88,10 @@ class UbitrackManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Returns a UTBodyData object that can be used for visualization of an avatar.
+    /// Generates body data from raw kinect measurements and updates the avatar
     /// </summary>
     /// <param name="skeleton"></param>
-    public void GenerateBodyData(InseilMeasurement skeleton)
+    private void GenerateBodyData(InseilMeasurement skeleton)
     {
         //update kinect to world matrix, but we need sensor height and angle for that
         Quaternion quatTiltAngle = Quaternion.Euler(-sensorAngle, 0.0f, 0.0f);
@@ -108,7 +107,6 @@ class UbitrackManager : MonoBehaviour
         CalculateJointOrientations(ref bodyData);
 
         //update avatar
-        //avatarControllers[0].UpdateInseilAvatar(ref bodyData);
         avatarController.UpdateInseilAvatar(ref bodyData);
     }
 
