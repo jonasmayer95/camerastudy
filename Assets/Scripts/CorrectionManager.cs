@@ -279,6 +279,12 @@ public class CorrectionManager : MonoBehaviour {
         cameraFeedback.cameraPerspective = perspective;
     }
 
+
+    /// <summary>
+    /// Generates a random position around the shoulder with the arm length as maximum distance to the shoulder
+    /// </summary>
+    /// <param name="righthanded"></param>
+    /// <returns></returns>
     public Vector3 CalculateRandomOrbPosition(bool righthanded)
     {
         Vector3 pos;
@@ -292,6 +298,7 @@ public class CorrectionManager : MonoBehaviour {
             {
                 distance += (joint.GetChild(0).position - joint.transform.position).magnitude;
             }
+            pos = Random.onUnitSphere * Random.value * distance + rootBone.transform.position;
         }
         else
         {
@@ -300,9 +307,8 @@ public class CorrectionManager : MonoBehaviour {
             {
                 distance += (joint.GetChild(0).position - joint.transform.position).magnitude;
             }
-            
+            pos = Random.onUnitSphere * Random.value * distance + rootBone.transform.position;          
         }
-        pos = Random.onUnitSphere * distance;
         return pos;
     }
 }
