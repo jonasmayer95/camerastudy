@@ -178,6 +178,7 @@ GameObject:
   - 224: {fileID: 22469834}
   - 222: {fileID: 22234582}
   - 114: {fileID: 11427620}
+  - 114: {fileID: 11492822}
   m_Layer: 5
   m_Name: UserStudyUI
   m_TagString: Untagged
@@ -1625,6 +1626,23 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &11492822
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 123812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd05f763db7697e4cb8c3ad781e86e03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  nameInputField: {fileID: 164648}
+  trialInputField: {fileID: 164570}
+  ageInputField: {fileID: 116956}
+  sexToggleGroup: {fileID: 100080}
+  camToggleGroup: {fileID: 191806}
+  submitButton: {fileID: 124816}
 --- !u!114 &11493134
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1933,8 +1951,8 @@ RectTransform:
   m_RootOrder: 2
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: 0, y: -40}
-  m_SizeDelta: {x: 160, y: 20}
+  m_AnchoredPosition: {x: -10.4249954, y: -40}
+  m_SizeDelta: {x: 139.149994, y: 20}
   m_Pivot: {x: .5, y: .5}
 --- !u!224 &22428664
 RectTransform:
@@ -1952,8 +1970,8 @@ RectTransform:
   m_RootOrder: 1
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: 0, y: -20}
-  m_SizeDelta: {x: 160, y: 20}
+  m_AnchoredPosition: {x: -10.4250011, y: -20}
+  m_SizeDelta: {x: 139.149994, y: 20}
   m_Pivot: {x: .5, y: .5}
 --- !u!224 &22431984
 RectTransform:
@@ -1989,8 +2007,8 @@ RectTransform:
   m_RootOrder: 1
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: 0, y: -20}
-  m_SizeDelta: {x: 160, y: 20}
+  m_AnchoredPosition: {x: -24.2999992, y: -20}
+  m_SizeDelta: {x: 111.5, y: 20}
   m_Pivot: {x: .5, y: .5}
 --- !u!224 &22435692
 RectTransform:
@@ -2061,8 +2079,8 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 160, y: 20}
+  m_AnchoredPosition: {x: -24.2750053, y: 0}
+  m_SizeDelta: {x: 111.449997, y: 20}
   m_Pivot: {x: .5, y: .5}
 --- !u!224 &22441292
 RectTransform:
@@ -2170,8 +2188,8 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 160, y: 20}
+  m_AnchoredPosition: {x: -10.3999996, y: 0}
+  m_SizeDelta: {x: 139.100006, y: 20}
   m_Pivot: {x: .5, y: .5}
 --- !u!224 &22450798
 RectTransform:

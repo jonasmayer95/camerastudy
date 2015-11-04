@@ -46,6 +46,9 @@ public class InseilAvatarController : MonoBehaviour
     // Variable to hold all them bones. It will initialize the same size as initialRotations.
     protected Transform[] bones;
 
+    // Public accessor for MovementRecorder
+    public Transform[] Bones { get { return bones; } }
+
     // Rotations of the bones when the Kinect tracking starts.
     protected Quaternion[] initialRotations;
 
@@ -779,11 +782,16 @@ public class InseilAvatarController : MonoBehaviour
 		{24, KinectInterop.JointType.FootRight},
 	};
 
+    public Dictionary<int, KinectInterop.JointType> BoneIndex2JointMap { get { return boneIndex2JointMap; } }
+
+
     protected readonly Dictionary<int, List<KinectInterop.JointType>> specIndex2JointMap = new Dictionary<int, List<KinectInterop.JointType>>
 	{
 		{25, new List<KinectInterop.JointType> {KinectInterop.JointType.ShoulderLeft, KinectInterop.JointType.SpineShoulder} },
 		{26, new List<KinectInterop.JointType> {KinectInterop.JointType.ShoulderRight, KinectInterop.JointType.SpineShoulder} },
 	};
+
+    public Dictionary<int, List<KinectInterop.JointType>> SpecIndex2JointMap { get { return specIndex2JointMap; } }
 
     protected readonly Dictionary<int, KinectInterop.JointType> boneIndex2MirrorJointMap = new Dictionary<int, KinectInterop.JointType>
 	{
@@ -820,11 +828,14 @@ public class InseilAvatarController : MonoBehaviour
 		{24, KinectInterop.JointType.FootLeft},
 	};
 
+    public Dictionary<int, KinectInterop.JointType> BoneIndex2MirrorJointMap { get { return boneIndex2MirrorJointMap; } }
+
     protected readonly Dictionary<int, List<KinectInterop.JointType>> specIndex2MirrorJointMap = new Dictionary<int, List<KinectInterop.JointType>>
 	{
 		{25, new List<KinectInterop.JointType> {KinectInterop.JointType.ShoulderRight, KinectInterop.JointType.SpineShoulder} },
 		{26, new List<KinectInterop.JointType> {KinectInterop.JointType.ShoulderLeft, KinectInterop.JointType.SpineShoulder} },
 	};
 
+    public Dictionary<int, List<KinectInterop.JointType>> SpecIndex2MirrorJointMap { get { return specIndex2MirrorJointMap; } }
 }
 
