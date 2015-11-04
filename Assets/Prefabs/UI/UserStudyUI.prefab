@@ -1269,7 +1269,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 11475518}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 11492822}
+        m_MethodName: SubmitData
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!114 &11450872
@@ -1643,6 +1654,7 @@ MonoBehaviour:
   sexToggleGroup: {fileID: 100080}
   camToggleGroup: {fileID: 191806}
   submitButton: {fileID: 124816}
+  userStudyObject: {fileID: 0}
 --- !u!114 &11493134
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1951,8 +1963,8 @@ RectTransform:
   m_RootOrder: 2
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: -10.4249954, y: -40}
-  m_SizeDelta: {x: 139.149994, y: 20}
+  m_AnchoredPosition: {x: -8.05002594, y: -40}
+  m_SizeDelta: {x: 143.899994, y: 20}
   m_Pivot: {x: .5, y: .5}
 --- !u!224 &22428664
 RectTransform:
@@ -1970,8 +1982,8 @@ RectTransform:
   m_RootOrder: 1
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: -10.4250011, y: -20}
-  m_SizeDelta: {x: 139.149994, y: 20}
+  m_AnchoredPosition: {x: -8.04999733, y: -20}
+  m_SizeDelta: {x: 143.899994, y: 20}
   m_Pivot: {x: .5, y: .5}
 --- !u!224 &22431984
 RectTransform:
@@ -2099,7 +2111,7 @@ RectTransform:
   m_RootOrder: 1
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: -40, y: 0}
+  m_AnchoredPosition: {x: -34.5999985, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: .5, y: .5}
 --- !u!224 &22441536
@@ -2188,8 +2200,8 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: -10.3999996, y: 0}
-  m_SizeDelta: {x: 139.100006, y: 20}
+  m_AnchoredPosition: {x: -8, y: 0}
+  m_SizeDelta: {x: 143.800003, y: 20}
   m_Pivot: {x: .5, y: .5}
 --- !u!224 &22450798
 RectTransform:
@@ -2439,7 +2451,7 @@ RectTransform:
   m_RootOrder: 0
   m_AnchorMin: {x: .5, y: .5}
   m_AnchorMax: {x: .5, y: .5}
-  m_AnchoredPosition: {x: 104, y: 0}
+  m_AnchoredPosition: {x: 111, y: 0}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: .5, y: .5}
 --- !u!224 &22497592

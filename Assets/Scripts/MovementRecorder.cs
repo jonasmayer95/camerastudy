@@ -5,7 +5,7 @@ using System;
 using UnityEngine.EventSystems;
 using System.Text;
 
-public class MovementRecorder : MonoBehaviour
+public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
 {
     private static uint frameCount;
     private StreamWriter rawWriter;
@@ -62,7 +62,7 @@ public class MovementRecorder : MonoBehaviour
         
         //write stuff that has been set through events, then get avatar movement data
         rawWriter.Write("{0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10};", userData.name, userData.trial, userData.age, userData.camType, userData.sex,
-            userData.trialCode, userData.startFrame, userData.endFrame, userData.time, frameCount, Time.time);
+            userData.trialCode, userData.startFrame, userData.endFrame, userData.completionTime, frameCount, Time.time);
 
 
         for (int i = 0; i < bones.Length; ++i)
@@ -157,12 +157,54 @@ public class MovementRecorder : MonoBehaviour
 
         return sb.ToString();
     }
+
+    public void StartTrial(uint startFrame, float startTime)
+    {
+        userData.startFrame = startFrame;
+        userData.startTime = startTime;
+
+        userData.endFrame = null;
+        userData.endTime = null;
+    }
+
+    public void EndTrial(uint endFrame, float endTime)
+    {
+        userData.endFrame = endFrame;
+        userData.endTime = endTime;
+
+        var timeDiff = userData.endTime - userData.startTime;
+        userData.completionTime = timeDiff * 1000;
+        
+    }
+
+    public void ChangeTrial(uint trialCode)
+    {
+        userData.trialCode = trialCode;
+
+        ResetTimesAndFrames(ref userData);
+    }
+
+    public void ChangeCamera(CameraType cam)
+    {
+        userData.camType = cam;
+
+        ResetTimesAndFrames(ref userData);
+    }
+
+    private void ResetTimesAndFrames(ref UserStudyData data)
+    {
+        data.startTime = null;
+        data.startFrame = null;
+        data.endTime = null;
+        data.endFrame = null;
+        data.completionTime = null;
+    }
 }
 
 public interface IUserStudyMessageTarget : IEventSystemHandler
 {
     /// <summary>
-    /// Called when the user starts puts his hand on the start marker. Should reset
+    /// Called when the user puts his hand on the start marker. Should reset
     /// time and frame variables.
     /// </summary>
     /// <param name="startFrame">Number of the frame this was called in.</param>
@@ -170,7 +212,8 @@ public interface IUserStudyMessageTarget : IEventSystemHandler
     void StartTrial(uint startFrame, float startTime);
 
     /// <summary>
-    /// Called when the user reaches the end marker.
+    /// Called when the user reaches the end marker. Should calculate and write
+    /// time difference in milliseconds.
     /// </summary>
     /// <param name="endFrame">Number of the frame this was called in.</param>
     /// <param name="endTime">Absolute time this was called (from program start).</param>
@@ -205,7 +248,7 @@ struct UserStudyData
         this.endFrame = null;
         this.startTime = null;
         this.endTime = null;
-        this.time = null;
+        this.completionTime = null;
         this.trialCode = null;
     }
 
@@ -221,7 +264,7 @@ struct UserStudyData
     //these are for calculating the timespan it took the user to complete a trial.
     public float? startTime;
     public float? endTime;
-    public DateTime? time;
+    public float? completionTime;
 
     public uint? trialCode;
 
