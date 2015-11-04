@@ -147,14 +147,14 @@ public class InseilAvatarController : MonoBehaviour
         }
     }
 
-    void OnApplicationQuit()
-    {
-        if (writer != null)
-        {
-            writer.Flush();
-            writer.Dispose();
-        }
-    }
+    //void OnApplicationQuit()
+    //{
+    //    if (writer != null)
+    //    {
+    //        writer.Flush();
+    //        writer.Dispose();
+    //    }
+    //}
 
     // Update the avatar each frame.
     public void UpdateAvatar(Int64 UserID)
