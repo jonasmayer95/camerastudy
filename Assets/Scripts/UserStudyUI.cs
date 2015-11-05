@@ -37,6 +37,7 @@ public class UserStudyUI : MonoBehaviour
         //ExecuteEvents.Execute<UserStudyMessageTarget>(userStudyObject, null, (x, y) => x.InitializeAndActivateUserStudy(name, trial, age, cam, sex));
         MovementRecorder.InitializeAndActivateUserStudy(name, trial, age, cam, sex);
         userStudyObject.SetActive(true);
+        this.gameObject.SetActive(false);
     }
 
     /// <summary>
