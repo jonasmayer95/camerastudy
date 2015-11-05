@@ -9,7 +9,6 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
 {
     private static uint frameCount;
     private StreamWriter rawWriter;
-    //private StreamWriter detailedWriter;
     public string filePath;
     public string fileName;
 
@@ -39,7 +38,8 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
                 rawWriter = new StreamWriter(filePath);
 
                 //write raw header to file
-                string header = string.Concat("name;trial;age;camera;sex;trial_code;start_frame;end_frame;completion_time;current_frame;current_time;", GetBoneDescriptions(controller));
+                string header = string.Concat("name;trial;age;camera;sex;trial_code;start_frame;end_frame;completion_time;current_frame;current_time;start_position;end_position;",
+                    GetBoneDescriptions(controller));
                 rawWriter.WriteLine(header);
             }
         }
@@ -61,8 +61,8 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
         //we also need to save the randomized trials somewhere and set them.
         
         //write stuff that has been set through events, then get avatar movement data
-        rawWriter.Write("{0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10};", userData.name, userData.trial, userData.age, userData.camType, userData.sex,
-            userData.trialCode, userData.startFrame, userData.endFrame, userData.completionTime, frameCount, Time.time);
+        rawWriter.Write("{0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10};{11};{12};", userData.name, userData.trial, userData.age, userData.camType, userData.sex,
+            userData.trialCode, userData.startFrame, userData.endFrame, userData.completionTime, frameCount, Time.time, userData.start, userData.end);
 
 
         for (int i = 0; i < bones.Length; ++i)
@@ -177,7 +177,7 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
         
     }
 
-    public void ChangeTrial(uint trialCode)
+    public void ChangeTrial(uint trialCode, Vector3 start, Vector3 end)
     {
         userData.trialCode = trialCode;
 
@@ -221,10 +221,12 @@ public interface IUserStudyMessageTarget : IEventSystemHandler
 
     /// <summary>
     /// Called when the trial (ball positions) should be changed. Should reset
-    /// times and frames.
+    /// times and frames
     /// </summary>
-    /// <param name="trialCode">Number of the required trial.</param>
-    void ChangeTrial(uint trialCode);
+    /// <param name="trialCode"></param>
+    /// <param name="start"></param>
+    /// <param name="end"></param>
+    void ChangeTrial(uint trialCode, Vector3 start, Vector3 end);
 
     /// <summary>
     /// Called when the camera pattern changes. SHould (probably) reset
@@ -250,6 +252,8 @@ struct UserStudyData
         this.endTime = null;
         this.completionTime = null;
         this.trialCode = null;
+        this.start = null;
+        this.end = null;
     }
 
     public string name;
@@ -269,6 +273,8 @@ struct UserStudyData
     public uint? trialCode;
 
     //we still need (nullable?) positions for start and target balls in here that can be set from the outside
+    public Vector3? start;
+    public Vector3? end;
 }
 
 public enum CameraType
