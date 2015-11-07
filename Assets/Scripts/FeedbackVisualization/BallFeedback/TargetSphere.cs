@@ -9,11 +9,14 @@ public class TargetSphere : MonoBehaviour {
     public Transform leftShoulder;
     private int positionIndex = 0;
     private bool rightHanded;
-
-	// Use this for initialization
-	void Start () {
-        
+    private Material progressBar;
+    public float progressBarTime;
+    private float progressBarStartTime;
+    private Vector4 color = new Vector4();
 	
+    // Use this for initialization
+	void Start () {
+        progressBar = transform.GetChild(0).gameObject.GetComponent<Material>();
 	}
 	
 	// Update is called once per frame
@@ -21,14 +24,12 @@ public class TargetSphere : MonoBehaviour {
 	
 	}
 
-    public void InitTargetSphere(int posCount, bool rightHanded)
+    public void InitTargetSphere(List<Vector3> positions, bool rightHanded)
     {
-        positions = new List<Vector3>();
-        for (int i = 0; i < posCount; i++)
-        {
-            positions.Add(CalculateRandomOrbPosition(true));
-        }
+        this.positions = positions;
         this.rightHanded = rightHanded;
+        transform.position = positions[0];
+        positionIndex = 0;
     }
 
     public Vector3 CalculateRandomOrbPosition(bool righthanded)
@@ -62,10 +63,31 @@ public class TargetSphere : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
-        if (rightHanded && other.name == "RightHand" || !rightHanded && other.name == "LeftHand")
+        if (positionIndex > 0 && (rightHanded && other.name == "RightHand" || !rightHanded && other.name == "LeftHand"))
         {
             positionIndex++;
-            transform.position = positions[positionIndex];
+            if (positionIndex < positions.Count)
+            {
+                transform.position = positions[positionIndex];
+            }
+            else
+            {
+                //Load feedback summary screen
+            }
+        }
+        else
+        {
+            progressBarStartTime = Time.time;
+        }
+    }
+
+    void OnTriggerStay(Collider other)
+    {
+        if (positionIndex == 0 && (rightHanded && other.name == "RightHand" || !rightHanded && other.name == "LeftHand"))
+        {
+            color = progressBar.color;
+            color.w = (Time.time - progressBarStartTime) / progressBarTime;
+            progressBar.color = color;   
         }
     }
 }
