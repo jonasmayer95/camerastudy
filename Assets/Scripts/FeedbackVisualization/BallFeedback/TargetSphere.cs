@@ -5,8 +5,6 @@ using System.Collections.Generic;
 public class TargetSphere : MonoBehaviour {
 
     private List<Vector3> positions;
-    public Transform rightShoulder;
-    public Transform leftShoulder;
     private int positionIndex = 0;
     private Handedness handedness;
     private Material progressBar;
@@ -16,7 +14,8 @@ public class TargetSphere : MonoBehaviour {
 	
     // Use this for initialization
 	void Start () {
-        progressBar = transform.GetChild(0).gameObject.GetComponent<Material>();
+        progressBar = transform.GetChild(0).gameObject.GetComponent<Renderer>().material;
+        progressBar.SetFloat("_Cutoff", 1);
 	}
 	
 	// Update is called once per frame
@@ -36,6 +35,7 @@ public class TargetSphere : MonoBehaviour {
 
     void OnTriggerEnter(Collider other)
     {
+        Debug.Log("enter");
         if (positionIndex > 0 && (handedness == Handedness.RightHanded && other.name == "RightHand" || handedness == Handedness.LeftHanded && other.name == "LeftHand"))
         {
             positionIndex++;
@@ -45,7 +45,7 @@ public class TargetSphere : MonoBehaviour {
             }
             else
             {
-                //Load feedback summary screen
+                UserStudyLogic.instance.EndUserStudy();
             }
         }
         else
@@ -56,11 +56,18 @@ public class TargetSphere : MonoBehaviour {
 
     void OnTriggerStay(Collider other)
     {
+        Debug.Log(handedness);
         if (positionIndex == 0 && (handedness == Handedness.RightHanded && other.name == "RightHand" || handedness == Handedness.LeftHanded && other.name == "LeftHand"))
         {
-            color = progressBar.color;
-            color.w = (Time.time - progressBarStartTime) / progressBarTime;
-            progressBar.color = color;   
+            progressBar.SetFloat("_Cutoff", 1 - (Time.time - progressBarStartTime) / progressBarTime);
+
+            if (Time.time - progressBarStartTime > progressBarTime)
+            {
+                UserStudyLogic.instance.StartUserStudy();
+                positionIndex++;
+                transform.position = positions[positionIndex];
+                progressBar.SetFloat("_Cutoff", 1);
+            }
         }
     }
 }

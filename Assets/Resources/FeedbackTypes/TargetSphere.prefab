@@ -43,7 +43,7 @@ Transform:
   m_GameObject: {fileID: 104258}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: .125, y: .125, z: 1}
+  m_LocalScale: {x: .5, y: .5, z: 1}
   m_Children: []
   m_Father: {fileID: 441316}
   m_RootOrder: 0
@@ -54,7 +54,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 116370}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -.115961805, y: -6.13799715, z: 7.33523178}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: .125, y: .125, z: .125}
   m_Children:
   - {fileID: 429170}
@@ -102,8 +102,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 037deb84d2d4d0c4098bb7f2cb812ab4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rightShoulder: {fileID: 0}
-  leftShoulder: {fileID: 0}
   progressBarTime: 1
 --- !u!135 &13563618
 SphereCollider:
@@ -112,7 +110,7 @@ SphereCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 116370}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: .5
@@ -149,7 +147,15 @@ Prefab:
   serializedVersion: 2
   m_Modification:
     m_TransformParent: {fileID: 0}
-    m_Modifications: []
+    m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: m_IsTrigger
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_UseGravity
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 116370}

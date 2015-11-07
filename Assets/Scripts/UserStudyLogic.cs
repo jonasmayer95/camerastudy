@@ -78,9 +78,10 @@ public class UserStudyLogic : MonoBehaviour {
         {
             rootBone = rightShoulder;
             joint = rootBone;
-            while (joint.GetChild(0).name != "HandRight")
+            while (joint.GetChild(0).name != "RightHand")
             {
                 distance += (joint.GetChild(0).position - joint.transform.position).magnitude;
+                joint = joint.GetChild(0);
             }
             pos = Random.onUnitSphere * Random.value * distance + rootBone.transform.position;
         }
@@ -91,6 +92,7 @@ public class UserStudyLogic : MonoBehaviour {
             while (joint.GetChild(0).name != "LeftHand")
             {
                 distance += (joint.GetChild(0).position - joint.transform.position).magnitude;
+                joint = joint.GetChild(0);
             }
             pos = Random.onUnitSphere * Random.value * distance + rootBone.transform.position;
         }
