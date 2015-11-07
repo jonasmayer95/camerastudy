@@ -215,21 +215,24 @@ public class CorrectionManager : MonoBehaviour {
         }
 
         // Increasing error time
-        postureErrors[newJoint].errorTime += Time.deltaTime;
-
-        // Switch to new error
-        if (postureErrors[newJoint].errorTime >= errorDurationUntilCorrection)
+        if (newJoint != null)
         {
-            if (joint != null && newJoint != joint)
-            {
-                postureErrors[joint].errorTime = 0;
-            }
+            postureErrors[newJoint].errorTime += Time.deltaTime;
 
-            joint = newJoint;
-
-            if (postureErrors[joint].errorDistance > tolerance)
+            // Switch to new error
+            if (postureErrors[newJoint].errorTime >= errorDurationUntilCorrection)
             {
-                showWindow = true;
+                if (joint != null && newJoint != joint)
+                {
+                    postureErrors[joint].errorTime = 0;
+                }
+
+                joint = newJoint;
+
+                if (postureErrors[joint].errorDistance > tolerance)
+                {
+                    showWindow = true;
+                }
             }
         }
 
@@ -277,38 +280,5 @@ public class CorrectionManager : MonoBehaviour {
     public void SwitchCameraMode(CameraPerspectives perspective)
     {
         cameraFeedback.cameraPerspective = perspective;
-    }
-
-
-    /// <summary>
-    /// Generates a random position around the shoulder with the arm length as maximum distance to the shoulder
-    /// </summary>
-    /// <param name="righthanded"></param>
-    /// <returns></returns>
-    public Vector3 CalculateRandomOrbPosition(bool righthanded)
-    {
-        Vector3 pos;
-        Transform rootBone;
-        float distance = 0;
-        if(righthanded)
-        {
-            rootBone = avatar.GetBone("RightArm");
-            Transform joint = rootBone;
-            while(joint.GetChild(0).name != "HandRight")
-            {
-                distance += (joint.GetChild(0).position - joint.transform.position).magnitude;
-            }
-            pos = Random.onUnitSphere * Random.value * distance + rootBone.transform.position;
-        }
-        else
-        {
-            rootBone = avatar.GetBone("LeftArm");
-            while (joint.GetChild(0).name != "LeftHand")
-            {
-                distance += (joint.GetChild(0).position - joint.transform.position).magnitude;
-            }
-            pos = Random.onUnitSphere * Random.value * distance + rootBone.transform.position;          
-        }
-        return pos;
     }
 }
