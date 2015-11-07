@@ -4,6 +4,11 @@ using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
 
+public enum Handedness
+{
+    RightHanded, LeftHanded
+}
+
 public class UserStudyUI : MonoBehaviour
 {
     public GameObject nameInputField;
@@ -11,6 +16,8 @@ public class UserStudyUI : MonoBehaviour
     public GameObject ageInputField;
     public GameObject sexToggleGroup;
     public GameObject camToggleGroup;
+    public GameObject handednessToggleGroup;
+    public GameObject feedbackToggleGroup;
     public GameObject submitButton;
 
     //the object that contains a MovementRecorder script
@@ -28,6 +35,8 @@ public class UserStudyUI : MonoBehaviour
 
         Sex sex = (Sex) GetToggleIndex(sexToggleGroup.GetComponent<ToggleGroup>().ActiveToggles());
         CameraType cam = (CameraType) GetToggleIndex(camToggleGroup.GetComponent<ToggleGroup>().ActiveToggles());
+        Handedness hand = (Handedness) GetToggleIndex(handednessToggleGroup.GetComponent<ToggleGroup>().ActiveToggles());
+        CameraFeedbackMode feedbackType = (CameraFeedbackMode) GetToggleIndex(feedbackToggleGroup.GetComponent<ToggleGroup>().ActiveToggles());
 
         //alright, and who needs this data now except the avatar for recording? (I should decouple that, btw)
         
@@ -37,6 +46,10 @@ public class UserStudyUI : MonoBehaviour
         //ExecuteEvents.Execute<UserStudyMessageTarget>(userStudyObject, null, (x, y) => x.InitializeAndActivateUserStudy(name, trial, age, cam, sex));
         MovementRecorder.InitializeAndActivateUserStudy(name, trial, age, cam, sex);
         userStudyObject.SetActive(true);
+
+        // Init UserStudyLogic component with userspecific data
+        UserStudyLogic.instance.InitNewUserStudy(feedbackType, hand, cam);
+
         this.gameObject.SetActive(false);
     }
 
