@@ -8,7 +8,7 @@ public class TargetSphere : MonoBehaviour {
     public Transform rightShoulder;
     public Transform leftShoulder;
     private int positionIndex = 0;
-    private bool rightHanded;
+    private Handedness handedness;
     private Material progressBar;
     public float progressBarTime;
     private float progressBarStartTime;
@@ -24,46 +24,19 @@ public class TargetSphere : MonoBehaviour {
 	
 	}
 
-    public void InitTargetSphere(List<Vector3> positions, bool rightHanded)
+    public void InitTargetSphere(List<Vector3> positions, Handedness handedness)
     {
         this.positions = positions;
-        this.rightHanded = rightHanded;
+        this.handedness = handedness;
         transform.position = positions[0];
         positionIndex = 0;
     }
 
-    public Vector3 CalculateRandomOrbPosition(bool righthanded)
-    {
-        Vector3 pos;
-        Transform rootBone;
-        Transform joint;
-        float distance = 0;
-        if (righthanded)
-        {
-            rootBone = rightShoulder;
-             joint = rootBone;
-            while (joint.GetChild(0).name != "HandRight")
-            {
-                distance += (joint.GetChild(0).position - joint.transform.position).magnitude;
-            }
-            pos = Random.onUnitSphere * Random.value * distance + rootBone.transform.position;
-        }
-        else
-        {
-            rootBone = leftShoulder;
-            joint = rootBone;
-            while (joint.GetChild(0).name != "LeftHand")
-            {
-                distance += (joint.GetChild(0).position - joint.transform.position).magnitude;
-            }
-            pos = Random.onUnitSphere * Random.value * distance + rootBone.transform.position;
-        }
-        return pos;
-    }
+  
 
     void OnTriggerEnter(Collider other)
     {
-        if (positionIndex > 0 && (rightHanded && other.name == "RightHand" || !rightHanded && other.name == "LeftHand"))
+        if (positionIndex > 0 && (handedness == Handedness.RightHanded && other.name == "RightHand" || handedness == Handedness.LeftHanded && other.name == "LeftHand"))
         {
             positionIndex++;
             if (positionIndex < positions.Count)
@@ -83,7 +56,7 @@ public class TargetSphere : MonoBehaviour {
 
     void OnTriggerStay(Collider other)
     {
-        if (positionIndex == 0 && (rightHanded && other.name == "RightHand" || !rightHanded && other.name == "LeftHand"))
+        if (positionIndex == 0 && (handedness == Handedness.RightHanded && other.name == "RightHand" || handedness == Handedness.LeftHanded && other.name == "LeftHand"))
         {
             color = progressBar.color;
             color.w = (Time.time - progressBarStartTime) / progressBarTime;

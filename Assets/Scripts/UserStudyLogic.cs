@@ -4,8 +4,7 @@ using System.Collections.Generic;
 
 public struct UserStudyTargetPositions
 {
-    public Vector3 startPosition;
-    public Vector3 endPosition;
+    public List<Vector3> positions;
 }
 
 public class UserStudyLogic : MonoBehaviour {
@@ -13,7 +12,7 @@ public class UserStudyLogic : MonoBehaviour {
     public static UserStudyLogic instance;
     public GameObject cameraFeedbackPrefab;
     public GameObject targetSpherePrefab;
-    public BoneMap avatarBones;
+    public Transform leftShoulder, rightShoulder;
     private CameraFeedback cameraFeedback;
     private TargetSphere targetSphere;
     private List<UserStudyTargetPositions> targetPositions = new List<UserStudyTargetPositions>();
@@ -48,7 +47,15 @@ public class UserStudyLogic : MonoBehaviour {
     {
         cameraType = cam;
         targetSphere.gameObject.SetActive(true);
-        targetSphere.InitTargetSphere(0, true);
+
+        // Temp debug code for testing
+        UserStudyTargetPositions userStudyTargetPositions = new UserStudyTargetPositions();
+        userStudyTargetPositions.positions = new List<Vector3>();
+        userStudyTargetPositions.positions.Add(CalculateRandomOrbPosition(handedness));
+        userStudyTargetPositions.positions.Add(CalculateRandomOrbPosition(handedness));
+        targetPositions.Add(userStudyTargetPositions);
+
+        targetSphere.InitTargetSphere(userStudyTargetPositions.positions, handedness);
     }
 
     public void StartUserStudy()
@@ -61,8 +68,32 @@ public class UserStudyLogic : MonoBehaviour {
 
     }
 
-    public BoneMap GetAvatarBones()
+    public Vector3 CalculateRandomOrbPosition(Handedness hand)
     {
-        return avatarBones;
+        Vector3 pos;
+        Transform rootBone;
+        Transform joint;
+        float distance = 0;
+        if (hand == Handedness.RightHanded)
+        {
+            rootBone = rightShoulder;
+            joint = rootBone;
+            while (joint.GetChild(0).name != "HandRight")
+            {
+                distance += (joint.GetChild(0).position - joint.transform.position).magnitude;
+            }
+            pos = Random.onUnitSphere * Random.value * distance + rootBone.transform.position;
+        }
+        else
+        {
+            rootBone = leftShoulder;
+            joint = rootBone;
+            while (joint.GetChild(0).name != "LeftHand")
+            {
+                distance += (joint.GetChild(0).position - joint.transform.position).magnitude;
+            }
+            pos = Random.onUnitSphere * Random.value * distance + rootBone.transform.position;
+        }
+        return pos;
     }
 }
