@@ -4,12 +4,12 @@ using System.Collections.Generic;
 
 public enum CameraFeedbackMode
 {
-    LinearArrow, Cylinder, RigedArrow, DockingArrow2D
+    LinearArrow, RigedArrow, DockingArrow2D, DockingBall2D, DockingPuzzle2D, DockingSpike2D
 }
 
 public enum CameraPerspectives
 {
-    Front, Up, Side, Behind, Normal
+    Front, Up, Normal, Side, Behind
 }
 
 public enum CameraSide
@@ -25,26 +25,23 @@ public enum CameraMotionStates
 public class CameraFeedback : MonoBehaviour {
 
     // Camera Setup
-    public float camDistance;
     public Camera feedbackCamera;
-    private bool showingWindow = false;
+    //private bool showingWindow = false;
 
     // Joint setup
     public Transform feedbackAvatar_hip;
     public Transform feedbackAvatar_joint;
-    public Transform connectingJoint;
-    private float lineAlpha;
+    //public Transform connectingJoint;
+    //private float lineAlpha;
 
     // Target position and tolerance
-    public List<Vector3> positions = new List<Vector3>();
+    private Vector3 targetPosition;
     public float tolerance;
     private int index;
 
     // Feedback mode
     public CameraFeedbackMode cameraFeedbackMode = CameraFeedbackMode.RigedArrow;
-    public CameraPerspectives cameraPerspective = CameraPerspectives.Front;
-    public CameraMotionStates cameraMotion = CameraMotionStates.Jumping;
-    public CameraSide cameraSide = CameraSide.Left;
+    
 
     // Prefabs
     public GameObject targetSpherePrefab;
@@ -53,19 +50,37 @@ public class CameraFeedback : MonoBehaviour {
     public GameObject cylinderPrefab;    
     public GameObject line3DPrefab;
     public GameObject rigedArrowPrefab;
+
     public GameObject dockingArrow2DPrefab;
     public GameObject arrowDock2DPrefab;
+    private GameObject dockingArrow2D;
+    private GameObject arrowDock2D;
+
+    public GameObject ballDock2DPrefab;
+    public GameObject dockingBall2DPrefab;
+    private GameObject ballDock2D;
+    private GameObject dockingBall2D;
+
+    public GameObject puzzleDock2DPrefab;
+    public GameObject dockingPuzzle2DPrefab;
+    private GameObject puzzleDock2D;
+    private GameObject dockingPuzzle2D;
+
+    public GameObject spikeDock2DPrefab;
+    public GameObject dockingSpike2DPrefab;
+    private GameObject spikeDock2D;
+    private GameObject dockingSpike2D;
    
     // Variables used for referencing
     private GameObject feedbackCylinder;    
     private GameObject targetSphere;
     private GameObject arrow3D;
-    private GameObject line3D;
-    private LineRenderer rend;
+    //private GameObject line3D;
+    //private LineRenderer rend;
     private GameObject rigedArrow;
     private Transform rootBoneArrow;
-    private GameObject dockingArrow2D;
-    private GameObject arrowDock2D;
+    
+    
     private Renderer targetSphereRenderer;
     public float spriteDistance;
     private bool initialized = false;
@@ -76,24 +91,24 @@ public class CameraFeedback : MonoBehaviour {
     void Start()
     {
         // Spawn a sphere to show the target position for debugging
-        targetSphere = Instantiate(targetSpherePrefab, Vector3.zero, Quaternion.identity) as GameObject;
+        /*targetSphere = Instantiate(targetSpherePrefab, Vector3.zero, Quaternion.identity) as GameObject;
         targetSphereRenderer = targetSphere.GetComponent<Renderer>();
         targetSphereRenderer.material.color = targetSphereColor;
         targetSphere.transform.parent = transform;
         targetSphere.SetActive(false);
-
+        */
         // Spawn a linear arrow pointing from the joint to the correct position
         arrow3D = Instantiate(arrow3DPrefab, Vector3.zero, Quaternion.identity) as GameObject;
         arrow3D.transform.parent = transform;
         arrow3D.SetActive(false);
 
         // Spawn the line pointing from the joint to the camera image
-        line3D = Instantiate(line3DPrefab, transform.position, Quaternion.identity) as GameObject;
-        line3D.transform.parent = transform;
-        rend = line3D.GetComponent<LineRenderer>();
+        //line3D = Instantiate(line3DPrefab, transform.position, Quaternion.identity) as GameObject;
+        //line3D.transform.parent = transform;
+        /*rend = line3D.GetComponent<LineRenderer>();
         rend.SetVertexCount(2);
         rend.SetPosition(0, transform.position);
-        rend.SetPosition(1, transform.position);
+        rend.SetPosition(1, transform.position);*/
 
         // Spawn a cylinder showing an bent arrow from the joint to the correct position
         feedbackCylinder = Instantiate(cylinderPrefab, Vector3.zero, Quaternion.identity) as GameObject;
@@ -107,8 +122,7 @@ public class CameraFeedback : MonoBehaviour {
         //BendArrow(180);
         rigedArrow.SetActive(false);
 
-
-        // Spawn a dockingStation to show the target position for debugging
+        // Spawn a dockingStation to show the target position
         arrowDock2D = Instantiate(arrowDock2DPrefab, Vector3.zero, Quaternion.identity) as GameObject;
         arrowDock2D.transform.parent = feedbackCamera.transform;
         arrowDock2D.SetActive(false);
@@ -118,17 +132,59 @@ public class CameraFeedback : MonoBehaviour {
         dockingArrow2D.transform.parent = feedbackCamera.transform;
         dockingArrow2D.SetActive(false);
 
+        // Spawn a ballDockingStation to show the target position
+        ballDock2D = Instantiate(ballDock2DPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+        ballDock2D.transform.parent = feedbackCamera.transform;
+        ballDock2D.SetActive(false);
+
+        // Spawn a dockingBall pointing from the joint to the dock
+        dockingBall2D = Instantiate(dockingBall2DPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+        dockingBall2D.transform.parent = feedbackCamera.transform;
+        dockingBall2D.SetActive(false);
+
+        // Spawn a puzzleDockingStation to show the target position
+        puzzleDock2D = Instantiate(puzzleDock2DPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+        puzzleDock2D.transform.parent = feedbackCamera.transform;
+        puzzleDock2D.SetActive(false);
+
+        // Spawn a dockingPuzzle pointing from the joint to the dock
+        dockingPuzzle2D = Instantiate(dockingPuzzle2DPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+        dockingPuzzle2D.transform.parent = feedbackCamera.transform;
+        dockingPuzzle2D.SetActive(false);
+
+        // Spawn a spikeDockingStation to show the target position
+        spikeDock2D = Instantiate(spikeDock2DPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+        spikeDock2D.transform.parent = feedbackCamera.transform;
+        spikeDock2D.SetActive(false);
+
+        // Spawn a dockingSpike pointing from the joint to the dock
+        dockingSpike2D = Instantiate(dockingSpike2DPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+        dockingSpike2D.transform.parent = feedbackCamera.transform;
+        dockingSpike2D.SetActive(false);
+
         // Init camera position
         //UpdateCameraPosition();
-        positions.Add(Vector3.zero);
+        targetPosition = Vector3.zero;
     }
 
-    public void ResetWindow()
+    /*public void ResetWindow()
     {
         showingWindow = false;
+    }*/
+
+    public void InitCorrectionCamera(Transform hip, Transform hand, Vector3 targetOrbRelPosition, GameObject targetSphere, CameraFeedbackMode camMode)
+    {
+        feedbackCamera = Camera.main;
+        feedbackAvatar_hip = hip;
+        feedbackAvatar_joint = hand;
+        targetPosition = targetOrbRelPosition;
+        this.targetSphere = targetSphere;
+        targetSphereRenderer = targetSphere.GetComponent<Renderer>();
+        cameraFeedbackMode = camMode;
+        initialized = true;
     }
 
-    public void InitCorrectionWindow(StaticJoint joint, FeedbackCamera_Avatar cameraAvatar, BoneMap basicAvatar, Vector3 windowPosition, bool enabled, float lineAlpha, bool left)
+    /*public void InitCorrectionWindow(StaticJoint joint, FeedbackCamera_Avatar cameraAvatar, BoneMap basicAvatar, Vector3 windowPosition, bool enabled, float lineAlpha, bool left)
     {
         showingWindow = enabled;
         this.lineAlpha = lineAlpha;
@@ -155,30 +211,29 @@ public class CameraFeedback : MonoBehaviour {
         initialized = true;
         
         UpdateCameraPosition();
-    }
+    }*/
 
     void OnEnable()
     {
         //UpdateCameraPosition();
     }
 
-    void OnTriggerEnter(Collider other)
+   /* void OnTriggerEnter(Collider other)
     {
         if (initialized && other.gameObject == feedbackAvatar_joint)
         {
             index = (index + 1) % positions.Count;
         }
-    }
+    }*/
 
     // Update is called once per frame
     void Update()
-    {
+    {        
         if (initialized)
         {
             // Show sphere at target position (for debugging)
             targetSphere.SetActive(true);
-            targetSphere.transform.position = feedbackAvatar_hip.position + positions[index];
-
+            
             // Update the position and orientation of the 3D arrow
             if (cameraFeedbackMode == CameraFeedbackMode.LinearArrow)
             {
@@ -192,7 +247,7 @@ public class CameraFeedback : MonoBehaviour {
                 arrow3D.transform.localScale = new Vector3(radius, radius, radius);
 
                 // Update and activate the 3D arrow
-                arrow3D.transform.position = feedbackAvatar_joint.position + ((feedbackAvatar_hip.position + positions[index]) - feedbackAvatar_joint.position) / 2.0f;
+                arrow3D.transform.position = feedbackAvatar_joint.position + (targetSphere.transform.position - feedbackAvatar_joint.position) / 2.0f;
                 arrow3D.transform.LookAt(targetSphere.transform.position);
 
                 // Activate the 3D arrow
@@ -209,7 +264,7 @@ public class CameraFeedback : MonoBehaviour {
                 arrowDock2D.SetActive(false);
 
                 // Update and activate the riged 3D arrow
-                rigedArrow.transform.position = feedbackAvatar_joint.position + ((feedbackAvatar_hip.position + positions[index]) - feedbackAvatar_joint.position) / 2.0f;
+                rigedArrow.transform.position = feedbackAvatar_joint.position + (targetSphere.transform.position - feedbackAvatar_joint.position) / 2.0f;
 
                 rigedArrow.transform.LookAt(targetSphere.transform.position);
                 Quaternion baseRot = rigedArrow.transform.rotation;
@@ -224,7 +279,7 @@ public class CameraFeedback : MonoBehaviour {
             }
 
             // Update the position size and orientation of the cylinder showing a bent arrow
-            if (cameraFeedbackMode == CameraFeedbackMode.Cylinder)
+            /*if (cameraFeedbackMode == CameraFeedbackMode.Cylinder)
             {
                 // Deactivate the 3D arrow
                 arrow3D.SetActive(false);
@@ -234,7 +289,7 @@ public class CameraFeedback : MonoBehaviour {
 
 
                 // Update position and size
-                feedbackCylinder.transform.position = feedbackAvatar_joint.position + ((feedbackAvatar_hip.position + positions[index]) - feedbackAvatar_joint.position) / 2.0f;
+                feedbackCylinder.transform.position = feedbackAvatar_joint.position + (targetSphere.transform.position - feedbackAvatar_joint.position) / 2.0f;
                 float radius = Vector3.Distance(targetSphere.transform.position, feedbackAvatar_joint.position) / 1.5f;
                 feedbackCylinder.transform.localScale = new Vector3(radius, radius, radius);
 
@@ -284,7 +339,7 @@ public class CameraFeedback : MonoBehaviour {
                 // Activate cylinder
                 feedbackCylinder.SetActive(true);
                 targetSphereRenderer.enabled = true;
-            }
+            }*/
 
             // Update the position and orientation of the 3D arrow
             if (cameraFeedbackMode == CameraFeedbackMode.DockingArrow2D)
@@ -293,7 +348,7 @@ public class CameraFeedback : MonoBehaviour {
                 arrow3D.SetActive(false);
                 rigedArrow.SetActive(false);
                 feedbackCylinder.SetActive(false);
-                targetSphereRenderer.enabled = false;
+                //targetSphereRenderer.enabled = false;
 
                 dockingArrow2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.position - feedbackCamera.transform.position).normalized;
                 arrowDock2D.transform.position = feedbackCamera.transform.position + spriteDistance * (targetSphere.transform.position - feedbackCamera.transform.position).normalized;
@@ -312,6 +367,84 @@ public class CameraFeedback : MonoBehaviour {
                 dockingArrow2D.SetActive(true);
                 arrowDock2D.SetActive(true);
             }
+
+            if (cameraFeedbackMode == CameraFeedbackMode.DockingBall2D)
+            {
+                // Deactivate the 3D arrow
+                arrow3D.SetActive(false);
+                rigedArrow.SetActive(false);
+                feedbackCylinder.SetActive(false);
+                //targetSphereRenderer.enabled = false;
+
+                dockingBall2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.position - feedbackCamera.transform.position).normalized;
+                ballDock2D.transform.position = feedbackCamera.transform.position + spriteDistance * (targetSphere.transform.position - feedbackCamera.transform.position).normalized;
+
+                dockingBall2D.transform.localRotation = Quaternion.identity;
+                ballDock2D.transform.localRotation = Quaternion.identity;
+
+                Vector2 dir = ballDock2D.transform.localPosition - dockingBall2D.transform.localPosition;
+                dir.Normalize();
+
+                float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+                dockingBall2D.transform.localRotation = Quaternion.Euler(dockingBall2D.transform.localRotation.x, 0, angle);
+                ballDock2D.transform.localRotation = Quaternion.Euler(dockingBall2D.transform.localRotation.x, 0, angle);
+
+                //Activate the Dock and arrow 
+                dockingBall2D.SetActive(true);
+                ballDock2D.SetActive(true);
+            }
+
+            if (cameraFeedbackMode == CameraFeedbackMode.DockingPuzzle2D)
+            {
+                // Deactivate the 3D arrow
+                arrow3D.SetActive(false);
+                rigedArrow.SetActive(false);
+                feedbackCylinder.SetActive(false);
+                //targetSphereRenderer.enabled = false;
+
+                dockingPuzzle2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.position - feedbackCamera.transform.position).normalized;
+                puzzleDock2D.transform.position = feedbackCamera.transform.position + spriteDistance * (targetSphere.transform.position - feedbackCamera.transform.position).normalized;
+
+                dockingPuzzle2D.transform.localRotation = Quaternion.identity;
+                puzzleDock2D.transform.localRotation = Quaternion.identity;
+
+                Vector2 dir = puzzleDock2D.transform.localPosition - dockingPuzzle2D.transform.localPosition;
+                dir.Normalize();
+
+                float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+                dockingPuzzle2D.transform.localRotation = Quaternion.Euler(dockingPuzzle2D.transform.localRotation.x, 0, angle);
+                puzzleDock2D.transform.localRotation = Quaternion.Euler(dockingPuzzle2D.transform.localRotation.x, 0, angle);
+
+                //Activate the Dock and arrow 
+                dockingPuzzle2D.SetActive(true);
+                puzzleDock2D.SetActive(true);
+            }
+
+            if (cameraFeedbackMode == CameraFeedbackMode.DockingSpike2D)
+            {
+                // Deactivate the 3D arrow
+                arrow3D.SetActive(false);
+                rigedArrow.SetActive(false);
+                feedbackCylinder.SetActive(false);
+                //targetSphereRenderer.enabled = false;
+
+                dockingSpike2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.position - feedbackCamera.transform.position).normalized;
+                spikeDock2D.transform.position = feedbackCamera.transform.position + spriteDistance * (targetSphere.transform.position - feedbackCamera.transform.position).normalized;
+
+                dockingSpike2D.transform.localRotation = Quaternion.identity;
+                spikeDock2D.transform.localRotation = Quaternion.identity;
+
+                Vector2 dir = spikeDock2D.transform.localPosition - dockingSpike2D.transform.localPosition;
+                dir.Normalize();
+
+                float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+                dockingSpike2D.transform.localRotation = Quaternion.Euler(dockingSpike2D.transform.localRotation.x, 0, angle);
+                spikeDock2D.transform.localRotation = Quaternion.Euler(dockingSpike2D.transform.localRotation.x, 0, angle);
+
+                //Activate the Dock and arrow 
+                dockingSpike2D.SetActive(true);
+                spikeDock2D.SetActive(true);
+            }
         }
 
 
@@ -325,13 +458,19 @@ public class CameraFeedback : MonoBehaviour {
             rigedArrow.SetActive(false);
             dockingArrow2D.SetActive(false);
             arrowDock2D.SetActive(false);
+            ballDock2D.SetActive(false);
+            dockingBall2D.SetActive(false);
+            puzzleDock2D.SetActive(false);
+            dockingPuzzle2D.SetActive(false);
+            spikeDock2D.SetActive(false);
+            dockingSpike2D.SetActive(false);
         }
 
         // Update Camera position
-        UpdateCameraPosition();
+        //UpdateCameraPosition();
 
         // Update the end point of the 3D line according to the new position of the joint
-        if (showingWindow && lineAlpha == 1)
+        /*if (showingWindow && lineAlpha == 1)
         {
             rend.enabled = true;
             rend.SetPosition(1, connectingJoint.position);
@@ -339,148 +478,29 @@ public class CameraFeedback : MonoBehaviour {
         else
         {
             rend.enabled = false;
-        }
+        }*/
 
     }
-
-    void UpdateCameraPosition()
+    void OnDisable()
     {
         if (initialized)
         {
-            // Calculate vector of arrow
-            Vector3 arrowVector = targetSphere.transform.position - feedbackAvatar_joint.position;
-            arrowVector = arrowVector.normalized;
-            /*
-            if (Mathf.Abs(arrowVector.x) > Mathf.Abs(arrowVector.z))
-            {
-                cameraPerspective = CameraPerspectives.Front;
-            }
-            */
-            //else
-            {
-                if (left)
-                {
-                    cameraSide = CameraSide.Left;
-                }
-                else
-                {
-                    cameraSide = CameraSide.Right;
-                }
-            }
-
-            // Calculate middled vector
-            //Vector3 boneVectorA = feedbackAvatar_joint.GetChild(0).transform.position - feedbackAvatar_joint.position;
-            //boneVectorA = boneVectorA.normalized;
-
-            //Transform parent = feedbackAvatar_joint.parent.transform;
-            //Vector3 boneVectorB = parent.position - feedbackAvatar_joint.position;
-            //boneVectorB = boneVectorB.normalized;
-
-            // Calculate normal for camera
-            // Vector3 camNormal = Vector3.Cross(arrowVector, ((boneVectorA + boneVectorB) - feedbackAvatar_joint.position).normalized);
-            //Vector3 camNormal = Vector3.Cross(boneVectorA, boneVectorB);
-
-            //feedbackCamera.position = arrow3D.transform.position - camNormal.normalized * camDistance;
-            //feedbackCamera.transform.LookAt(feedbackAvatar_joint.transform.position);
-
-            if (cameraMotion == CameraMotionStates.Jumping)
-            {
-                if (cameraPerspective == CameraPerspectives.Front)
-                {
-                    feedbackCamera.transform.rotation = Quaternion.identity;
-                    feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * -Vector3.forward;                    
-                }
-
-                if (cameraPerspective == CameraPerspectives.Behind)
-                {
-                    feedbackCamera.transform.rotation = Quaternion.Euler(0, 180, 0);
-                    feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.forward;
-                }
-
-                if (cameraPerspective == CameraPerspectives.Side && cameraSide == CameraSide.Left)
-                {
-                    feedbackCamera.transform.rotation = Quaternion.Euler(0, 90, 0);
-                    feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.left;
-                }
-
-                if (cameraPerspective == CameraPerspectives.Side && cameraSide == CameraSide.Right)
-                {
-                    feedbackCamera.transform.rotation = Quaternion.Euler(0, -90, 0);
-                    feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.right;
-                }
-
-                if (cameraPerspective == CameraPerspectives.Up)
-                {
-                    feedbackCamera.transform.rotation = Quaternion.Euler(90,0,0);
-                    feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.up;
-                }
-
-                if (cameraPerspective == CameraPerspectives.Normal)
-                {
-                    if (cameraSide == CameraSide.Left)
-                    {
-                        feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized;
-                        feedbackCamera.transform.LookAt((targetSphere.transform.position + feedbackAvatar_joint.position) * 0.5f);
-                    }
-                    else
-                    {
-                        feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * -Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized;
-                        feedbackCamera.transform.LookAt((targetSphere.transform.position + feedbackAvatar_joint.position) * 0.5f);
-                    
-                    }
-                }
-            }
-
-            if (cameraMotion == CameraMotionStates.Moving)
-            {
-                if (cameraPerspective == CameraPerspectives.Front)
-                {
-                    feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.identity, Time.deltaTime * 1);
-                    feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * -Vector3.forward, Time.deltaTime * 1);
-                }
-
-                if (cameraPerspective == CameraPerspectives.Behind)
-                {
-                    feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(0, 180, 0), Time.deltaTime * 1);
-                    feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.forward, Time.deltaTime * 1);
-                }
-
-                if (cameraPerspective == CameraPerspectives.Side && cameraSide == CameraSide.Left)
-                {
-                    feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation,Quaternion.Euler(0, 90, 0), Time.deltaTime * 1);
-                    feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.left, Time.deltaTime * 1);
-                }
-
-                if (cameraPerspective == CameraPerspectives.Side && cameraSide == CameraSide.Right)
-                {
-                    feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(0, -90, 0), Time.deltaTime * 1);
-                    feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.right, Time.deltaTime * 1);
-                }
-
-                if (cameraPerspective == CameraPerspectives.Up)
-                {
-                    feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(90,0,0), Time.deltaTime * 1);
-                    feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.up, Time.deltaTime * 1);
-                }
-
-                if (cameraPerspective == CameraPerspectives.Normal)
-                {
-                    if (cameraSide == CameraSide.Left)
-                    {
-                        feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized, Time.deltaTime * 1);
-                        //feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, , Time.deltaTime * 1);                      
-                        feedbackCamera.transform.LookAt((targetSphere.transform.position + feedbackAvatar_joint.position) * 0.5f);
-                    }
-                    else
-                    {
-                        feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * -Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized, Time.deltaTime * 1);
-                        //feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, , Time.deltaTime * 1);
-                        feedbackCamera.transform.LookAt((targetSphere.transform.position + feedbackAvatar_joint.position) * 0.5f);
-                    }
-                }
-            }
+            targetSphere.SetActive(false);
+            arrow3D.SetActive(false);
+            feedbackCylinder.SetActive(false);
+            rigedArrow.SetActive(false);
+            dockingArrow2D.SetActive(false);
+            arrowDock2D.SetActive(false);
+            ballDock2D.SetActive(false);
+            dockingBall2D.SetActive(false);
+            puzzleDock2D.SetActive(false);
+            dockingPuzzle2D.SetActive(false);
+            spikeDock2D.SetActive(false);
+            dockingSpike2D.SetActive(false);
         }
     }
+
+    
 
     void BendArrow(float angle)
     {

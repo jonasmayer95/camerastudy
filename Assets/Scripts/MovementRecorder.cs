@@ -102,7 +102,7 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
     }
 
 
-    public static void InitializeAndActivateUserStudy(string name, uint trial, uint age, CameraType camType, Sex sex)
+    public static void InitializeAndActivateUserStudy(string name, uint trial, uint age, CameraPerspectives camType, Sex sex)
     {
         userData = new UserStudyData(name, trial, age, camType, sex);
 
@@ -184,7 +184,7 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
         ResetTimesAndFrames(ref userData);
     }
 
-    public void ChangeCamera(CameraType cam)
+    public void ChangeCamera(CameraPerspectives cam)
     {
         userData.camType = cam;
 
@@ -233,12 +233,12 @@ public interface IUserStudyMessageTarget : IEventSystemHandler
     /// local trial number.
     /// </summary>
     /// <param name="cam">The desired camera pattern.</param>
-    void ChangeCamera(CameraType cam);
+    void ChangeCamera(CameraPerspectives cam);
 }
 
 struct UserStudyData
 {
-    public UserStudyData(string name, uint trial, uint age, CameraType camType, Sex sex)
+    public UserStudyData(string name, uint trial, uint age, CameraPerspectives camType, Sex sex)
     {
         this.name = name;
         this.trial = trial;
@@ -259,7 +259,7 @@ struct UserStudyData
     public string name;
     public uint trial;
     public uint age;
-    public CameraType camType;
+    public CameraPerspectives camType;
     public Sex sex;
 
     public uint? startFrame;
@@ -277,12 +277,6 @@ struct UserStudyData
     public Vector3? end;
 }
 
-public enum CameraType
-{
-    LeftRight,
-    Top,
-    Normal
-}
 
 public enum Sex
 {

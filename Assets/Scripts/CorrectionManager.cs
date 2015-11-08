@@ -153,7 +153,7 @@ public class CorrectionManager : MonoBehaviour {
         postureErrors.Clear();
         if (cameraFeedback != null)
         {
-            cameraFeedback.ResetWindow();
+            //cameraFeedback.ResetWindow();
         }
         joint = null;
     }
@@ -246,7 +246,7 @@ public class CorrectionManager : MonoBehaviour {
 
             cameraFeedback.cameraFeedbackMode = mode;
             //Debug.Log("greatest error: " + postureErrors[joint].errorDistance + " Name: " + postureErrors[joint].staticJoint.joint);
-            cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar, avatar, RectWorldPos, false, guiAlpha, true);
+            //cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar, avatar, RectWorldPos, false, guiAlpha, true);
             correcting = true;
 
             if (postureErrors[joint].staticJoint.targetPosition.x > 0)
@@ -254,7 +254,7 @@ public class CorrectionManager : MonoBehaviour {
                 if (postureErrors[joint].errorDistance > tolerance)
                 {
                     windowPos = WindowPosition.Right;
-                    cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar, avatar, RectWorldPos, true, guiAlpha, false);
+                    //cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar, avatar, RectWorldPos, true, guiAlpha, false);
 
                     
                 }
@@ -264,7 +264,7 @@ public class CorrectionManager : MonoBehaviour {
                 if (postureErrors[joint].errorDistance > tolerance)
                 {
                     windowPos = WindowPosition.Left;
-                    cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar, avatar, RectWorldPos, true, guiAlpha, true);
+                    //cameraFeedback.InitCorrectionWindow(postureErrors[joint].staticJoint, correctionAvatar, avatar, RectWorldPos, true, guiAlpha, true);
 
                     
                 }
@@ -279,6 +279,6 @@ public class CorrectionManager : MonoBehaviour {
 
     public void SwitchCameraMode(CameraPerspectives perspective)
     {
-        cameraFeedback.cameraPerspective = perspective;
+        //cameraFeedback.cameraPerspective = perspective;
     }
 }

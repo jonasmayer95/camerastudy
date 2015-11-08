@@ -11,6 +11,8 @@ public class TargetSphere : MonoBehaviour {
     public float progressBarTime;
     private float progressBarStartTime;
     private Vector4 color = new Vector4();
+    private Transform hip;
+    private bool initialized = false;
 	
     // Use this for initialization
 	void Start () {
@@ -20,30 +22,30 @@ public class TargetSphere : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-	
+        if (initialized)
+        {
+            transform.position = hip.position + positions[positionIndex];
+        }
 	}
 
-    public void InitTargetSphere(List<Vector3> positions, Handedness handedness)
+    public void InitTargetSphere(List<Vector3> positions, Handedness handedness, Transform hip)
     {
         this.positions = positions;
         this.handedness = handedness;
         transform.position = positions[0];
         positionIndex = 0;
+        this.hip = hip;
+        initialized = true;
     }
 
   
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("enter");
-        if (positionIndex > 0 && (handedness == Handedness.RightHanded && other.name == "RightHand" || handedness == Handedness.LeftHanded && other.name == "LeftHand"))
+        if (positionIndex > 0 && (handedness == Handedness.LeftHanded && other.name == "RightHand" || handedness == Handedness.RightHanded && other.name == "LeftHand"))
         {
             positionIndex++;
-            if (positionIndex < positions.Count)
-            {
-                transform.position = positions[positionIndex];
-            }
-            else
+            if(positionIndex >= positions.Count)
             {
                 UserStudyLogic.instance.EndUserStudy();
             }
@@ -56,17 +58,15 @@ public class TargetSphere : MonoBehaviour {
 
     void OnTriggerStay(Collider other)
     {
-        Debug.Log(handedness);
-        if (positionIndex == 0 && (handedness == Handedness.RightHanded && other.name == "RightHand" || handedness == Handedness.LeftHanded && other.name == "LeftHand"))
+        if (positionIndex == 0 && (handedness == Handedness.LeftHanded && other.name == "RightHand" || handedness == Handedness.RightHanded && other.name == "LeftHand"))
         {
             progressBar.SetFloat("_Cutoff", 1 - (Time.time - progressBarStartTime) / progressBarTime);
 
             if (Time.time - progressBarStartTime > progressBarTime)
-            {
-                UserStudyLogic.instance.StartUserStudy();
+            {               
                 positionIndex++;
-                transform.position = positions[positionIndex];
                 progressBar.SetFloat("_Cutoff", 1);
+                UserStudyLogic.instance.StartUserStudy(handedness);
             }
         }
     }

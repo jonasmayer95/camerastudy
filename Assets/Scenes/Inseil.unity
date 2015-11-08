@@ -785,7 +785,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 290775172}
+      - m_Target: {fileID: 0}
         m_MethodName: SwitchCorrectionMethod
         m_Mode: 3
         m_Arguments:
@@ -851,6 +851,7 @@ MonoBehaviour:
   m_Script: {fileID: -1862395651, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Delegates: []
   delegates: []
 --- !u!1 &41248133
 GameObject:
@@ -931,7 +932,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 290775172}
+      - m_Target: {fileID: 0}
         m_MethodName: SwitchCorrectionMethod
         m_Mode: 3
         m_Arguments:
@@ -997,6 +998,7 @@ MonoBehaviour:
   m_Script: {fileID: -1862395651, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Delegates: []
   delegates: []
 --- !u!1 &42403163
 GameObject:
@@ -1288,6 +1290,7 @@ CanvasRenderer:
   m_GameObject: {fileID: 251440957}
 --- !u!50 &251440962
 Rigidbody2D:
+  serializedVersion: 2
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
@@ -1296,11 +1299,11 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: .0500000007
   m_GravityScale: 0
-  m_FixedAngle: 0
   m_IsKinematic: 1
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
+  m_Constraints: 0
 --- !u!58 &251440963
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -1457,7 +1460,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 290775171}
+      - m_Target: {fileID: 0}
         m_MethodName: LoadExerciseUI
         m_Mode: 1
         m_Arguments:
@@ -1523,6 +1526,7 @@ MonoBehaviour:
   m_Script: {fileID: -1862395651, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Delegates: []
   delegates: []
 --- !u!1 &290775169
 GameObject:
@@ -1532,8 +1536,6 @@ GameObject:
   serializedVersion: 4
   m_Component:
   - 4: {fileID: 290775170}
-  - 114: {fileID: 290775171}
-  - 114: {fileID: 290775172}
   m_Layer: 0
   m_Name: Exercises
   m_TagString: Untagged
@@ -1553,55 +1555,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
---- !u!114 &290775171
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 290775169}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4b3bb37fc1308b34c99522bc1654be37, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  feedbackTypes: 00000000
-  bodyHeight: 1.79999995
-  exercisePath: ExerciseFiles
-  sizeOfSet: 10
-  nameOfPerson: Flo
-  set: 1
-  boneMap: {fileID: 30069701}
-  coordinatesRelToJoint: {fileID: 30069646}
-  exerciseButtonPrefab: {fileID: 140356, guid: 1661b6e28517c7c4c841959ab1f4a058, type: 2}
-  exerciseUI: {fileID: 425671178}
-  feedbackUI: {fileID: 596734522}
-  backButton: {fileID: 874106522}
-  canvas: {fileID: 685273788}
---- !u!114 &290775172
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 290775169}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 346f7e30b6d4206429ed43561b21831b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  relativeRectPos: {x: .100000001, y: .25}
-  mode: 2
-  tolerance: .200000003
-  errorDurationUntilCorrection: 1
-  correctionCamera: {fileID: 1059045179}
-  cameraFeedbackPrefab: {fileID: 176790, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
-  correctionAvatar: {fileID: 30069700}
-  avatar: {fileID: 30069701}
-  relTo: {fileID: 30069646}
-  cameraImageRenderTexture: {fileID: 8400000, guid: 65c3cc919aa935245bb28b8f9a4cf0f4,
-    type: 2}
-  cameraImageRenderTextureArrow: {fileID: 8400000, guid: 254fad50c8ad95048bdb0c1955e617d2,
-    type: 2}
-  windowMode: 2
 --- !u!1 &313916557
 GameObject:
   m_ObjectHideFlags: 0
@@ -2726,6 +2679,14 @@ Prefab:
       propertyPath: m_AnchoredPosition.y
       value: 20
       objectReference: {fileID: 0}
+    - target: {fileID: 11474532, guid: 4454bcadedc9edf47b5e5b3b16bc3afb, type: 2}
+      propertyPath: m_IsOn
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 11432838, guid: 4454bcadedc9edf47b5e5b3b16bc3afb, type: 2}
+      propertyPath: m_Text
+      value: Front/Left/Right Camera
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 4454bcadedc9edf47b5e5b3b16bc3afb, type: 2}
   m_IsPrefabParent: 0
@@ -2908,7 +2869,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 290775171}
+      - m_Target: {fileID: 0}
         m_MethodName: ShowFeedback
         m_Mode: 3
         m_Arguments:
@@ -2974,6 +2935,7 @@ MonoBehaviour:
   m_Script: {fileID: -1862395651, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Delegates: []
   delegates: []
 --- !u!1 &862229423
 GameObject:
@@ -3119,7 +3081,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 290775171}
+      - m_Target: {fileID: 0}
         m_MethodName: DisableExerciseUI
         m_Mode: 1
         m_Arguments:
@@ -3185,6 +3147,7 @@ MonoBehaviour:
   m_Script: {fileID: -1862395651, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Delegates: []
   delegates: []
 --- !u!1 &879957667
 GameObject:
@@ -3365,6 +3328,7 @@ MonoBehaviour:
   m_SubmitButton: Submit
   m_CancelButton: Cancel
   m_InputActionsPerSecond: 10
+  m_RepeatDelay: .5
   m_AllowActivationOnMobileDevice: 0
 --- !u!114 &913078694
 MonoBehaviour:
@@ -3535,7 +3499,7 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: .300000012
+  near clip plane: .100000001
   far clip plane: 1000
   field of view: 60
   orthographic: 0
@@ -3547,10 +3511,12 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
+  m_TargetEye: 3
   m_HDR: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: .0219999999
+  m_StereoMirrorMode: 0
 --- !u!4 &1059045180
 Transform:
   m_ObjectHideFlags: 0
@@ -3752,7 +3718,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 290775172}
+      - m_Target: {fileID: 0}
         m_MethodName: SwitchCorrectionMethod
         m_Mode: 3
         m_Arguments:
@@ -3818,6 +3784,7 @@ MonoBehaviour:
   m_Script: {fileID: -1862395651, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Delegates: []
   delegates: []
 --- !u!1 &1147637920
 GameObject:
@@ -4756,10 +4723,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3270d4568fad32a4ab7df5fe48cb44cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  camDistance: 1.5
   cameraFeedbackPrefab: {fileID: 176790, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
   targetSpherePrefab: {fileID: 116370, guid: 454da40768f4b6947845b7871f916741, type: 2}
   leftShoulder: {fileID: 30069661}
   rightShoulder: {fileID: 30069650}
+  hip: {fileID: 30069646}
+  leftHand: {fileID: 30069663}
+  rightHand: {fileID: 30069652}
+  cameraMotion: 0
 --- !u!4 &1602659024
 Transform:
   m_ObjectHideFlags: 0
@@ -5187,7 +5159,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 290775172}
+      - m_Target: {fileID: 0}
         m_MethodName: SwitchCorrectionMethod
         m_Mode: 3
         m_Arguments:
@@ -5253,6 +5225,7 @@ MonoBehaviour:
   m_Script: {fileID: -1862395651, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_Delegates: []
   delegates: []
 --- !u!1 &1794712468
 GameObject:

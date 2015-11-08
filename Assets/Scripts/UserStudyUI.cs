@@ -33,11 +33,11 @@ public class UserStudyUI : MonoBehaviour
         uint trial = uint.Parse(trialInputField.GetComponent<InputField>().text);
         uint age = uint.Parse(ageInputField.GetComponent<InputField>().text);
 
-        Sex sex = (Sex) GetToggleIndex(sexToggleGroup.GetComponent<ToggleGroup>().ActiveToggles());
-        CameraType cam = (CameraType) GetToggleIndex(camToggleGroup.GetComponent<ToggleGroup>().ActiveToggles());
-        Handedness hand = (Handedness) GetToggleIndex(handednessToggleGroup.GetComponent<ToggleGroup>().ActiveToggles());
-        CameraFeedbackMode feedbackType = (CameraFeedbackMode) GetToggleIndex(feedbackToggleGroup.GetComponent<ToggleGroup>().ActiveToggles());
-
+        Sex sex = (Sex) GetToggleIndex(sexToggleGroup);
+        CameraPerspectives cam = (CameraPerspectives)GetToggleIndex(camToggleGroup);
+        Handedness hand = (Handedness) GetToggleIndex(handednessToggleGroup);
+        CameraFeedbackMode feedbackType = (CameraFeedbackMode) GetToggleIndex(feedbackToggleGroup);
+        //Debug.Log(GetToggleIndex(feedbackToggleGroup.GetComponent<ToggleGroup>().ActiveToggles()));
         //alright, and who needs this data now except the avatar for recording? (I should decouple that, btw)
         
         //TODO: validate the data before firing the event
@@ -48,7 +48,7 @@ public class UserStudyUI : MonoBehaviour
         userStudyObject.SetActive(true);
 
         // Init UserStudyLogic component with userspecific data
-        UserStudyLogic.instance.InitNewUserStudy(feedbackType, hand, cam);
+        UserStudyLogic.instance.InitNewUserStudy(feedbackType, hand, cam, this);
 
         this.gameObject.SetActive(false);
     }
@@ -59,19 +59,17 @@ public class UserStudyUI : MonoBehaviour
     /// </summary>
     /// <param name="toggles">A set of toggles.</param>
     /// <returns></returns>
-    private uint GetToggleIndex(IEnumerable<Toggle> toggles)
+    private uint GetToggleIndex( GameObject toggleGroup)
     {
-        uint i = 0;
-
-        foreach (Toggle toggle in toggles)
+        uint k = 0;
+        for (int i = 0; i < toggleGroup.transform.childCount; i++)
         {
-            if (toggle.isOn)
+            if(toggleGroup.transform.GetChild(i).GetComponent<Toggle>().isOn)
             {
+                k = (uint)i;
                 break;
             }
-            ++i;
         }
-
-        return i;
+        return k;
     }
 }

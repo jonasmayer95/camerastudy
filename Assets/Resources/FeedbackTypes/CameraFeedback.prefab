@@ -85,16 +85,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 866702fa97a41e44dba778890f0e4b35, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camDistance: 1
   feedbackCamera: {fileID: 0}
   feedbackAvatar_hip: {fileID: 0}
   feedbackAvatar_joint: {fileID: 0}
-  connectingJoint: {fileID: 0}
-  positions: []
   tolerance: .200000003
   cameraFeedbackMode: 2
-  cameraPerspective: 0
-  cameraMotion: 0
   targetSpherePrefab: {fileID: 162198, guid: 4d932e12d8da59746990cd4af1135d9d, type: 2}
   targetSphereColor: {r: 0, g: .503448486, b: 1, a: 0}
   arrow3DPrefab: {fileID: 172930, guid: 980ad7de033d3874e8cc8e1e180ae89b, type: 2}
@@ -103,6 +98,13 @@ MonoBehaviour:
   rigedArrowPrefab: {fileID: 196840, guid: a9662b23a7174fc4990e1e88eaea2b23, type: 2}
   dockingArrow2DPrefab: {fileID: 190220, guid: 2c23d32700d99754dbc83fb167b3bff7, type: 2}
   arrowDock2DPrefab: {fileID: 121718, guid: 32ab1fe5d0e57684e92e29616a2a96e7, type: 2}
+  ballDock2DPrefab: {fileID: 157826, guid: cb0eb1529ac820e43b7a9744dbe1207d, type: 2}
+  dockingBall2DPrefab: {fileID: 185572, guid: b00c485963885a64198e70634308ef95, type: 2}
+  puzzleDock2DPrefab: {fileID: 185302, guid: cfafc818bf1c8604b9c6f2c661976342, type: 2}
+  dockingPuzzle2DPrefab: {fileID: 126102, guid: 03be025e0f214054a93a74a56c18fb4e,
+    type: 2}
+  spikeDock2DPrefab: {fileID: 116456, guid: 7aaa3463b14703b45ab04563399a6aad, type: 2}
+  dockingSpike2DPrefab: {fileID: 123396, guid: c8f90cb8c129c88439dfc4c924aae041, type: 2}
   spriteDistance: .310000002
 --- !u!1001 &100100000
 Prefab:
@@ -139,6 +141,30 @@ Prefab:
       propertyPath: cameraPerspective
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: ballDock2DPrefab
+      value: 
+      objectReference: {fileID: 157826, guid: cb0eb1529ac820e43b7a9744dbe1207d, type: 2}
+    - target: {fileID: 0}
+      propertyPath: dockingBall2DPrefab
+      value: 
+      objectReference: {fileID: 185572, guid: b00c485963885a64198e70634308ef95, type: 2}
+    - target: {fileID: 0}
+      propertyPath: puzzleDock2DPrefab
+      value: 
+      objectReference: {fileID: 185302, guid: cfafc818bf1c8604b9c6f2c661976342, type: 2}
+    - target: {fileID: 0}
+      propertyPath: dockingPuzzle2DPrefab
+      value: 
+      objectReference: {fileID: 126102, guid: 03be025e0f214054a93a74a56c18fb4e, type: 2}
+    - target: {fileID: 0}
+      propertyPath: spikeDock2DPrefab
+      value: 
+      objectReference: {fileID: 116456, guid: 7aaa3463b14703b45ab04563399a6aad, type: 2}
+    - target: {fileID: 0}
+      propertyPath: dockingSpike2DPrefab
+      value: 
+      objectReference: {fileID: 123396, guid: c8f90cb8c129c88439dfc4c924aae041, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 176790}
