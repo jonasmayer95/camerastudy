@@ -516,7 +516,7 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: .0500000007
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: .075000003, z: 0}
 --- !u!54 &30069692
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -591,7 +591,7 @@ SphereCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: .0500000007
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: .075000003, z: 0}
 --- !u!54 &30069698
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3511,7 +3511,6 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
-  m_TargetEye: 3
   m_HDR: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
