@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public enum Handedness
 {
@@ -29,36 +30,43 @@ public class UserStudyUI : MonoBehaviour
     /// </summary>
     public void SubmitData()
     {
-        string name = nameInputField.GetComponent<InputField>().text;
-        uint trial = uint.Parse(trialInputField.GetComponent<InputField>().text);
-        uint age = uint.Parse(ageInputField.GetComponent<InputField>().text);
+        try
+        {
+            string name = nameInputField.GetComponent<InputField>().text;
+            if (string.IsNullOrEmpty(name))
+            {
+                throw new ArgumentException("name", "is null or an empty string.");
 
-        Sex sex = (Sex) GetToggleIndex(sexToggleGroup);
-        CameraPerspectives cam = (CameraPerspectives)GetToggleIndex(camToggleGroup);
-        Handedness hand = (Handedness) GetToggleIndex(handednessToggleGroup);
-        CameraFeedbackMode feedbackType = (CameraFeedbackMode) GetToggleIndex(feedbackToggleGroup);
-        //Debug.Log(GetToggleIndex(feedbackToggleGroup.GetComponent<ToggleGroup>().ActiveToggles()));
-        //alright, and who needs this data now except the avatar for recording? (I should decouple that, btw)
-        
-        //TODO: validate the data before firing the event
+                // TODO: Set some UI indicator, e.g. red input field or something
+            }
 
+            uint trial = uint.Parse(trialInputField.GetComponent<InputField>().text);
+            uint age = uint.Parse(ageInputField.GetComponent<InputField>().text);
 
-        //ExecuteEvents.Execute<UserStudyMessageTarget>(userStudyObject, null, (x, y) => x.InitializeAndActivateUserStudy(name, trial, age, cam, sex));
-        MovementRecorder.InitializeAndActivateUserStudy(name, trial, age, cam, sex);
-        userStudyObject.SetActive(true);
+            Sex sex = (Sex)GetToggleIndex(sexToggleGroup);
+            CameraPerspectives cam = (CameraPerspectives)GetToggleIndex(camToggleGroup);
+            Handedness hand = (Handedness)GetToggleIndex(handednessToggleGroup);
+            CameraFeedbackMode feedbackType = (CameraFeedbackMode)GetToggleIndex(feedbackToggleGroup);
 
-        // Init UserStudyLogic component with userspecific data
-        UserStudyLogic.instance.InitNewUserStudy(feedbackType, hand, cam, this);
+            // TODO: validate enums (Enum.IsDefined)
 
-        this.gameObject.SetActive(false);
+            // We've got valid data, send it to MovementRecoreder
+            MovementRecorder.InitializeAndActivateUserStudy(name, trial, age, cam, sex);
+            userStudyObject.SetActive(true);
+
+            // Init UserStudyLogic component with userspecific data
+            UserStudyLogic.instance.InitNewUserStudy(feedbackType, hand, cam, this);
+
+            this.gameObject.SetActive(false);
+        }
+        catch (ArgumentException ex)
+        {
+            Debug.Log(ex.Message);
+        }
+       
     }
 
-    /// <summary>
-    /// Gets the index of a Toggle from a ToggleGroup. Given an arbitrary set of
-    /// toggles, it returns the first active one.
-    /// </summary>
-    /// <param name="toggles">A set of toggles.</param>
-    /// <returns></returns>
+
     private uint GetToggleIndex( GameObject toggleGroup)
     {
         uint k = 0;

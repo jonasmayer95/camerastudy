@@ -62,7 +62,7 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
         
         //write stuff that has been set through events, then get avatar movement data
         rawWriter.Write("{0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10};{11};{12};", userData.name, userData.trial, userData.age, userData.camType, userData.sex,
-            userData.trialCode, userData.startFrame, userData.endFrame, userData.completionTime, frameCount, Time.time, userData.start, userData.end);
+            userData.trialCode, userData.startFrame, userData.endFrame, userData.completionTime.ToString(), frameCount, Time.time, userData.startPosition, userData.endPosition);
 
 
         for (int i = 0; i < bones.Length; ++i)
@@ -158,33 +158,36 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
         return sb.ToString();
     }
 
-    public void StartTrial(uint startFrame, float startTime)
+    public void StartTrial(float startTime)
     {
-        userData.startFrame = startFrame;
+        userData.startFrame = frameCount;
         userData.startTime = startTime;
 
         userData.endFrame = null;
         userData.endTime = null;
     }
 
-    public void EndTrial(uint endFrame, float endTime)
+    public void EndTrial(float endTime)
     {
-        userData.endFrame = endFrame;
+        userData.endFrame = frameCount;
         userData.endTime = endTime;
 
-        var timeDiff = userData.endTime - userData.startTime;
-        userData.completionTime = timeDiff * 1000;
+        /*var timeDiff*/
+        userData.completionTime = userData.endTime - userData.startTime;
+        //userData.completionTime = timeDiff * 1000.0f;
         
     }
 
-    public void ChangeTrial(uint trialCode, Vector3 start, Vector3 end)
+    public void SetTrial(uint trialCode, Vector3 start, Vector3 end)
     {
         userData.trialCode = trialCode;
+        userData.startPosition = start;
+        userData.endPosition = end;
 
         ResetTimesAndFrames(ref userData);
     }
 
-    public void ChangeCamera(CameraPerspectives cam)
+    public void SetCamera(CameraPerspectives cam)
     {
         userData.camType = cam;
 
@@ -207,33 +210,31 @@ public interface IUserStudyMessageTarget : IEventSystemHandler
     /// Called when the user puts his hand on the start marker. Should reset
     /// time and frame variables.
     /// </summary>
-    /// <param name="startFrame">Number of the frame this was called in.</param>
     /// <param name="startTime">Absolute time this was called (from program start).</param>
-    void StartTrial(uint startFrame, float startTime);
+    void StartTrial(float startTime);
 
     /// <summary>
     /// Called when the user reaches the end marker. Should calculate and write
     /// time difference in milliseconds.
     /// </summary>
-    /// <param name="endFrame">Number of the frame this was called in.</param>
     /// <param name="endTime">Absolute time this was called (from program start).</param>
-    void EndTrial(uint endFrame, float endTime);
+    void EndTrial(float endTime);
 
     /// <summary>
     /// Called when the trial (ball positions) should be changed. Should reset
-    /// times and frames
+    /// times and frames.
     /// </summary>
     /// <param name="trialCode"></param>
     /// <param name="start"></param>
     /// <param name="end"></param>
-    void ChangeTrial(uint trialCode, Vector3 start, Vector3 end);
+    void SetTrial(uint trialCode, Vector3 start, Vector3 end);
 
     /// <summary>
-    /// Called when the camera pattern changes. SHould (probably) reset
+    /// Called when the camera pattern changes. Should (probably) reset
     /// local trial number.
     /// </summary>
     /// <param name="cam">The desired camera pattern.</param>
-    void ChangeCamera(CameraPerspectives cam);
+    void SetCamera(CameraPerspectives cam);
 }
 
 struct UserStudyData
@@ -252,8 +253,8 @@ struct UserStudyData
         this.endTime = null;
         this.completionTime = null;
         this.trialCode = null;
-        this.start = null;
-        this.end = null;
+        this.startPosition = null;
+        this.endPosition = null;
     }
 
     public string name;
@@ -273,8 +274,8 @@ struct UserStudyData
     public uint? trialCode;
 
     //we still need (nullable?) positions for start and target balls in here that can be set from the outside
-    public Vector3? start;
-    public Vector3? end;
+    public Vector3? startPosition;
+    public Vector3? endPosition;
 }
 
 

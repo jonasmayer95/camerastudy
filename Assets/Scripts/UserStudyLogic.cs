@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
 
-public class UserStudyLogic : MonoBehaviour {
+public class UserStudyLogic : MonoBehaviour
+{
 
     public static UserStudyLogic instance;
     public float camDistance = 1.5f;
@@ -21,13 +23,19 @@ public class UserStudyLogic : MonoBehaviour {
     private CameraSide cameraSide = CameraSide.Left;
     private UserStudyUI userStudyUI;
 
+    private Vector3 startPosition;
+    private Vector3 endPosition;
+
+    // Object that has an attached MovementRecorder
+    public GameObject userStudyObject;
+
     private void InitTargetPositions(Handedness handedness)
     {
         List<Vector3> positions = new List<Vector3>();
         targetPositions = new List<List<Vector3>>();
-        
+
         //Initialize righthanded positions
-        positions.Add(new Vector3(0.75f,0.5f,-0.2f));
+        positions.Add(new Vector3(0.75f, 0.5f, -0.2f));
         positions.Add(new Vector3(0.5f, 0.75f, -0.3f));
         targetPositions.Add(positions);
 
@@ -51,7 +59,7 @@ public class UserStudyLogic : MonoBehaviour {
         positions.Add(new Vector3(0.1f, 0.3f, -0.75f));
         positions.Add(new Vector3(0.2f, 0.8f, -0.1f));
         targetPositions.Add(positions);
-        
+
         //Flip directions if lefthanded
         if (handedness == Handedness.LeftHanded)
         {
@@ -70,22 +78,21 @@ public class UserStudyLogic : MonoBehaviour {
         instance = this;
     }
 
-	// Use this for initialization
-	void Start () 
+
+    void Start()
     {
         SpawnUserStudyComponents();
-        
-	}
-	
-	// Update is called once per frame
-	void Update () {
+
+    }
+
+    void Update()
+    {
 
         if (initialized)
         {
             UpdateCameraPosition();
         }
-	
-	}   
+    }
 
     private void SpawnUserStudyComponents()
     {
@@ -107,7 +114,11 @@ public class UserStudyLogic : MonoBehaviour {
 
         InitTargetPositions(handedness);
 
-        targetSphere.InitTargetSphere(targetPositions[Random.Range(0, targetPositions.Count)], handedness, hip);   
+        var positions = targetPositions[Random.Range(0, targetPositions.Count)];
+        this.startPosition = positions[0];
+        this.endPosition = positions[1];
+
+        targetSphere.InitTargetSphere(positions, handedness, hip);
 
         if (handedness == Handedness.LeftHanded)
         {
@@ -134,6 +145,13 @@ public class UserStudyLogic : MonoBehaviour {
             cameraFeedback.InitCorrectionCamera(hip, leftHand, targetSphere.transform.position - hip.position, targetSphere.gameObject, camFeedbackMode);
             feedbackAvatar_joint = leftHand;
         }
+
+        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
+
+        //TODO: Send me a proper trial code + start and end ball positions
+        //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(trialcode, startPos, endPos));
+
+        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
     }
 
     public void EndUserStudy()
@@ -142,6 +160,8 @@ public class UserStudyLogic : MonoBehaviour {
         cameraFeedback.gameObject.SetActive(false);
         initialized = false;
         userStudyUI.gameObject.SetActive(true);
+
+        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.EndTrial(Time.time));
     }
 
     void UpdateCameraPosition()
