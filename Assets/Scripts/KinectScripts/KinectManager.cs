@@ -3010,7 +3010,6 @@ public class KinectManager : MonoBehaviour
                 }
             }
         }
-        Debug.Log(avatarControllers.Count);
         foreach(var avatarController in avatarControllers)
         {
             avatarController.ScaleAvatar(jointScales);

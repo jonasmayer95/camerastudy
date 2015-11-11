@@ -4,23 +4,9 @@ using System.Collections.Generic;
 
 public enum CameraFeedbackMode
 {
-    LinearArrow, RigedArrow, DockingArrow2D, DockingBall2D, DockingPuzzle2D, DockingSpike2D
+    DockingArrow2D, DockingBall2D, DockingPuzzle2D, DockingSpike2D, LinearArrow, RigedArrow, 
 }
 
-public enum CameraPerspectives
-{
-    Front, Up, Normal, Side, Behind
-}
-
-public enum CameraSide
-{
-    Left, Right
-}
-
-public enum CameraMotionStates
-{
-    Jumping, Moving
-}
 
 public class CameraFeedback : MonoBehaviour {
 
@@ -40,7 +26,7 @@ public class CameraFeedback : MonoBehaviour {
     private int index;
 
     // Feedback mode
-    public CameraFeedbackMode cameraFeedbackMode = CameraFeedbackMode.RigedArrow;
+    public CameraFeedbackMode cameraFeedbackMode = CameraFeedbackMode.DockingArrow2D;
     
 
     // Prefabs

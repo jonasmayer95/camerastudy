@@ -3,6 +3,26 @@ using UnityEngine.EventSystems;
 using System.Collections;
 using System.Collections.Generic;
 
+public enum CameraPerspectives
+{
+    Side, Up, Normal, Front, Behind
+}
+
+public enum CameraUpdateMode
+{
+    Static, Updated
+}
+
+public enum CameraSide
+{
+    Left, Right
+}
+
+public enum CameraMotionStates
+{
+    Jumping, Moving
+}
+
 public class UserStudyLogic : MonoBehaviour
 {
 
@@ -13,6 +33,8 @@ public class UserStudyLogic : MonoBehaviour
     public Transform leftShoulder, rightShoulder, hip, leftHand, rightHand;
     private CameraFeedback cameraFeedback;
     private Camera feedbackCamera;
+    private Vector3 camStartPos;
+    private Quaternion camStartOrientation;
     private TargetSphere targetSphere;
     public List<List<Vector3>> targetPositions;
     private CameraFeedbackMode camFeedbackMode;
@@ -21,10 +43,14 @@ public class UserStudyLogic : MonoBehaviour
     private CameraPerspectives cameraPerspective = CameraPerspectives.Front;
     public CameraMotionStates cameraMotion = CameraMotionStates.Jumping;
     private CameraSide cameraSide = CameraSide.Left;
+    private CameraUpdateMode camUpdateMode = CameraUpdateMode.Static;
     private UserStudyUI userStudyUI;
-
+    private bool camMotion;
     private Vector3 startPosition;
     private Vector3 endPosition;
+    private uint trialCounter;
+    private uint numTrials;
+    private Handedness handedness;
 
     // Object that has an attached MovementRecorder
     public GameObject userStudyObject;
@@ -82,13 +108,14 @@ public class UserStudyLogic : MonoBehaviour
     void Start()
     {
         SpawnUserStudyComponents();
-
+        camStartPos = feedbackCamera.transform.position;
+        camStartOrientation = feedbackCamera.transform.rotation;
     }
 
     void Update()
     {
 
-        if (initialized)
+        if (camMotion)
         {
             UpdateCameraPosition();
         }
@@ -102,23 +129,16 @@ public class UserStudyLogic : MonoBehaviour
         cameraFeedback.gameObject.SetActive(false);
         targetSphere = (Instantiate(targetSpherePrefab, Vector3.zero, Quaternion.identity) as GameObject).GetComponent<TargetSphere>();
         targetSphere.gameObject.SetActive(false);
-    }
+    }    
 
-    public void InitNewUserStudy(CameraFeedbackMode feedbackType, Handedness handedness, CameraPerspectives cam, UserStudyUI userStudyUI)
+    public void InitNewUserStudy(CameraFeedbackMode feedbackType, Handedness handedness, CameraPerspectives camPerspective, CameraMotionStates camMotion, UserStudyUI userStudyUI, uint numTrials)
     {
         this.userStudyUI = userStudyUI;
-        cameraPerspective = cam;
+        cameraPerspective = camPerspective;
+        cameraMotion = camMotion;
         camFeedbackMode = feedbackType;
-        Debug.Log(camFeedbackMode);
-        targetSphere.gameObject.SetActive(true);
-
-        InitTargetPositions(handedness);
-
-        var positions = targetPositions[Random.Range(0, targetPositions.Count)];
-        this.startPosition = positions[0];
-        this.endPosition = positions[1];
-
-        targetSphere.InitTargetSphere(positions, handedness, hip);
+        this.numTrials = numTrials;
+        this.handedness = handedness;
 
         if (handedness == Handedness.LeftHanded)
         {
@@ -127,14 +147,29 @@ public class UserStudyLogic : MonoBehaviour
         else
         {
             feedbackAvatar_joint = leftHand;
-        }
+        } 
+
+        InitTargetPositions(handedness);
+
+        InitNewTrial();
 
         initialized = true;
     }
 
-    public void StartUserStudy(Handedness handedness)
+    private void InitNewTrial()
+    {
+        var positions = targetPositions[Random.Range(0, targetPositions.Count)];
+        this.startPosition = positions[0];
+        this.endPosition = positions[1];
+
+        targetSphere.gameObject.SetActive(true); 
+        targetSphere.InitTargetSphere(positions, handedness, hip);                      
+    }
+
+    public void StartTrial()
     {
         cameraFeedback.gameObject.SetActive(true);
+        camMotion = true;
         if (handedness == Handedness.LeftHanded)
         {
             cameraFeedback.InitCorrectionCamera(hip, rightHand, targetSphere.transform.position - hip.position, targetSphere.gameObject, camFeedbackMode);
@@ -149,19 +184,32 @@ public class UserStudyLogic : MonoBehaviour
         ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
 
         //TODO: Send me a proper trial code + start and end ball positions
-        //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(trialcode, startPos, endPos));
+        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(trialCounter, startPosition, endPosition));
 
         ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
+
+        trialCounter++;
+        Debug.Log(trialCounter + " TrialCounter" + numTrials + " numTrials");
     }
 
-    public void EndUserStudy()
+    public void EndTrial()
     {
-        targetSphere.gameObject.SetActive(false);
         cameraFeedback.gameObject.SetActive(false);
-        initialized = false;
-        userStudyUI.gameObject.SetActive(true);
-
+        camMotion = false;
+        feedbackCamera.transform.position = camStartPos;
+        feedbackCamera.transform.rotation = camStartOrientation;
         ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.EndTrial(Time.time));
+
+        if (trialCounter < numTrials)
+        {
+            InitNewTrial();
+        }
+        else
+        {
+            trialCounter = 0;
+            userStudyUI.gameObject.SetActive(true);
+            initialized = false;
+        }
     }
 
     void UpdateCameraPosition()
@@ -170,30 +218,15 @@ public class UserStudyLogic : MonoBehaviour
         Vector3 arrowVector = targetSphere.transform.position - feedbackAvatar_joint.position;
         arrowVector = arrowVector.normalized;
 
-        if (cameraPerspective == CameraPerspectives.Up)
+        if (cameraPerspective == CameraPerspectives.Side)
         {
-            cameraMotion = CameraMotionStates.Jumping;
-        }
-
-        if (cameraPerspective != CameraPerspectives.Up && cameraPerspective != CameraPerspectives.Behind
-            && cameraPerspective != CameraPerspectives.Normal)
-        {
-            if (Mathf.Abs(arrowVector.x) > Mathf.Abs(arrowVector.z))
+            if (handedness == Handedness.LeftHanded)
             {
-                cameraPerspective = CameraPerspectives.Front;
+                cameraSide = CameraSide.Left;
             }
-
             else
             {
-                cameraPerspective = CameraPerspectives.Side;
-                if (targetSphere.transform.position.x < hip.transform.position.x)
-                {
-                    cameraSide = CameraSide.Left;
-                }
-                else
-                {
-                    cameraSide = CameraSide.Right;
-                }
+                cameraSide = CameraSide.Right;
             }
         }
 
@@ -231,16 +264,49 @@ public class UserStudyLogic : MonoBehaviour
 
             if (cameraPerspective == CameraPerspectives.Normal)
             {
-                if (cameraSide == CameraSide.Left)
+                if (camUpdateMode == CameraUpdateMode.Updated)
                 {
-                    feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized;
-                    feedbackCamera.transform.LookAt((targetSphere.transform.position + feedbackAvatar_joint.position) * 0.5f);
+                    if (cameraSide == CameraSide.Left)
+                    {
+                        feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * -Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized;
+                        feedbackCamera.transform.LookAt((targetSphere.transform.position + feedbackAvatar_joint.position) * 0.5f);
+                    }
+                    else
+                    {
+                        feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized;
+                        feedbackCamera.transform.LookAt((targetSphere.transform.position + feedbackAvatar_joint.position) * 0.5f);
+
+                    }
                 }
                 else
                 {
-                    feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * -Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized;
-                    feedbackCamera.transform.LookAt((targetSphere.transform.position + feedbackAvatar_joint.position) * 0.5f);
-
+                    Vector3 crossProduct = Vector3.Cross((hip.position + endPosition) - (hip.position + startPosition), Vector3.up).normalized;
+                    if (cameraSide == CameraSide.Left)
+                    {
+                        // ToDo: Calculate static normal position
+                        if (crossProduct.x > 0)
+                        {
+                            feedbackCamera.transform.position = ((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f + camDistance * -crossProduct;
+                        }
+                        else
+                        {
+                            feedbackCamera.transform.position = ((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f + camDistance * crossProduct;
+                        }
+                        feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);                        
+                    }
+                    else
+                    {
+                        // ToDo: Calculate static normal position
+                        if (crossProduct.x < 0)
+                        {
+                            feedbackCamera.transform.position = ((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f + camDistance * crossProduct;
+                        }
+                        else
+                        {
+                            feedbackCamera.transform.position = ((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f + camDistance * -crossProduct;
+                        }
+                        feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
+                    }
                 }
             }
         }
@@ -279,17 +345,56 @@ public class UserStudyLogic : MonoBehaviour
 
             if (cameraPerspective == CameraPerspectives.Normal)
             {
-                if (cameraSide == CameraSide.Left)
+                if (camUpdateMode == CameraUpdateMode.Updated)
                 {
-                    feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized, Time.deltaTime * 1);
-                    //feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, , Time.deltaTime * 1);                      
-                    feedbackCamera.transform.LookAt((targetSphere.transform.position + feedbackAvatar_joint.position) * 0.5f);
+                    if (cameraSide == CameraSide.Left)
+                    {
+                        feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * -Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized, Time.deltaTime * 1);
+                        //feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, , Time.deltaTime * 1);                      
+                        feedbackCamera.transform.LookAt((targetSphere.transform.position + feedbackAvatar_joint.position) * 0.5f);
+                    }
+                    else
+                    {
+                        feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized, Time.deltaTime * 1);
+                        //feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, , Time.deltaTime * 1);
+                        feedbackCamera.transform.LookAt((targetSphere.transform.position + feedbackAvatar_joint.position) * 0.5f);
+                    }
                 }
+
                 else
                 {
-                    feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * -Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized, Time.deltaTime * 1);
-                    //feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, , Time.deltaTime * 1);
-                    feedbackCamera.transform.LookAt((targetSphere.transform.position + feedbackAvatar_joint.position) * 0.5f);
+                    Vector3 crossProduct = Vector3.Cross((hip.position + endPosition) - (hip.position + startPosition), Vector3.up).normalized;
+                    Debug.Log(crossProduct);
+                    //Debug.DrawRay(hip.position + startPosition, crossProduct);
+                    Debug.DrawRay(hip.position + startPosition, -crossProduct);
+                    if (cameraSide == CameraSide.Left)
+                    {
+                        if (crossProduct.x > 0)
+                        {
+                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -crossProduct, Time.deltaTime);
+                       
+                        }
+
+                        else
+                        {
+                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * crossProduct, Time.deltaTime);
+                        }
+                        // ToDo Calculate smoothed normal position
+                        feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
+                    }
+                    else
+                    {
+                        // ToDo Calculate smoothed normal position
+                        if (crossProduct.x > 0)
+                        {
+                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -crossProduct, Time.deltaTime);
+                        }
+                        else
+                        {
+                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * crossProduct, Time.deltaTime);
+                        }
+                        feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
+                    }
                 }
             }
         }

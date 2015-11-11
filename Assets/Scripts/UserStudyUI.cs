@@ -14,9 +14,11 @@ public class UserStudyUI : MonoBehaviour
 {
     public GameObject nameInputField;
     public GameObject trialInputField;
+    public GameObject setInputField;
     public GameObject ageInputField;
     public GameObject sexToggleGroup;
-    public GameObject camToggleGroup;
+    public GameObject camPerspectivesToggleGroup;
+    public GameObject camMotionToggleGroup;
     public GameObject handednessToggleGroup;
     public GameObject feedbackToggleGroup;
     public GameObject submitButton;
@@ -42,20 +44,22 @@ public class UserStudyUI : MonoBehaviour
 
             uint trial = uint.Parse(trialInputField.GetComponent<InputField>().text);
             uint age = uint.Parse(ageInputField.GetComponent<InputField>().text);
+            uint set = uint.Parse(setInputField.GetComponent<InputField>().text);
 
             Sex sex = (Sex)GetToggleIndex(sexToggleGroup);
-            CameraPerspectives cam = (CameraPerspectives)GetToggleIndex(camToggleGroup);
+            CameraPerspectives camPerspective = (CameraPerspectives)GetToggleIndex(camPerspectivesToggleGroup);
+            CameraMotionStates camMotion = (CameraMotionStates)GetToggleIndex(camMotionToggleGroup);
             Handedness hand = (Handedness)GetToggleIndex(handednessToggleGroup);
             CameraFeedbackMode feedbackType = (CameraFeedbackMode)GetToggleIndex(feedbackToggleGroup);
 
             // TODO: validate enums (Enum.IsDefined)
 
             // We've got valid data, send it to MovementRecoreder
-            MovementRecorder.InitializeAndActivateUserStudy(name, trial, age, cam, sex);
+            MovementRecorder.InitializeAndActivateUserStudy(name, trial, age, camPerspective, sex);
             userStudyObject.SetActive(true);
 
             // Init UserStudyLogic component with userspecific data
-            UserStudyLogic.instance.InitNewUserStudy(feedbackType, hand, cam, this);
+            UserStudyLogic.instance.InitNewUserStudy(feedbackType, hand, camPerspective, camMotion, this, trial);
 
             this.gameObject.SetActive(false);
         }

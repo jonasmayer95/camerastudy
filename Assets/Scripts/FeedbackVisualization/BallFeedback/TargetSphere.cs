@@ -47,7 +47,10 @@ public class TargetSphere : MonoBehaviour {
             positionIndex++;
             if(positionIndex >= positions.Count)
             {
-                UserStudyLogic.instance.EndUserStudy();
+                progressBarStartTime = 0;
+                positionIndex = 0;
+                gameObject.SetActive(false);
+                UserStudyLogic.instance.EndTrial();
             }
         }
         else
@@ -66,7 +69,7 @@ public class TargetSphere : MonoBehaviour {
             {               
                 positionIndex++;
                 progressBar.SetFloat("_Cutoff", 1);
-                UserStudyLogic.instance.StartUserStudy(handedness);
+                UserStudyLogic.instance.StartTrial();
             }
         }
     }

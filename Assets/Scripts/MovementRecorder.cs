@@ -40,6 +40,8 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
                 //write raw header to file
                 string header = string.Concat("name;trial;age;camera;sex;trial_code;start_frame;end_frame;completion_time;current_frame;current_time;start_position;end_position;",
                     GetBoneDescriptions(controller));
+
+                // TODO: remove start and end pos, write detailed log file
                 rawWriter.WriteLine(header);
             }
         }
@@ -171,6 +173,8 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
     {
         userData.endFrame = frameCount;
         userData.endTime = endTime;
+
+        //flush after completion
 
         /*var timeDiff*/
         userData.completionTime = userData.endTime - userData.startTime;
