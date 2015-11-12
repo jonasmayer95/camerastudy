@@ -2,10 +2,30 @@
 using System.Collections;
 using System.Collections.Generic;
 
+
+public struct Trial
+{
+    public Vector3 start;
+    public Vector3 end;
+    public uint number;
+
+    public Trial(Vector3 start, Vector3 end, uint number)
+    {
+        this.start = start;
+        this.end = end;
+        this.number = number;
+    }
+}
+
+enum TrialState 
+{
+    start,end
+}
+
 public class TargetSphere : MonoBehaviour {
 
-    private List<Vector3> positions;
-    private int positionIndex = 0;
+    private Trial trial;
+    private TrialState trialState;
     private Handedness handedness;
     private Material progressBar;
     public float progressBarTime;
@@ -24,52 +44,51 @@ public class TargetSphere : MonoBehaviour {
 	void Update () {
         if (initialized)
         {
-            transform.position = hip.position + positions[positionIndex];
+            if (trialState == TrialState.start)
+            {
+                transform.position = hip.position + trial.start;
+            }
+            else
+            {
+                transform.position = hip.position + trial.end;
+            }
         }
 	}
 
-    public void InitTargetSphere(List<Vector3> positions, Handedness handedness, Transform hip)
+    public void InitTargetSphere(Trial trial, Handedness handedness, Transform hip)
     {
-        this.positions = positions;
+        this.trial = trial;
         this.handedness = handedness;
-        transform.position = positions[0];
-        positionIndex = 0;
+        transform.position = trial.start;
         this.hip = hip;
         initialized = true;
+        progressBarStartTime = 0.0f;
+        trialState = TrialState.start;
     }
-
-  
 
     void OnTriggerEnter(Collider other)
     {
-        if (positionIndex > 0 && (handedness == Handedness.LeftHanded && other.name == "RightHand" || handedness == Handedness.RightHanded && other.name == "LeftHand"))
+        if (handedness == Handedness.LeftHanded && other.name == "RightHand" || handedness == Handedness.RightHanded && other.name == "LeftHand")
         {
-            positionIndex++;
-            if(positionIndex >= positions.Count)
+            if (trialState == TrialState.end)
             {
-                progressBarStartTime = 0;
-                positionIndex = 0;
-                gameObject.SetActive(false);
+                progressBar.SetFloat("_Cutoff", 1);
                 UserStudyLogic.instance.EndTrial();
             }
-        }
-        else
-        {
             progressBarStartTime = Time.time;
         }
     }
 
     void OnTriggerStay(Collider other)
     {
-        if (positionIndex == 0 && (handedness == Handedness.LeftHanded && other.name == "RightHand" || handedness == Handedness.RightHanded && other.name == "LeftHand"))
+        if (trialState == TrialState.start && (handedness == Handedness.LeftHanded && other.name == "RightHand" || handedness == Handedness.RightHanded && other.name == "LeftHand"))
         {
             progressBar.SetFloat("_Cutoff", 1 - (Time.time - progressBarStartTime) / progressBarTime);
-
             if (Time.time - progressBarStartTime > progressBarTime)
-            {               
-                positionIndex++;
+            {
+                trialState = TrialState.end;
                 progressBar.SetFloat("_Cutoff", 1);
-                UserStudyLogic.instance.StartTrial();
+                UserStudyLogic.instance.StartTrial();        
             }
         }
     }

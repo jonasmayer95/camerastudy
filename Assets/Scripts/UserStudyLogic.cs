@@ -158,12 +158,14 @@ public class UserStudyLogic : MonoBehaviour
 
     private void InitNewTrial()
     {
-        var positions = targetPositions[Random.Range(0, targetPositions.Count)];
+        var positions = targetPositions[Random.Range(0, targetPositions.Count - 1)];
         this.startPosition = positions[0];
         this.endPosition = positions[1];
 
+        Trial trial = new Trial(positions[0], positions[1], trialCounter);
+
         targetSphere.gameObject.SetActive(true); 
-        targetSphere.InitTargetSphere(positions, handedness, hip);                      
+        targetSphere.InitTargetSphere(trial, handedness, hip);                      
     }
 
     public void StartTrial()
@@ -183,7 +185,6 @@ public class UserStudyLogic : MonoBehaviour
 
         ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
 
-        //TODO: Send me a proper trial code + start and end ball positions
         ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(trialCounter/*, startPosition, endPosition*/));
 
         ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
