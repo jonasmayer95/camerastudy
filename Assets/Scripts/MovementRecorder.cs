@@ -9,17 +9,18 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
 {
     private static uint frameCount;
     private StreamWriter rawWriter;
+    private StreamWriter detailedWriter;
     public string filePath;
     public string fileName;
 
     public GameObject avatar;
     private AvatarController controller;
     private static UserStudyData userData;
-    
-    
+
+
     void Start()
     {
-        
+
         if (avatar != null)
         {
             controller = avatar.GetComponent<AvatarController>();
@@ -34,15 +35,17 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
                 //TODO: validate path
                 var date = DateTime.Now;
                 filePath = filePath + fileName + date.Second.ToString() + date.Minute.ToString() +
-                    date.Hour.ToString() + date.Day.ToString() + date.Month.ToString() + date.Year.ToString() + ".csv";
-                rawWriter = new StreamWriter(filePath);
+                    date.Hour.ToString() + date.Day.ToString() + date.Month.ToString() + date.Year.ToString();
+                rawWriter = new StreamWriter(filePath + ".csv");
+                detailedWriter = new StreamWriter(filePath + "_detailed.csv");
 
                 //write raw header to file
-                string header = string.Concat("name;trial;age;camera;sex;trial_code;start_frame;end_frame;completion_time;current_frame;current_time;start_position;end_position;",
+                string rawHeader = string.Concat("name;trial;age;camera;sex;trial_code;start_frame;end_frame;completion_time;current_frame;current_time;",
                     GetBoneDescriptions(controller));
+                string detailedHeader = "name;trial;age;camera;sex;trial_code;completion_time;";
 
-                // TODO: remove start and end pos, write detailed log file
-                rawWriter.WriteLine(header);
+                rawWriter.WriteLine(rawHeader);
+                detailedWriter.WriteLine(detailedHeader);
             }
         }
         else
@@ -52,19 +55,14 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
         }
     }
 
-    
+
     void Update()
     {
         var bones = controller.Bones;
 
-        //we need to be able to write based on certain events. end_frame for example could be triggered by
-        //the "game logic"...but rawwriter needs to record all the stuff anyway, so...
-        //start_frame and end_frame should be set in response to events.
-        //we also need to save the randomized trials somewhere and set them.
-        
         //write stuff that has been set through events, then get avatar movement data
-        rawWriter.Write("{0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10};{11};{12};", userData.name, userData.trial, userData.age, userData.camType, userData.sex,
-            userData.trialCode, userData.startFrame, userData.endFrame, userData.completionTime.ToString(), frameCount, Time.time, userData.startPosition, userData.endPosition);
+        rawWriter.Write("{0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10};", userData.name, userData.trial, userData.age, userData.camType, userData.sex,
+            userData.trialCode, userData.startFrame, userData.endFrame, userData.completionTime.ToString(), frameCount, Time.time);
 
 
         for (int i = 0; i < bones.Length; ++i)
@@ -76,7 +74,7 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
             {
                 //record bone position, rotation and timestamp
                 WriteBoneData(bones[i], rawWriter);
-                
+
             }
             else if (controller.SpecIndex2JointMap.ContainsKey(i))
             {
@@ -100,6 +98,12 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
         {
             rawWriter.Flush();
             rawWriter.Dispose();
+        }
+
+        if (detailedWriter != null)
+        {
+            detailedWriter.Flush();
+            detailedWriter.Dispose();
         }
     }
 
@@ -173,20 +177,26 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
     {
         userData.endFrame = frameCount;
         userData.endTime = endTime;
-
-        //flush after completion
-
-        /*var timeDiff*/
         userData.completionTime = userData.endTime - userData.startTime;
-        //userData.completionTime = timeDiff * 1000.0f;
-        
+
+        detailedWriter.WriteLine(string.Format("{0};{1};{2};{3};{4};{5};{6};", userData.name, userData.trial, userData.age, userData.camType,
+            userData.sex, userData.trialCode, userData.completionTime));
+
+        // There's a bug that sometimes prevents completion time from being written to the raw log file.
+        // A dirty hack would be to call Update in here, but I'd rather ask Max to fix his game logic
+        // to not fire the events immediately after one another so that this module has a chance to
+        // Update().
+
+        //flush after trial completion
+        rawWriter.Flush();
+        detailedWriter.Flush();
     }
 
-    public void SetTrial(uint trialCode, Vector3 start, Vector3 end)
+    public void SetTrial(uint trialCode/*, Vector3 start, Vector3 end*/)
     {
         userData.trialCode = trialCode;
-        userData.startPosition = start;
-        userData.endPosition = end;
+        //userData.startPosition = start;
+        //userData.endPosition = end;
 
         ResetTimesAndFrames(ref userData);
     }
@@ -229,9 +239,7 @@ public interface IUserStudyMessageTarget : IEventSystemHandler
     /// times and frames.
     /// </summary>
     /// <param name="trialCode"></param>
-    /// <param name="start"></param>
-    /// <param name="end"></param>
-    void SetTrial(uint trialCode, Vector3 start, Vector3 end);
+    void SetTrial(uint trialCode/*, Vector3 start, Vector3 end*/);
 
     /// <summary>
     /// Called when the camera pattern changes. Should (probably) reset
@@ -257,8 +265,8 @@ struct UserStudyData
         this.endTime = null;
         this.completionTime = null;
         this.trialCode = null;
-        this.startPosition = null;
-        this.endPosition = null;
+        //this.startPosition = null;
+        //this.endPosition = null;
     }
 
     public string name;
@@ -278,8 +286,8 @@ struct UserStudyData
     public uint? trialCode;
 
     //we still need (nullable?) positions for start and target balls in here that can be set from the outside
-    public Vector3? startPosition;
-    public Vector3? endPosition;
+    //public Vector3? startPosition;
+    //public Vector3? endPosition;
 }
 
 

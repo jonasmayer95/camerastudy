@@ -184,7 +184,7 @@ public class UserStudyLogic : MonoBehaviour
         ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
 
         //TODO: Send me a proper trial code + start and end ball positions
-        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(trialCounter, startPosition, endPosition));
+        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(trialCounter/*, startPosition, endPosition*/));
 
         ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
 
