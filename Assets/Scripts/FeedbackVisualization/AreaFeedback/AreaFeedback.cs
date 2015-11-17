@@ -15,7 +15,7 @@ public class AreaFeedback : InseilFeedback {
     // General
     public Vector3 position;
     public Vector3 rotation;
-    private Quaternion orientation;
+    //private Quaternion orientation;
 
     // Geometry type
     public AreaType areaType;
@@ -57,7 +57,7 @@ public class AreaFeedback : InseilFeedback {
     public float zSize;
 	// Use this for initialization
 	void Start () {
-        orientation = Quaternion.Euler(rotation);
+        //orientation = Quaternion.Euler(rotation);
         InitializeFeedbackArea();
         speed = time * (vertices1.Length / 2 - 1);
         arrowMat = GetComponent<MeshRenderer>().materials[1];

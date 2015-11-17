@@ -39,7 +39,7 @@ public class UserStudyLogic : MonoBehaviour
     public List<List<Vector3>> targetPositions;
     private CameraFeedbackMode camFeedbackMode;
     private Transform feedbackAvatar_joint;
-    private bool initialized;
+    //private bool initialized;
     private CameraPerspectives cameraPerspective = CameraPerspectives.Front;
     public CameraMotionStates cameraMotion = CameraMotionStates.Jumping;
     private CameraSide cameraSide = CameraSide.Left;
@@ -155,7 +155,7 @@ public class UserStudyLogic : MonoBehaviour
 
         InitNewTrial();
 
-        initialized = true;
+        //initialized = true;
     }
 
     private void InitNewTrial()
@@ -212,7 +212,7 @@ public class UserStudyLogic : MonoBehaviour
         {
             trialCounter = 0;
             userStudyUI.gameObject.SetActive(true);
-            initialized = false;
+            //initialized = false;
         }
     }
 
@@ -244,20 +244,20 @@ public class UserStudyLogic : MonoBehaviour
         Vector3 arrowVector = targetSphere.transform.position - feedbackAvatar_joint.position;
         arrowVector = arrowVector.normalized;
 
+        // Assign handedness
         if (cameraPerspective == CameraPerspectives.Side || cameraPerspective == CameraPerspectives.Normal)
         {
             if (handedness == Handedness.LeftHanded)
             {
                 cameraSide = CameraSide.Left;
-                Debug.Log("Enabled Lefthanded");
             }
             else
             {
                 cameraSide = CameraSide.Right;
-                Debug.Log("Enabled Righthanded");
             }
         }
 
+        // Directly jumping to desired positions and perspectives
         if (cameraMotion == CameraMotionStates.Jumping)
         {
             if (cameraPerspective == CameraPerspectives.Front)
@@ -292,6 +292,7 @@ public class UserStudyLogic : MonoBehaviour
 
             if (cameraPerspective == CameraPerspectives.Normal)
             {
+                // Continiously updating normal position
                 if (camUpdateMode == CameraUpdateMode.Updated)
                 {
                     if (cameraSide == CameraSide.Left)
@@ -306,12 +307,13 @@ public class UserStudyLogic : MonoBehaviour
 
                     }
                 }
+                // Initial normal position
                 else
                 {
                     Vector3 crossProduct = Vector3.Cross((hip.position + endPosition) - (hip.position + startPosition), Vector3.up).normalized;
                     if (cameraSide == CameraSide.Left)
                     {
-                        // ToDo: Calculate static normal position
+                        // Calculate static normal position
                         if (crossProduct.x - hip.position.x > 0)
                         {
                             feedbackCamera.transform.position = ((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f + camDistance * -crossProduct;
@@ -324,7 +326,7 @@ public class UserStudyLogic : MonoBehaviour
                     }
                     else
                     {
-                        // ToDo: Calculate static normal position
+                        // Calculate static normal position
                         if (crossProduct.x - hip.position.x < 0)
                         {
                             feedbackCamera.transform.position = ((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f + camDistance * -crossProduct;
@@ -339,6 +341,7 @@ public class UserStudyLogic : MonoBehaviour
             }
         }
 
+        // Smoothly moving to target position and orientation
         if (cameraMotion == CameraMotionStates.Moving)
         {
             if (cameraPerspective == CameraPerspectives.Front)
@@ -373,6 +376,7 @@ public class UserStudyLogic : MonoBehaviour
 
             if (cameraPerspective == CameraPerspectives.Normal)
             {
+                // Continiously updating normal position
                 if (camUpdateMode == CameraUpdateMode.Updated)
                 {
                     if (cameraSide == CameraSide.Left)
@@ -392,15 +396,12 @@ public class UserStudyLogic : MonoBehaviour
                 else
                 {
                     Vector3 crossProduct = Vector3.Cross((hip.position + endPosition) - (hip.position + startPosition), Vector3.up).normalized;
-                    Debug.Log(crossProduct);
-                    //Debug.DrawRay(hip.position + startPosition, crossProduct);
-                    Debug.DrawRay(hip.position + startPosition, -crossProduct);
+
                     if (cameraSide == CameraSide.Left)
                     {
                         if (crossProduct.x - hip.position.x > 0)
                         {
                             feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -crossProduct, Time.deltaTime);
-                       
                         }
 
                         else

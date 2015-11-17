@@ -64,7 +64,7 @@ public class CorrectionManager : MonoBehaviour {
     private float fadeOutTime;
     Transform joint = null;
     Transform newJoint = null;
-    private FadeState fadeState;
+    //private FadeState fadeState;
 
 
     void Awake()
@@ -82,7 +82,7 @@ public class CorrectionManager : MonoBehaviour {
 
         GUI.color = new Color(GUI.color.r, GUI.color.g, GUI.color.b, 0);
 
-        fadeState = FadeState.FadeOut;
+        //fadeState = FadeState.FadeOut;
 	}
 	
 	// Update is called once per frame
@@ -242,7 +242,7 @@ public class CorrectionManager : MonoBehaviour {
             Ray ray = mainCam.ScreenPointToRay(new Vector2((rectPos + new Vector2(rectSize.x / 2, rectSize.y / 2)).x, Screen.height - (rectPos + new Vector2(rectSize.x / 2, rectSize.y / 2)).y));
             //Debug.Log(new Vector2((rectPos + new Vector2(rectSize.x / 2, rectSize.y / 2)).x, Screen.height -(rectPos + new Vector2(rectSize.x / 2, rectSize.y / 2)).y));
             Physics.Raycast(ray, 10.0f);
-            Vector3 RectWorldPos = ray.origin + ray.direction * -(mainCam.transform.position.z + mainCam.nearClipPlane);
+            //Vector3 RectWorldPos = ray.origin + ray.direction * -(mainCam.transform.position.z + mainCam.nearClipPlane);
 
             cameraFeedback.cameraFeedbackMode = mode;
             //Debug.Log("greatest error: " + postureErrors[joint].errorDistance + " Name: " + postureErrors[joint].staticJoint.joint);

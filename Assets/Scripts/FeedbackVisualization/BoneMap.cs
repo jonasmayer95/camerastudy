@@ -6,11 +6,11 @@ public class BoneMap : MonoBehaviour {
 
     public List<Transform> bones = new List<Transform>();
     private Dictionary<string, Transform> boneMap = new Dictionary<string, Transform>();
-    private AvatarController avatar;
+    //private AvatarController avatar;
 
     void Awake()
     {
-        avatar = gameObject.GetComponent<AvatarController>();
+        //avatar = gameObject.GetComponent<AvatarController>();
         foreach (Transform bone in bones)
         {
             if (!boneMap.ContainsKey(bone.name))

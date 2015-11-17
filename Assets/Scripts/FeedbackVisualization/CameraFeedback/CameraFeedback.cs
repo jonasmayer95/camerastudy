@@ -21,7 +21,7 @@ public class CameraFeedback : MonoBehaviour {
     //private float lineAlpha;
 
     // Target position and tolerance
-    private Vector3 targetPosition;
+    //private Vector3 targetPosition;
     public float tolerance;
     private int index;
 
@@ -64,7 +64,7 @@ public class CameraFeedback : MonoBehaviour {
     //private GameObject line3D;
     //private LineRenderer rend;
     private GameObject rigedArrow;
-    private Transform rootBoneArrow;
+    //private Transform rootBoneArrow;
     
     
     private Renderer targetSphereRenderer;
@@ -150,7 +150,7 @@ public class CameraFeedback : MonoBehaviour {
 
         // Init camera position
         //UpdateCameraPosition();
-        targetPosition = Vector3.zero;
+        //targetPosition = Vector3.zero;
     }
 
     /*public void ResetWindow()
@@ -163,7 +163,7 @@ public class CameraFeedback : MonoBehaviour {
         feedbackCamera = Camera.main;
         feedbackAvatar_hip = hip;
         feedbackAvatar_joint = hand;
-        targetPosition = targetOrbRelPosition;
+        //targetPosition = targetOrbRelPosition;
         this.targetSphere = targetSphere;
         targetSphereRenderer = targetSphere.GetComponent<Renderer>();
         cameraFeedbackMode = camMode;
@@ -488,7 +488,7 @@ public class CameraFeedback : MonoBehaviour {
 
     
 
-    void BendArrow(float angle)
+    /*void BendArrow(float angle)
     {
         int boneCount = 0;
         Transform child = rootBoneArrow;
@@ -506,5 +506,5 @@ public class CameraFeedback : MonoBehaviour {
             child = child.GetChild(0);
             boneCount--;
         }
-    }
+    }*/
 }

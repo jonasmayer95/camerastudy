@@ -52,7 +52,7 @@ public class InseilExercise : MonoBehaviour {
     //private List<StreamWriter> sw = new List<StreamWriter>();    
 
     // Exercise parameter
-    private string exerciseName;
+    //private string exerciseName;
     private ExerciseConstraint[] exerciseConstraints;
     private List<StaticJoint> staticjoints;
     private List<MotionJoint> motionjoints;
@@ -93,7 +93,7 @@ public class InseilExercise : MonoBehaviour {
 
     public void InitExercise(string exerciseName, ExerciseInfo info, List<ExerciseExplanation> feedbackTypes, float bodyHeight, Transform relTo, BoneMap avatar)
     {
-        this.exerciseName = exerciseName;
+        //this.exerciseName = exerciseName;
         this.feedbackTypes = feedbackTypes;
 
         string json = File.ReadAllText("Assets/Resources/ExerciseFiles/" + exerciseName + ".json");

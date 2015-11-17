@@ -30,7 +30,7 @@ public class TargetSphere : MonoBehaviour {
     private Material progressBar;
     public float progressBarTime;
     private float progressBarStartTime;
-    private Vector4 color = new Vector4();
+    //private Vector4 color = new Vector4();
     private Transform hip;
     private bool initialized = false;
 	
