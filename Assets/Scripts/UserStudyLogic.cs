@@ -151,6 +151,8 @@ public class UserStudyLogic : MonoBehaviour
 
         InitTargetPositions(handedness);
 
+        ShuffleList(targetPositions);
+
         InitNewTrial();
 
         initialized = true;
@@ -158,7 +160,8 @@ public class UserStudyLogic : MonoBehaviour
 
     private void InitNewTrial()
     {
-        var positions = targetPositions[Random.Range(0, targetPositions.Count - 1)];
+        //var positions = targetPositions[Random.Range(0, targetPositions.Count - 1)];
+        var positions = targetPositions[(int)trialCounter];
         this.startPosition = positions[0];
         this.endPosition = positions[1];
 
@@ -213,21 +216,45 @@ public class UserStudyLogic : MonoBehaviour
         }
     }
 
+    private void ShuffleArray<T>(T[] arr)
+    {
+        for (int i = arr.Length - 1; i > 0; i--)
+        {
+            int r = Random.Range(0, i);
+            T tmp = arr[i];
+            arr[i] = arr[r];
+            arr[r] = tmp;
+        }
+    }
+
+    private void ShuffleList<T>(List<T> list)
+    {
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int r = Random.Range(0, i);
+            T tmp = list[i];
+            list[i] = list[r];
+            list[r] = tmp;
+        }
+    }
+
     void UpdateCameraPosition()
     {
         // Calculate vector of arrow
         Vector3 arrowVector = targetSphere.transform.position - feedbackAvatar_joint.position;
         arrowVector = arrowVector.normalized;
 
-        if (cameraPerspective == CameraPerspectives.Side)
+        if (cameraPerspective == CameraPerspectives.Side || cameraPerspective == CameraPerspectives.Normal)
         {
             if (handedness == Handedness.LeftHanded)
             {
                 cameraSide = CameraSide.Left;
+                Debug.Log("Enabled Lefthanded");
             }
             else
             {
                 cameraSide = CameraSide.Right;
+                Debug.Log("Enabled Righthanded");
             }
         }
 
@@ -236,31 +263,31 @@ public class UserStudyLogic : MonoBehaviour
             if (cameraPerspective == CameraPerspectives.Front)
             {
                 feedbackCamera.transform.rotation = Quaternion.identity;
-                feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * -Vector3.forward;
+                feedbackCamera.transform.position = hip.position + (startPosition + endPosition) * 0.5f + camDistance * -Vector3.forward;
             }
 
             if (cameraPerspective == CameraPerspectives.Behind)
             {
                 feedbackCamera.transform.rotation = Quaternion.Euler(0, 180, 0);
-                feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.forward;
+                feedbackCamera.transform.position = hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.forward;
             }
 
             if (cameraPerspective == CameraPerspectives.Side && cameraSide == CameraSide.Left)
             {
                 feedbackCamera.transform.rotation = Quaternion.Euler(0, 90, 0);
-                feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.left;
+                feedbackCamera.transform.position = hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.left;
             }
 
             if (cameraPerspective == CameraPerspectives.Side && cameraSide == CameraSide.Right)
             {
                 feedbackCamera.transform.rotation = Quaternion.Euler(0, -90, 0);
-                feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.right;
+                feedbackCamera.transform.position = hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.right;
             }
 
             if (cameraPerspective == CameraPerspectives.Up)
             {
                 feedbackCamera.transform.rotation = Quaternion.Euler(90, 0, 0);
-                feedbackCamera.transform.position = (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.up;
+                feedbackCamera.transform.position = hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.up;
             }
 
             if (cameraPerspective == CameraPerspectives.Normal)
@@ -285,7 +312,7 @@ public class UserStudyLogic : MonoBehaviour
                     if (cameraSide == CameraSide.Left)
                     {
                         // ToDo: Calculate static normal position
-                        if (crossProduct.x > 0)
+                        if (crossProduct.x - hip.position.x > 0)
                         {
                             feedbackCamera.transform.position = ((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f + camDistance * -crossProduct;
                         }
@@ -298,13 +325,13 @@ public class UserStudyLogic : MonoBehaviour
                     else
                     {
                         // ToDo: Calculate static normal position
-                        if (crossProduct.x < 0)
+                        if (crossProduct.x - hip.position.x < 0)
                         {
-                            feedbackCamera.transform.position = ((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f + camDistance * crossProduct;
+                            feedbackCamera.transform.position = ((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f + camDistance * -crossProduct;
                         }
                         else
                         {
-                            feedbackCamera.transform.position = ((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f + camDistance * -crossProduct;
+                            feedbackCamera.transform.position = ((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f + camDistance * crossProduct;
                         }
                         feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
                     }
@@ -317,31 +344,31 @@ public class UserStudyLogic : MonoBehaviour
             if (cameraPerspective == CameraPerspectives.Front)
             {
                 feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.identity, Time.deltaTime * 1);
-                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * -Vector3.forward, Time.deltaTime * 1);
+                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -Vector3.forward, Time.deltaTime * 1);
             }
 
             if (cameraPerspective == CameraPerspectives.Behind)
             {
                 feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(0, 180, 0), Time.deltaTime * 1);
-                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.forward, Time.deltaTime * 1);
+                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.forward, Time.deltaTime * 1);
             }
 
             if (cameraPerspective == CameraPerspectives.Side && cameraSide == CameraSide.Left)
             {
                 feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(0, 90, 0), Time.deltaTime * 1);
-                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.left, Time.deltaTime * 1);
+                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.left, Time.deltaTime * 1);
             }
 
             if (cameraPerspective == CameraPerspectives.Side && cameraSide == CameraSide.Right)
             {
                 feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(0, -90, 0), Time.deltaTime * 1);
-                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.right, Time.deltaTime * 1);
+                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.right, Time.deltaTime * 1);
             }
 
             if (cameraPerspective == CameraPerspectives.Up)
             {
                 feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(90, 0, 0), Time.deltaTime * 1);
-                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.up, Time.deltaTime * 1);
+                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.up, Time.deltaTime * 1);
             }
 
             if (cameraPerspective == CameraPerspectives.Normal)
@@ -370,7 +397,7 @@ public class UserStudyLogic : MonoBehaviour
                     Debug.DrawRay(hip.position + startPosition, -crossProduct);
                     if (cameraSide == CameraSide.Left)
                     {
-                        if (crossProduct.x > 0)
+                        if (crossProduct.x - hip.position.x > 0)
                         {
                             feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -crossProduct, Time.deltaTime);
                        
@@ -386,13 +413,13 @@ public class UserStudyLogic : MonoBehaviour
                     else
                     {
                         // ToDo Calculate smoothed normal position
-                        if (crossProduct.x > 0)
+                        if (crossProduct.x - hip.position.x > 0)
                         {
-                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -crossProduct, Time.deltaTime);
+                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * crossProduct, Time.deltaTime);
                         }
                         else
                         {
-                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * crossProduct, Time.deltaTime);
+                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -crossProduct, Time.deltaTime);
                         }
                         feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
                     }
