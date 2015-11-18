@@ -297,8 +297,8 @@ InputManager:
     m_Name: UserStudyButton
     descriptiveName: Shows the user study UI
     descriptiveNegativeName: 
-    negativeButton: u
-    positiveButton: u
+    negativeButton: left shift
+    positiveButton: left shift
     altNegativeButton: 
     altPositiveButton: 
     gravity: 1000
