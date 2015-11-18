@@ -23,8 +23,42 @@ public enum CameraMotionStates
     Jumping, Moving
 }
 
+/// <summary>
+/// Defines start and target positions and a sequence number for the user study.
+/// </summary>
+public class PositionSet
+{
+    public PositionSet(Vector3 start, Vector3 end, uint trialCode)
+    {
+        this.StartPosition = start;
+        this.EndPosition = end;
+        this.TrialCode = trialCode;
+    }
+
+    /// <summary>
+    /// Flips the x component of the vector so that left-handed people don't complain when
+    /// doing the user study.
+    /// </summary>
+    public void FlipHandedness()
+    {
+        this.StartPosition = new Vector3(StartPosition.x * -1, StartPosition.y, StartPosition.z);
+        this.EndPosition = new Vector3(EndPosition.x * -1, StartPosition.y, StartPosition.z);
+    }
+
+    public Vector3 StartPosition { get; set; }
+    public Vector3 EndPosition { get; set; }
+    public uint TrialCode { get; set; }
+}
+
 public class UserStudyLogic : MonoBehaviour
 {
+    //these are all defined positions for now. we should build sets out of these.
+    private PositionSet[] targetPos = { new PositionSet(new Vector3(0.75f, 0.5f, -0.2f), new Vector3(0.5f, 0.75f, -0.3f), 0), 
+                                        new PositionSet(new Vector3(0.5f, 0.3f, -0.4f), new Vector3(0.6f, 0.6f, -0.1f), 1), 
+                                        new PositionSet(new Vector3(0.4f, 0.8f, 0), new Vector3(0.5f, 0.3f, -0.3f), 2),
+                                        new PositionSet(new Vector3(0.6f, 0.2f, -0.5f), new Vector3(0.2f, 0.8f, -0.1f), 3),
+                                        new PositionSet(new Vector3(0.1f, 0.3f, -0.75f), new Vector3(0.2f, 0.8f, -0.1f), 4)
+                                      };
 
     public static UserStudyLogic instance;
     public float camDistance = 1.5f;
@@ -36,7 +70,6 @@ public class UserStudyLogic : MonoBehaviour
     private Vector3 camStartPos;
     private Quaternion camStartOrientation;
     private TargetSphere targetSphere;
-    public List<List<Vector3>> targetPositions;
     private CameraFeedbackMode camFeedbackMode;
     private Transform feedbackAvatar_joint;
     //private bool initialized;
@@ -57,44 +90,11 @@ public class UserStudyLogic : MonoBehaviour
 
     private void InitTargetPositions(Handedness handedness)
     {
-        List<Vector3> positions = new List<Vector3>();
-        targetPositions = new List<List<Vector3>>();
-
-        //Initialize righthanded positions
-        positions.Add(new Vector3(0.75f, 0.5f, -0.2f));
-        positions.Add(new Vector3(0.5f, 0.75f, -0.3f));
-        targetPositions.Add(positions);
-
-
-        positions = new List<Vector3>();
-        positions.Add(new Vector3(0.5f, 0.3f, -0.4f));
-        positions.Add(new Vector3(0.6f, 0.6f, -0.1f));
-        targetPositions.Add(positions);
-
-        positions = new List<Vector3>();
-        positions.Add(new Vector3(0.4f, 0.8f, 0));
-        positions.Add(new Vector3(0.5f, 0.3f, -0.3f));
-        targetPositions.Add(positions);
-
-        positions = new List<Vector3>();
-        positions.Add(new Vector3(0.6f, 0.2f, -0.5f));
-        positions.Add(new Vector3(0.2f, 0.8f, -0.1f));
-        targetPositions.Add(positions);
-
-        positions = new List<Vector3>();
-        positions.Add(new Vector3(0.1f, 0.3f, -0.75f));
-        positions.Add(new Vector3(0.2f, 0.8f, -0.1f));
-        targetPositions.Add(positions);
-
-        //Flip directions if lefthanded
         if (handedness == Handedness.LeftHanded)
         {
-            foreach (List<Vector3> posVector in targetPositions)
+            foreach (var positions in targetPos)
             {
-                for (int i = 0; i < posVector.Count; i++)
-                {
-                    posVector[i] = new Vector3(posVector[i].x * -1, posVector[i].y, posVector[i].z);
-                }
+                positions.FlipHandedness();
             }
         }
     }
@@ -129,7 +129,7 @@ public class UserStudyLogic : MonoBehaviour
         cameraFeedback.gameObject.SetActive(false);
         targetSphere = (Instantiate(targetSpherePrefab, Vector3.zero, Quaternion.identity) as GameObject).GetComponent<TargetSphere>();
         targetSphere.gameObject.SetActive(false);
-    }    
+    }
 
     public void InitNewUserStudy(CameraFeedbackMode feedbackType, Handedness handedness, CameraPerspectives camPerspective, CameraMotionStates camMotion, UserStudyUI userStudyUI, uint numTrials)
     {
@@ -147,11 +147,11 @@ public class UserStudyLogic : MonoBehaviour
         else
         {
             feedbackAvatar_joint = leftHand;
-        } 
+        }
 
         InitTargetPositions(handedness);
 
-        ShuffleList(targetPositions);
+        ShuffleArray<PositionSet>(targetPos);
 
         InitNewTrial();
 
@@ -160,15 +160,11 @@ public class UserStudyLogic : MonoBehaviour
 
     private void InitNewTrial()
     {
-        //var positions = targetPositions[Random.Range(0, targetPositions.Count - 1)];
-        var positions = targetPositions[(int)trialCounter];
-        this.startPosition = positions[0];
-        this.endPosition = positions[1];
+        this.startPosition = targetPos[trialCounter].StartPosition;
+        this.endPosition = targetPos[trialCounter].EndPosition;
 
-        Trial trial = new Trial(positions[0], positions[1], trialCounter);
-
-        targetSphere.gameObject.SetActive(true); 
-        targetSphere.InitTargetSphere(trial, handedness, hip);                      
+        targetSphere.gameObject.SetActive(true);
+        targetSphere.InitTargetSphere(targetPos[trialCounter], handedness, hip);
     }
 
     public void StartTrial()
@@ -188,7 +184,7 @@ public class UserStudyLogic : MonoBehaviour
 
         ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
 
-        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(trialCounter/*, startPosition, endPosition*/));
+        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
 
         ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
 
@@ -322,7 +318,7 @@ public class UserStudyLogic : MonoBehaviour
                         {
                             feedbackCamera.transform.position = ((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f + camDistance * crossProduct;
                         }
-                        feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);                        
+                        feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
                     }
                     else
                     {

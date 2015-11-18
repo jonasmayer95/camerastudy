@@ -40,9 +40,9 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
                 filteredWriter = new StreamWriter(filePath + "_filtered.csv");
 
                 //write raw header to file
-                string rawHeader = string.Concat("name;trial;set;age;camera;sex;trial_code;start_frame;end_frame;completion_time;current_frame;current_time;",
+                string rawHeader = string.Concat("name;set;age;camera;sex;trial_code;start_frame;end_frame;completion_time;current_frame;current_time;",
                     GetBoneDescriptions(controller));
-                string detailedHeader = "name;trial;age;set;camera;sex;trial_code;completion_time;";
+                string detailedHeader = "name;set;age;camera;sex;trial_code;completion_time;";
 
                 rawWriter.WriteLine(rawHeader);
                 filteredWriter.WriteLine(detailedHeader);
@@ -61,7 +61,7 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
         var bones = controller.Bones;
 
         //write stuff that has been set through events, then get avatar movement data
-        rawWriter.Write("{0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10};{11};", userData.name, userData.trial, userData.set, userData.age, userData.camType, userData.sex,
+        rawWriter.Write("{0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10};", userData.name, userData.set, userData.age, userData.camType, userData.sex,
             userData.trialCode, userData.startFrame, userData.endFrame, userData.completionTime.ToString(), frameCount, Time.time);
 
 
@@ -179,7 +179,7 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
         userData.endTime = endTime;
         userData.completionTime = userData.endTime - userData.startTime;
 
-        filteredWriter.WriteLine(string.Format("{0};{1};{2};{3};{4};{5};{6};{7};", userData.name, userData.trial, userData.set, userData.age, userData.camType,
+        filteredWriter.WriteLine(string.Format("{0};{1};{2};{3};{4};{5};{6};", userData.name, userData.set, userData.age, userData.camType,
             userData.sex, userData.trialCode, userData.completionTime));
 
         //flush after trial completion

@@ -2,21 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 
-
-public struct Trial
-{
-    public Vector3 start;
-    public Vector3 end;
-    public uint number;
-
-    public Trial(Vector3 start, Vector3 end, uint number)
-    {
-        this.start = start;
-        this.end = end;
-        this.number = number;
-    }
-}
-
 enum TrialState 
 {
     start,end
@@ -24,7 +9,7 @@ enum TrialState
 
 public class TargetSphere : MonoBehaviour {
 
-    private Trial trial;
+    private PositionSet pos;
     private TrialState trialState;
     private Handedness handedness;
     private Material progressBar;
@@ -46,20 +31,20 @@ public class TargetSphere : MonoBehaviour {
         {
             if (trialState == TrialState.start)
             {
-                transform.position = hip.position + trial.start;
+                transform.position = hip.position + pos.StartPosition;
             }
             else
             {
-                transform.position = hip.position + trial.end;
+                transform.position = hip.position + pos.EndPosition;
             }
         }
 	}
 
-    public void InitTargetSphere(Trial trial, Handedness handedness, Transform hip)
+    public void InitTargetSphere(PositionSet pos, Handedness handedness, Transform hip)
     {
-        this.trial = trial;
+        this.pos = pos;
         this.handedness = handedness;
-        transform.position = trial.start;
+        transform.position = pos.StartPosition;
         this.hip = hip;
         initialized = true;
         progressBarStartTime = 0.0f;
