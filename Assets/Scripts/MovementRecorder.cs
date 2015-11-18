@@ -9,7 +9,7 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
 {
     private static uint frameCount;
     private StreamWriter rawWriter;
-    private StreamWriter detailedWriter;
+    private StreamWriter filteredWriter;
     public string filePath;
     public string fileName;
 
@@ -37,15 +37,15 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
                 filePath = filePath + fileName + date.Second.ToString() + date.Minute.ToString() +
                     date.Hour.ToString() + date.Day.ToString() + date.Month.ToString() + date.Year.ToString();
                 rawWriter = new StreamWriter(filePath + ".csv");
-                detailedWriter = new StreamWriter(filePath + "_detailed.csv");
+                filteredWriter = new StreamWriter(filePath + "_filtered.csv");
 
                 //write raw header to file
-                string rawHeader = string.Concat("name;trial;age;camera;sex;trial_code;start_frame;end_frame;completion_time;current_frame;current_time;",
+                string rawHeader = string.Concat("name;trial;set;age;camera;sex;trial_code;start_frame;end_frame;completion_time;current_frame;current_time;",
                     GetBoneDescriptions(controller));
-                string detailedHeader = "name;trial;age;camera;sex;trial_code;completion_time;";
+                string detailedHeader = "name;trial;age;set;camera;sex;trial_code;completion_time;";
 
                 rawWriter.WriteLine(rawHeader);
-                detailedWriter.WriteLine(detailedHeader);
+                filteredWriter.WriteLine(detailedHeader);
             }
         }
         else
@@ -61,7 +61,7 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
         var bones = controller.Bones;
 
         //write stuff that has been set through events, then get avatar movement data
-        rawWriter.Write("{0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10};", userData.name, userData.trial, userData.age, userData.camType, userData.sex,
+        rawWriter.Write("{0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10};{11};", userData.name, userData.trial, userData.set, userData.age, userData.camType, userData.sex,
             userData.trialCode, userData.startFrame, userData.endFrame, userData.completionTime.ToString(), frameCount, Time.time);
 
 
@@ -100,17 +100,17 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
             rawWriter.Dispose();
         }
 
-        if (detailedWriter != null)
+        if (filteredWriter != null)
         {
-            detailedWriter.Flush();
-            detailedWriter.Dispose();
+            filteredWriter.Flush();
+            filteredWriter.Dispose();
         }
     }
 
 
-    public static void InitializeAndActivateUserStudy(string name, uint trial, uint age, CameraPerspectives camType, Sex sex)
+    public static void InitializeAndActivateUserStudy(string name, uint trial, uint set, uint age, CameraPerspectives camType, Sex sex)
     {
-        userData = new UserStudyData(name, trial, age, camType, sex);
+        userData = new UserStudyData(name, trial, set, age, camType, sex);
 
         //so the flow looks like this: UI calls this method and activates the object that contains our recorder.
         //recorder initializes 2 streamwriters and writes stuff every frame. certain properties are set from
@@ -179,24 +179,17 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
         userData.endTime = endTime;
         userData.completionTime = userData.endTime - userData.startTime;
 
-        detailedWriter.WriteLine(string.Format("{0};{1};{2};{3};{4};{5};{6};", userData.name, userData.trial, userData.age, userData.camType,
+        filteredWriter.WriteLine(string.Format("{0};{1};{2};{3};{4};{5};{6};{7};", userData.name, userData.trial, userData.set, userData.age, userData.camType,
             userData.sex, userData.trialCode, userData.completionTime));
-
-        // There's a bug that sometimes prevents completion time from being written to the raw log file.
-        // A dirty hack would be to call Update in here, but I'd rather ask Max to fix his game logic
-        // to not fire the events immediately after one another so that this module has a chance to
-        // Update().
 
         //flush after trial completion
         rawWriter.Flush();
-        detailedWriter.Flush();
+        filteredWriter.Flush();
     }
 
-    public void SetTrial(uint trialCode/*, Vector3 start, Vector3 end*/)
+    public void SetTrial(uint trialCode)
     {
         userData.trialCode = trialCode;
-        //userData.startPosition = start;
-        //userData.endPosition = end;
 
         ResetTimesAndFrames(ref userData);
     }
@@ -251,10 +244,11 @@ public interface IUserStudyMessageTarget : IEventSystemHandler
 
 struct UserStudyData
 {
-    public UserStudyData(string name, uint trial, uint age, CameraPerspectives camType, Sex sex)
+    public UserStudyData(string name, uint trial, uint set, uint age, CameraPerspectives camType, Sex sex)
     {
         this.name = name;
         this.trial = trial;
+        this.set = set;
         this.age = age;
         this.camType = camType;
         this.sex = sex;
@@ -265,8 +259,6 @@ struct UserStudyData
         this.endTime = null;
         this.completionTime = null;
         this.trialCode = null;
-        //this.startPosition = null;
-        //this.endPosition = null;
     }
 
     public string name;
@@ -284,10 +276,7 @@ struct UserStudyData
     public float? completionTime;
 
     public uint? trialCode;
-
-    //we still need (nullable?) positions for start and target balls in here that can be set from the outside
-    //public Vector3? startPosition;
-    //public Vector3? endPosition;
+    public uint? set;
 }
 
 

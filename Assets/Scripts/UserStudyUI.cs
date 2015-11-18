@@ -55,7 +55,7 @@ public class UserStudyUI : MonoBehaviour
             // TODO: validate enums (Enum.IsDefined)
 
             // We've got valid data, send it to MovementRecoreder
-            MovementRecorder.InitializeAndActivateUserStudy(name, trial, age, camPerspective, sex);
+            MovementRecorder.InitializeAndActivateUserStudy(name, trial, set, age, camPerspective, sex);
             userStudyObject.SetActive(true);
 
             // Init UserStudyLogic component with userspecific data
