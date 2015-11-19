@@ -59,6 +59,9 @@ public class UserStudyLogic : MonoBehaviour
                                         new PositionSet(new Vector3(0.6f, 0.2f, -0.5f), new Vector3(0.2f, 0.8f, -0.1f), 3),
                                         new PositionSet(new Vector3(0.1f, 0.3f, -0.75f), new Vector3(0.2f, 0.8f, -0.1f), 4)
                                       };
+    private List<PositionSet> targetPositions = new List<PositionSet>();
+    private Vector3 icoSphereOffset = new Vector3(0.25f, 0.25f, -0.5f);
+    private float icoSphereScale = 0.15f;
 
     public static UserStudyLogic instance;
     public float camDistance = 1.5f;
@@ -90,6 +93,25 @@ public class UserStudyLogic : MonoBehaviour
 
     private void InitTargetPositions(Handedness handedness)
     {
+        List<Vector3> pos = BuildIcoSphereVertices();
+        //First Direction: In->Out
+        for (int i = 0; i < pos.Count; i++)
+        {
+            targetPositions.Add(new PositionSet(icoSphereOffset, icoSphereOffset + (icoSphereOffset + pos[i] - icoSphereOffset) * icoSphereScale, (uint)i));
+        }
+        //Second Direction: Out->In
+        for (int i = 0; i < pos.Count; i++)
+        {
+            targetPositions.Add(new PositionSet(icoSphereOffset + (icoSphereOffset + pos[i] - icoSphereOffset) * icoSphereScale, icoSphereOffset, (uint)(i + pos.Count)));
+        }
+
+        //Applying to targetPos array
+        targetPos = new PositionSet[pos.Count * 2];
+        for (int i = 0; i < targetPositions.Count; i++)
+        {
+            targetPos[i] = targetPositions[i];
+        }
+
         if (handedness == Handedness.LeftHanded)
         {
             foreach (var positions in targetPos)
@@ -149,11 +171,25 @@ public class UserStudyLogic : MonoBehaviour
             feedbackAvatar_joint = leftHand;
         }
 
-        InitTargetPositions(handedness);
+        InitTargetPositions(handedness);        
 
-        ShuffleArray<PositionSet>(targetPos);
+        if (this.numTrials > targetPos.Length)
+        {
+            this.numTrials = (uint) targetPos.Length;
+        }
 
-        InitNewTrial();
+        if (this.numTrials <= 0)
+        {
+            this.numTrials = 0;
+            trialCounter = 0;
+            userStudyUI.gameObject.SetActive(true);
+        }
+        else
+        {
+            ShuffleArray<PositionSet>(targetPos);
+
+            InitNewTrial();
+        }
 
         //initialized = true;
     }
@@ -232,6 +268,30 @@ public class UserStudyLogic : MonoBehaviour
             list[i] = list[r];
             list[r] = tmp;
         }
+    }
+
+    private List<Vector3> BuildIcoSphereVertices()
+    {
+        List<Vector3> vertexList = new List<Vector3>();
+
+        float t = (1.0f + Mathf.Sqrt(5.0f)) / 2.0f;
+
+        vertexList.Add(new Vector3(-1, t, 0));
+        vertexList.Add(new Vector3(1, t, 0));
+        vertexList.Add(new Vector3(-1, -t, 0));
+        vertexList.Add(new Vector3(1, -t, 0));
+
+        vertexList.Add(new Vector3(0, -1, t));
+        vertexList.Add(new Vector3(0, 1, t));
+        vertexList.Add(new Vector3(0, -1, -t));
+        vertexList.Add(new Vector3(0, 1, -t));
+
+        vertexList.Add(new Vector3(t, 0, -1));
+        vertexList.Add(new Vector3(t, 0, 1));
+        vertexList.Add(new Vector3(-t, 0, -1));
+        vertexList.Add(new Vector3(-t, 0, 1));
+
+        return vertexList;
     }
 
     void UpdateCameraPosition()
