@@ -61,7 +61,11 @@ public class UserStudyLogic : MonoBehaviour
                                       };
     private List<PositionSet> targetPositions = new List<PositionSet>();
     private Vector3 icoSphereOffset = new Vector3(0.25f, 0.25f, -0.5f);
-    private float icoSphereScale = 0.15f;
+    private float icoSphereScale = 0.125f;
+    private float targetSphereHugeScale;
+    private float targetSphereSmallScale = 0.025f;
+    private Renderer targetSphereRenderer;
+    private Color targetSphereStartColor;
 
     public static UserStudyLogic instance;
     public float camDistance = 1.5f;
@@ -87,6 +91,8 @@ public class UserStudyLogic : MonoBehaviour
     private uint trialCounter;
     private uint numTrials;
     private Handedness handedness;
+    private float startTime;
+    private float journeyTime = 5;
 
     // Object that has an attached MovementRecorder
     public GameObject userStudyObject;
@@ -97,12 +103,12 @@ public class UserStudyLogic : MonoBehaviour
         //First Direction: In->Out
         for (int i = 0; i < pos.Count; i++)
         {
-            targetPositions.Add(new PositionSet(icoSphereOffset, icoSphereOffset + (icoSphereOffset + pos[i] - icoSphereOffset) * icoSphereScale, (uint)i));
+            targetPositions.Add(new PositionSet(icoSphereOffset - pos[i] * icoSphereScale, icoSphereOffset +  pos[i] * icoSphereScale, (uint)i));
         }
         //Second Direction: Out->In
         for (int i = 0; i < pos.Count; i++)
         {
-            targetPositions.Add(new PositionSet(icoSphereOffset + (icoSphereOffset + pos[i] - icoSphereOffset) * icoSphereScale, icoSphereOffset, (uint)(i + pos.Count)));
+            targetPositions.Add(new PositionSet(icoSphereOffset + pos[i] * icoSphereScale, icoSphereOffset  - pos[i] * icoSphereScale, (uint)(i + pos.Count)));
         }
 
         //Applying to targetPos array
@@ -150,6 +156,9 @@ public class UserStudyLogic : MonoBehaviour
         cameraFeedback = (Instantiate(cameraFeedbackPrefab, Vector3.zero, Quaternion.identity) as GameObject).GetComponent<CameraFeedback>();
         cameraFeedback.gameObject.SetActive(false);
         targetSphere = (Instantiate(targetSpherePrefab, Vector3.zero, Quaternion.identity) as GameObject).GetComponent<TargetSphere>();
+        targetSphereRenderer = targetSphere.GetComponent<Renderer>();
+        targetSphereStartColor = targetSphereRenderer.material.color;
+        targetSphereHugeScale = targetSphere.transform.localScale.x;
         targetSphere.gameObject.SetActive(false);
     }
 
@@ -186,7 +195,7 @@ public class UserStudyLogic : MonoBehaviour
         }
         else
         {
-            ShuffleArray<PositionSet>(targetPos);
+            //ShuffleArray<PositionSet>(targetPos);
 
             InitNewTrial();
         }
@@ -200,13 +209,18 @@ public class UserStudyLogic : MonoBehaviour
         this.endPosition = targetPos[trialCounter].EndPosition;
 
         targetSphere.gameObject.SetActive(true);
+        targetSphere.transform.localScale = new Vector3(targetSphereHugeScale, targetSphereHugeScale, targetSphereHugeScale);
+        targetSphereRenderer.material.color = targetSphereStartColor;
         targetSphere.InitTargetSphere(targetPos[trialCounter], handedness, hip);
     }
 
     public void StartTrial()
     {
         cameraFeedback.gameObject.SetActive(true);
+        startTime = Time.time;
         camMotion = true;
+        targetSphere.transform.localScale = new Vector3(targetSphereSmallScale, targetSphereSmallScale, targetSphereSmallScale);
+        targetSphereRenderer.material.color = Color.red;
         if (handedness == Handedness.LeftHanded)
         {
             cameraFeedback.InitCorrectionCamera(hip, rightHand, targetSphere.transform.position - hip.position, targetSphere.gameObject, camFeedbackMode);
@@ -400,34 +414,36 @@ public class UserStudyLogic : MonoBehaviour
         // Smoothly moving to target position and orientation
         if (cameraMotion == CameraMotionStates.Moving)
         {
+            float fracComplete = (Time.time - startTime) / journeyTime;
+
             if (cameraPerspective == CameraPerspectives.Front)
             {
-                feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.identity, Time.deltaTime * 1);
-                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -Vector3.forward, Time.deltaTime * 1);
+                feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.identity, fracComplete);
+                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -Vector3.forward, fracComplete);
             }
 
             if (cameraPerspective == CameraPerspectives.Behind)
             {
-                feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(0, 180, 0), Time.deltaTime * 1);
-                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.forward, Time.deltaTime * 1);
+                feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(0, 180, 0), fracComplete);
+                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.forward, fracComplete);
             }
 
             if (cameraPerspective == CameraPerspectives.Side && cameraSide == CameraSide.Left)
             {
-                feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(0, 90, 0), Time.deltaTime * 1);
-                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.left, Time.deltaTime * 1);
+                feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(0, 90, 0), fracComplete);
+                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.left, fracComplete);
             }
 
             if (cameraPerspective == CameraPerspectives.Side && cameraSide == CameraSide.Right)
             {
-                feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(0, -90, 0), Time.deltaTime * 1);
-                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.right, Time.deltaTime * 1);
+                feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(0, -90, 0), fracComplete);
+                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.right, fracComplete);
             }
 
             if (cameraPerspective == CameraPerspectives.Up)
             {
-                feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(90, 0, 0), Time.deltaTime * 1);
-                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.up, Time.deltaTime * 1);
+                feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(90, 0, 0), fracComplete);
+                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.up, fracComplete);
             }
 
             if (cameraPerspective == CameraPerspectives.Normal)
@@ -437,13 +453,13 @@ public class UserStudyLogic : MonoBehaviour
                 {
                     if (cameraSide == CameraSide.Left)
                     {
-                        feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * -Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized, Time.deltaTime * 1);
+                        feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * -Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized, fracComplete);
                         //feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, , Time.deltaTime * 1);                      
                         feedbackCamera.transform.LookAt((targetSphere.transform.position + feedbackAvatar_joint.position) * 0.5f);
                     }
                     else
                     {
-                        feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized, Time.deltaTime * 1);
+                        feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized, fracComplete);
                         //feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, , Time.deltaTime * 1);
                         feedbackCamera.transform.LookAt((targetSphere.transform.position + feedbackAvatar_joint.position) * 0.5f);
                     }
@@ -457,12 +473,12 @@ public class UserStudyLogic : MonoBehaviour
                     {
                         if (crossProduct.x - hip.position.x > 0)
                         {
-                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -crossProduct, Time.deltaTime);
+                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -crossProduct, fracComplete);
                         }
 
                         else
                         {
-                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * crossProduct, Time.deltaTime);
+                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * crossProduct, fracComplete);
                         }
                         // ToDo Calculate smoothed normal position
                         feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
@@ -472,11 +488,11 @@ public class UserStudyLogic : MonoBehaviour
                         // ToDo Calculate smoothed normal position
                         if (crossProduct.x - hip.position.x > 0)
                         {
-                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * crossProduct, Time.deltaTime);
+                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * crossProduct, fracComplete);
                         }
                         else
                         {
-                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -crossProduct, Time.deltaTime);
+                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -crossProduct, fracComplete);
                         }
                         feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
                     }

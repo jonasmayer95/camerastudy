@@ -18,6 +18,9 @@ public class TargetSphere : MonoBehaviour {
     //private Vector4 color = new Vector4();
     private Transform hip;
     private bool initialized = false;
+    private float pulseSpeed = 0.025f;
+    private float pulseWidth = 0.025f;
+    private float pulseStartTime;
 	
     // Use this for initialization
 	void Start () {
@@ -36,6 +39,8 @@ public class TargetSphere : MonoBehaviour {
             else
             {
                 transform.position = hip.position + pos.EndPosition;
+                float pulse = Mathf.PingPong((Time.time - pulseStartTime) * pulseSpeed, pulseWidth);
+                transform.localScale = new Vector3(pulse, pulse, pulse);
             }
         }
 	}
@@ -72,6 +77,7 @@ public class TargetSphere : MonoBehaviour {
             if (Time.time - progressBarStartTime > progressBarTime)
             {
                 trialState = TrialState.end;
+                pulseStartTime = Time.time;
                 progressBar.SetFloat("_Cutoff", 1);
                 UserStudyLogic.instance.StartTrial();        
             }
