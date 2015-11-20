@@ -24,7 +24,7 @@ public class TargetSphere : MonoBehaviour {
 	
     // Use this for initialization
 	void Start () {
-        progressBar = transform.GetChild(0).gameObject.GetComponent<Renderer>().material;
+        progressBar = transform.GetChild(1).gameObject.GetComponent<Renderer>().material;
         progressBar.SetFloat("_Cutoff", 1);
 	}
 	
@@ -40,7 +40,7 @@ public class TargetSphere : MonoBehaviour {
             {
                 transform.position = hip.position + pos.EndPosition;
                 float pulse = Mathf.PingPong((Time.time - pulseStartTime) * pulseSpeed, pulseWidth);
-                transform.localScale = new Vector3(pulse, pulse, pulse);
+                transform.GetChild(0).localScale = new Vector3(pulse, pulse, pulse) * 80;
             }
         }
 	}
