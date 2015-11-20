@@ -22,6 +22,8 @@ public class UserStudyUI : MonoBehaviour
     public GameObject handednessToggleGroup;
     public GameObject feedbackToggleGroup;
     public GameObject submitButton;
+    public GameObject colorToggle;
+    public GameObject scalingToggle;
 
     //the object that contains a MovementRecorder script
     public GameObject userStudyObject;
@@ -51,7 +53,8 @@ public class UserStudyUI : MonoBehaviour
             CameraMotionStates camMotion = (CameraMotionStates)GetToggleIndex(camMotionToggleGroup);
             Handedness hand = (Handedness)GetToggleIndex(handednessToggleGroup);
             CameraFeedbackMode feedbackType = (CameraFeedbackMode)GetToggleIndex(feedbackToggleGroup);
-
+            bool coloring = colorToggle.GetComponent<Toggle>().isOn;
+            bool scaling = scalingToggle.GetComponent<Toggle>().isOn;
             // TODO: validate enums (Enum.IsDefined)
 
             // We've got valid data, send it to MovementRecoreder
@@ -59,7 +62,7 @@ public class UserStudyUI : MonoBehaviour
             userStudyObject.SetActive(true);
 
             // Init UserStudyLogic component with userspecific data
-            UserStudyLogic.instance.InitNewUserStudy(feedbackType, hand, camPerspective, camMotion, this, trial);
+            UserStudyLogic.instance.InitNewUserStudy(feedbackType, hand, camPerspective, camMotion, this, trial, coloring, scaling);
 
             this.gameObject.SetActive(false);
         }

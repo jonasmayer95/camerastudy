@@ -131,7 +131,7 @@ public class UserStudyLogic : MonoBehaviour
         targetSphere.gameObject.SetActive(false);
     }    
 
-    public void InitNewUserStudy(CameraFeedbackMode feedbackType, Handedness handedness, CameraPerspectives camPerspective, CameraMotionStates camMotion, UserStudyUI userStudyUI, uint numTrials)
+    public void InitNewUserStudy(CameraFeedbackMode feedbackType, Handedness handedness, CameraPerspectives camPerspective, CameraMotionStates camMotion, UserStudyUI userStudyUI, uint numTrials, bool coloring, bool scaling)
     {
         this.userStudyUI = userStudyUI;
         cameraPerspective = camPerspective;
@@ -139,7 +139,8 @@ public class UserStudyLogic : MonoBehaviour
         camFeedbackMode = feedbackType;
         this.numTrials = numTrials;
         this.handedness = handedness;
-
+        cameraFeedback.spriteScaling = scaling;
+        cameraFeedback.spriteColoring = coloring;
         if (handedness == Handedness.LeftHanded)
         {
             feedbackAvatar_joint = rightHand;

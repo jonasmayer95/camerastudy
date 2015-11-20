@@ -27,6 +27,9 @@ public class CameraFeedback : MonoBehaviour {
 
     // Feedback mode
     public CameraFeedbackMode cameraFeedbackMode = CameraFeedbackMode.DockingArrow2D;
+
+    public bool spriteColoring;
+    public bool spriteScaling;
     
 
     // Prefabs
@@ -73,6 +76,18 @@ public class CameraFeedback : MonoBehaviour {
     private bool left;
 
 
+    private Material dockingArrow2DMaterial;
+    private Material arrowDock2DMaterial;
+    private Material ballDock2DMaterial;
+    private Material dockingBall2DMaterial;
+    private Material puzzleDock2DMaterial;
+    private Material dockingPuzzle2DMaterial;
+    private Material spikeDock2DMaterial;
+    private Material dockingSpike2DMaterial;
+
+    public float colorDistance;
+
+
 	// Use this for initialization
     void Start()
     {
@@ -113,40 +128,56 @@ public class CameraFeedback : MonoBehaviour {
         arrowDock2D.transform.parent = feedbackCamera.transform;
         arrowDock2D.SetActive(false);
 
+        arrowDock2DMaterial = arrowDock2D.GetComponent<SpriteRenderer>().material;
+
         // Spawn a dockingArrow pointing from the joint to the dock
         dockingArrow2D = Instantiate(dockingArrow2DPrefab, Vector3.zero, Quaternion.identity) as GameObject;
         dockingArrow2D.transform.parent = feedbackCamera.transform;
         dockingArrow2D.SetActive(false);
+
+        dockingArrow2DMaterial = dockingArrow2D.GetComponent<SpriteRenderer>().material;
 
         // Spawn a ballDockingStation to show the target position
         ballDock2D = Instantiate(ballDock2DPrefab, Vector3.zero, Quaternion.identity) as GameObject;
         ballDock2D.transform.parent = feedbackCamera.transform;
         ballDock2D.SetActive(false);
 
+        ballDock2DMaterial = ballDock2D.GetComponent<SpriteRenderer>().material;
+
         // Spawn a dockingBall pointing from the joint to the dock
         dockingBall2D = Instantiate(dockingBall2DPrefab, Vector3.zero, Quaternion.identity) as GameObject;
         dockingBall2D.transform.parent = feedbackCamera.transform;
         dockingBall2D.SetActive(false);
+
+        dockingBall2DMaterial = dockingBall2D.GetComponent<SpriteRenderer>().material;
 
         // Spawn a puzzleDockingStation to show the target position
         puzzleDock2D = Instantiate(puzzleDock2DPrefab, Vector3.zero, Quaternion.identity) as GameObject;
         puzzleDock2D.transform.parent = feedbackCamera.transform;
         puzzleDock2D.SetActive(false);
 
+        puzzleDock2DMaterial = puzzleDock2D.GetComponent<SpriteRenderer>().material;
+
         // Spawn a dockingPuzzle pointing from the joint to the dock
         dockingPuzzle2D = Instantiate(dockingPuzzle2DPrefab, Vector3.zero, Quaternion.identity) as GameObject;
         dockingPuzzle2D.transform.parent = feedbackCamera.transform;
         dockingPuzzle2D.SetActive(false);
+
+        dockingPuzzle2DMaterial = dockingPuzzle2D.GetComponent<SpriteRenderer>().material;
 
         // Spawn a spikeDockingStation to show the target position
         spikeDock2D = Instantiate(spikeDock2DPrefab, Vector3.zero, Quaternion.identity) as GameObject;
         spikeDock2D.transform.parent = feedbackCamera.transform;
         spikeDock2D.SetActive(false);
 
+        spikeDock2DMaterial = spikeDock2D.GetComponent<SpriteRenderer>().material;
+
         // Spawn a dockingSpike pointing from the joint to the dock
         dockingSpike2D = Instantiate(dockingSpike2DPrefab, Vector3.zero, Quaternion.identity) as GameObject;
         dockingSpike2D.transform.parent = feedbackCamera.transform;
         dockingSpike2D.SetActive(false);
+
+        dockingSpike2DMaterial = dockingSpike2D.GetComponent<SpriteRenderer>().material;
 
         // Init camera position
         //UpdateCameraPosition();
@@ -352,6 +383,11 @@ public class CameraFeedback : MonoBehaviour {
                 //Activate the Dock and arrow 
                 dockingArrow2D.SetActive(true);
                 arrowDock2D.SetActive(true);
+
+                UpdateSpriteColor(dockingArrow2DMaterial);
+                UpdateSpriteColor(arrowDock2DMaterial);
+
+                UpdateSpriteScale(dockingArrow2D);
             }
 
             if (cameraFeedbackMode == CameraFeedbackMode.DockingBall2D)
@@ -378,6 +414,10 @@ public class CameraFeedback : MonoBehaviour {
                 //Activate the Dock and arrow 
                 dockingBall2D.SetActive(true);
                 ballDock2D.SetActive(true);
+
+                UpdateSpriteColor(dockingBall2DMaterial);
+                UpdateSpriteColor(ballDock2DMaterial);
+                UpdateSpriteScale(dockingBall2D);
             }
 
             if (cameraFeedbackMode == CameraFeedbackMode.DockingPuzzle2D)
@@ -404,6 +444,11 @@ public class CameraFeedback : MonoBehaviour {
                 //Activate the Dock and arrow 
                 dockingPuzzle2D.SetActive(true);
                 puzzleDock2D.SetActive(true);
+
+                UpdateSpriteColor(dockingPuzzle2DMaterial);
+                UpdateSpriteColor(puzzleDock2DMaterial);
+
+                UpdateSpriteScale(dockingPuzzle2D);
             }
 
             if (cameraFeedbackMode == CameraFeedbackMode.DockingSpike2D)
@@ -430,6 +475,12 @@ public class CameraFeedback : MonoBehaviour {
                 //Activate the Dock and arrow 
                 dockingSpike2D.SetActive(true);
                 spikeDock2D.SetActive(true);
+
+                //Set color
+                UpdateSpriteColor(dockingSpike2DMaterial);
+                UpdateSpriteColor(spikeDock2DMaterial);
+
+                UpdateSpriteScale(dockingSpike2D);
             }
         }
 
@@ -470,7 +521,7 @@ public class CameraFeedback : MonoBehaviour {
     void OnDisable()
     {
         if (initialized)
-        {
+        { 
             targetSphere.SetActive(false);
             arrow3D.SetActive(false);
             feedbackCylinder.SetActive(false);
@@ -507,4 +558,38 @@ public class CameraFeedback : MonoBehaviour {
             boneCount--;
         }
     }*/
+
+
+    //Colors the sprite dependent on the distance between the targetsphere and the joint with a color value between red and green
+    void UpdateSpriteColor(Material objectToColor)
+    {
+        if (spriteColoring)
+        {
+            //float distance = Vector3.Distance(targetSphere.transform.position, feedbackAvatar_joint.position);
+            float distance = Mathf.Abs((feedbackCamera.transform.rotation * targetSphere.transform.position).z - (feedbackCamera.transform.rotation * feedbackAvatar_joint.position).z);
+            if (distance < colorDistance)
+            {
+                float redFactor = distance / colorDistance;
+                float greenFactor = 1 - redFactor;
+                objectToColor.color = new Vector4(redFactor, greenFactor, 0, 1);
+            }
+            else
+            {
+                objectToColor.color = Color.red;
+            }
+        }
+    }
+
+    void UpdateSpriteScale(GameObject objToScale)
+    {
+        if (spriteScaling)
+        {
+            float distance = Mathf.Abs((feedbackCamera.transform.rotation * targetSphere.transform.position).z - (feedbackCamera.transform.rotation * feedbackAvatar_joint.position).z);
+            if (distance < colorDistance)
+            {
+                float scaleFactor = distance / colorDistance;
+                objToScale.transform.localScale = Vector3.one * Mathf.Max(scaleFactor, 0.2f);
+            }
+        }
+    }
 }
