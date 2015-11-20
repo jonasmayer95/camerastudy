@@ -2,21 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 
-
-public struct Trial
-{
-    public Vector3 start;
-    public Vector3 end;
-    public uint number;
-
-    public Trial(Vector3 start, Vector3 end, uint number)
-    {
-        this.start = start;
-        this.end = end;
-        this.number = number;
-    }
-}
-
 enum TrialState 
 {
     start,end
@@ -24,7 +9,7 @@ enum TrialState
 
 public class TargetSphere : MonoBehaviour {
 
-    private Trial trial;
+    private PositionSet pos;
     private TrialState trialState;
     private Handedness handedness;
     private Material progressBar;
@@ -33,6 +18,9 @@ public class TargetSphere : MonoBehaviour {
     //private Vector4 color = new Vector4();
     private Transform hip;
     private bool initialized = false;
+    private float pulseSpeed = 0.025f;
+    private float pulseWidth = 0.025f;
+    private float pulseStartTime;
 	
     // Use this for initialization
 	void Start () {
@@ -46,20 +34,22 @@ public class TargetSphere : MonoBehaviour {
         {
             if (trialState == TrialState.start)
             {
-                transform.position = hip.position + trial.start;
+                transform.position = hip.position + pos.StartPosition;
             }
             else
             {
-                transform.position = hip.position + trial.end;
+                transform.position = hip.position + pos.EndPosition;
+                float pulse = Mathf.PingPong((Time.time - pulseStartTime) * pulseSpeed, pulseWidth);
+                transform.localScale = new Vector3(pulse, pulse, pulse);
             }
         }
 	}
 
-    public void InitTargetSphere(Trial trial, Handedness handedness, Transform hip)
+    public void InitTargetSphere(PositionSet pos, Handedness handedness, Transform hip)
     {
-        this.trial = trial;
+        this.pos = pos;
         this.handedness = handedness;
-        transform.position = trial.start;
+        transform.position = pos.StartPosition;
         this.hip = hip;
         initialized = true;
         progressBarStartTime = 0.0f;
@@ -87,6 +77,7 @@ public class TargetSphere : MonoBehaviour {
             if (Time.time - progressBarStartTime > progressBarTime)
             {
                 trialState = TrialState.end;
+                pulseStartTime = Time.time;
                 progressBar.SetFloat("_Cutoff", 1);
                 UserStudyLogic.instance.StartTrial();        
             }

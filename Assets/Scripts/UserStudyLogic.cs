@@ -23,8 +23,49 @@ public enum CameraMotionStates
     Jumping, Moving
 }
 
+/// <summary>
+/// Defines start and target positions and a sequence number for the user study.
+/// </summary>
+public class PositionSet
+{
+    public PositionSet(Vector3 start, Vector3 end, uint trialCode)
+    {
+        this.StartPosition = start;
+        this.EndPosition = end;
+        this.TrialCode = trialCode;
+    }
+
+    /// <summary>
+    /// Flips the x component of the vector so that left-handed people don't complain when
+    /// doing the user study.
+    /// </summary>
+    public void FlipHandedness()
+    {
+        this.StartPosition = new Vector3(StartPosition.x * -1, StartPosition.y, StartPosition.z);
+        this.EndPosition = new Vector3(EndPosition.x * -1, StartPosition.y, StartPosition.z);
+    }
+
+    public Vector3 StartPosition { get; set; }
+    public Vector3 EndPosition { get; set; }
+    public uint TrialCode { get; set; }
+}
+
 public class UserStudyLogic : MonoBehaviour
 {
+    //these are all defined positions for now. we should build sets out of these.
+    private PositionSet[] targetPos = { new PositionSet(new Vector3(0.75f, 0.5f, -0.2f), new Vector3(0.5f, 0.75f, -0.3f), 0), 
+                                        new PositionSet(new Vector3(0.5f, 0.3f, -0.4f), new Vector3(0.6f, 0.6f, -0.1f), 1), 
+                                        new PositionSet(new Vector3(0.4f, 0.8f, 0), new Vector3(0.5f, 0.3f, -0.3f), 2),
+                                        new PositionSet(new Vector3(0.6f, 0.2f, -0.5f), new Vector3(0.2f, 0.8f, -0.1f), 3),
+                                        new PositionSet(new Vector3(0.1f, 0.3f, -0.75f), new Vector3(0.2f, 0.8f, -0.1f), 4)
+                                      };
+    private List<PositionSet> targetPositions = new List<PositionSet>();
+    private Vector3 icoSphereOffset = new Vector3(0.25f, 0.25f, -0.5f);
+    private float icoSphereScale = 0.125f;
+    private float targetSphereHugeScale;
+    private float targetSphereSmallScale = 0.025f;
+    private Renderer targetSphereRenderer;
+    private Color targetSphereStartColor;
 
     public static UserStudyLogic instance;
     public float camDistance = 1.5f;
@@ -36,7 +77,6 @@ public class UserStudyLogic : MonoBehaviour
     private Vector3 camStartPos;
     private Quaternion camStartOrientation;
     private TargetSphere targetSphere;
-    public List<List<Vector3>> targetPositions;
     private CameraFeedbackMode camFeedbackMode;
     private Transform feedbackAvatar_joint;
     //private bool initialized;
@@ -51,50 +91,38 @@ public class UserStudyLogic : MonoBehaviour
     private uint trialCounter;
     private uint numTrials;
     private Handedness handedness;
+    private float startTime;
+    private float journeyTime = 5;
 
     // Object that has an attached MovementRecorder
     public GameObject userStudyObject;
 
     private void InitTargetPositions(Handedness handedness)
     {
-        List<Vector3> positions = new List<Vector3>();
-        targetPositions = new List<List<Vector3>>();
+        List<Vector3> pos = BuildIcoSphereVertices();
+        //First Direction: In->Out
+        for (int i = 0; i < pos.Count; i++)
+        {
+            targetPositions.Add(new PositionSet(icoSphereOffset - pos[i] * icoSphereScale, icoSphereOffset +  pos[i] * icoSphereScale, (uint)i));
+        }
+        //Second Direction: Out->In
+        for (int i = 0; i < pos.Count; i++)
+        {
+            targetPositions.Add(new PositionSet(icoSphereOffset + pos[i] * icoSphereScale, icoSphereOffset  - pos[i] * icoSphereScale, (uint)(i + pos.Count)));
+        }
 
-        //Initialize righthanded positions
-        positions.Add(new Vector3(0.75f, 0.5f, -0.2f));
-        positions.Add(new Vector3(0.5f, 0.75f, -0.3f));
-        targetPositions.Add(positions);
+        //Applying to targetPos array
+        targetPos = new PositionSet[pos.Count * 2];
+        for (int i = 0; i < targetPositions.Count; i++)
+        {
+            targetPos[i] = targetPositions[i];
+        }
 
-
-        positions = new List<Vector3>();
-        positions.Add(new Vector3(0.5f, 0.3f, -0.4f));
-        positions.Add(new Vector3(0.6f, 0.6f, -0.1f));
-        targetPositions.Add(positions);
-
-        positions = new List<Vector3>();
-        positions.Add(new Vector3(0.4f, 0.8f, 0));
-        positions.Add(new Vector3(0.5f, 0.3f, -0.3f));
-        targetPositions.Add(positions);
-
-        positions = new List<Vector3>();
-        positions.Add(new Vector3(0.6f, 0.2f, -0.5f));
-        positions.Add(new Vector3(0.2f, 0.8f, -0.1f));
-        targetPositions.Add(positions);
-
-        positions = new List<Vector3>();
-        positions.Add(new Vector3(0.1f, 0.3f, -0.75f));
-        positions.Add(new Vector3(0.2f, 0.8f, -0.1f));
-        targetPositions.Add(positions);
-
-        //Flip directions if lefthanded
         if (handedness == Handedness.LeftHanded)
         {
-            foreach (List<Vector3> posVector in targetPositions)
+            foreach (var positions in targetPos)
             {
-                for (int i = 0; i < posVector.Count; i++)
-                {
-                    posVector[i] = new Vector3(posVector[i].x * -1, posVector[i].y, posVector[i].z);
-                }
+                positions.FlipHandedness();
             }
         }
     }
@@ -128,8 +156,11 @@ public class UserStudyLogic : MonoBehaviour
         cameraFeedback = (Instantiate(cameraFeedbackPrefab, Vector3.zero, Quaternion.identity) as GameObject).GetComponent<CameraFeedback>();
         cameraFeedback.gameObject.SetActive(false);
         targetSphere = (Instantiate(targetSpherePrefab, Vector3.zero, Quaternion.identity) as GameObject).GetComponent<TargetSphere>();
+        targetSphereRenderer = targetSphere.GetComponent<Renderer>();
+        targetSphereStartColor = targetSphereRenderer.material.color;
+        targetSphereHugeScale = targetSphere.transform.localScale.x;
         targetSphere.gameObject.SetActive(false);
-    }    
+    }
 
     public void InitNewUserStudy(CameraFeedbackMode feedbackType, Handedness handedness, CameraPerspectives camPerspective, CameraMotionStates camMotion, UserStudyUI userStudyUI, uint numTrials, bool coloring, bool scaling)
     {
@@ -148,34 +179,49 @@ public class UserStudyLogic : MonoBehaviour
         else
         {
             feedbackAvatar_joint = leftHand;
-        } 
+        }
 
-        InitTargetPositions(handedness);
+        InitTargetPositions(handedness);        
 
-        ShuffleList(targetPositions);
+        if (this.numTrials > targetPos.Length)
+        {
+            this.numTrials = (uint) targetPos.Length;
+        }
 
-        InitNewTrial();
+        if (this.numTrials <= 0)
+        {
+            this.numTrials = 0;
+            trialCounter = 0;
+            userStudyUI.gameObject.SetActive(true);
+        }
+        else
+        {
+            //ShuffleArray<PositionSet>(targetPos);
+
+            InitNewTrial();
+        }
 
         //initialized = true;
     }
 
     private void InitNewTrial()
     {
-        //var positions = targetPositions[Random.Range(0, targetPositions.Count - 1)];
-        var positions = targetPositions[(int)trialCounter];
-        this.startPosition = positions[0];
-        this.endPosition = positions[1];
+        this.startPosition = targetPos[trialCounter].StartPosition;
+        this.endPosition = targetPos[trialCounter].EndPosition;
 
-        Trial trial = new Trial(positions[0], positions[1], trialCounter);
-
-        targetSphere.gameObject.SetActive(true); 
-        targetSphere.InitTargetSphere(trial, handedness, hip);                      
+        targetSphere.gameObject.SetActive(true);
+        targetSphere.transform.localScale = new Vector3(targetSphereHugeScale, targetSphereHugeScale, targetSphereHugeScale);
+        targetSphereRenderer.material.color = targetSphereStartColor;
+        targetSphere.InitTargetSphere(targetPos[trialCounter], handedness, hip);
     }
 
     public void StartTrial()
     {
         cameraFeedback.gameObject.SetActive(true);
+        startTime = Time.time;
         camMotion = true;
+        targetSphere.transform.localScale = new Vector3(targetSphereSmallScale, targetSphereSmallScale, targetSphereSmallScale);
+        targetSphereRenderer.material.color = Color.red;
         if (handedness == Handedness.LeftHanded)
         {
             cameraFeedback.InitCorrectionCamera(hip, rightHand, targetSphere.transform.position - hip.position, targetSphere.gameObject, camFeedbackMode);
@@ -189,7 +235,7 @@ public class UserStudyLogic : MonoBehaviour
 
         ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
 
-        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(trialCounter/*, startPosition, endPosition*/));
+        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
 
         ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
 
@@ -237,6 +283,30 @@ public class UserStudyLogic : MonoBehaviour
             list[i] = list[r];
             list[r] = tmp;
         }
+    }
+
+    private List<Vector3> BuildIcoSphereVertices()
+    {
+        List<Vector3> vertexList = new List<Vector3>();
+
+        float t = (1.0f + Mathf.Sqrt(5.0f)) / 2.0f;
+
+        vertexList.Add(new Vector3(-1, t, 0));
+        vertexList.Add(new Vector3(1, t, 0));
+        vertexList.Add(new Vector3(-1, -t, 0));
+        vertexList.Add(new Vector3(1, -t, 0));
+
+        vertexList.Add(new Vector3(0, -1, t));
+        vertexList.Add(new Vector3(0, 1, t));
+        vertexList.Add(new Vector3(0, -1, -t));
+        vertexList.Add(new Vector3(0, 1, -t));
+
+        vertexList.Add(new Vector3(t, 0, -1));
+        vertexList.Add(new Vector3(t, 0, 1));
+        vertexList.Add(new Vector3(-t, 0, -1));
+        vertexList.Add(new Vector3(-t, 0, 1));
+
+        return vertexList;
     }
 
     void UpdateCameraPosition()
@@ -323,7 +393,7 @@ public class UserStudyLogic : MonoBehaviour
                         {
                             feedbackCamera.transform.position = ((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f + camDistance * crossProduct;
                         }
-                        feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);                        
+                        feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
                     }
                     else
                     {
@@ -345,34 +415,36 @@ public class UserStudyLogic : MonoBehaviour
         // Smoothly moving to target position and orientation
         if (cameraMotion == CameraMotionStates.Moving)
         {
+            float fracComplete = (Time.time - startTime) / journeyTime;
+
             if (cameraPerspective == CameraPerspectives.Front)
             {
-                feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.identity, Time.deltaTime * 1);
-                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -Vector3.forward, Time.deltaTime * 1);
+                feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.identity, fracComplete);
+                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -Vector3.forward, fracComplete);
             }
 
             if (cameraPerspective == CameraPerspectives.Behind)
             {
-                feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(0, 180, 0), Time.deltaTime * 1);
-                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.forward, Time.deltaTime * 1);
+                feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(0, 180, 0), fracComplete);
+                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.forward, fracComplete);
             }
 
             if (cameraPerspective == CameraPerspectives.Side && cameraSide == CameraSide.Left)
             {
-                feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(0, 90, 0), Time.deltaTime * 1);
-                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.left, Time.deltaTime * 1);
+                feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(0, 90, 0), fracComplete);
+                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.left, fracComplete);
             }
 
             if (cameraPerspective == CameraPerspectives.Side && cameraSide == CameraSide.Right)
             {
-                feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(0, -90, 0), Time.deltaTime * 1);
-                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.right, Time.deltaTime * 1);
+                feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(0, -90, 0), fracComplete);
+                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.right, fracComplete);
             }
 
             if (cameraPerspective == CameraPerspectives.Up)
             {
-                feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(90, 0, 0), Time.deltaTime * 1);
-                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.up, Time.deltaTime * 1);
+                feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(90, 0, 0), fracComplete);
+                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.up, fracComplete);
             }
 
             if (cameraPerspective == CameraPerspectives.Normal)
@@ -382,13 +454,13 @@ public class UserStudyLogic : MonoBehaviour
                 {
                     if (cameraSide == CameraSide.Left)
                     {
-                        feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * -Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized, Time.deltaTime * 1);
+                        feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * -Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized, fracComplete);
                         //feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, , Time.deltaTime * 1);                      
                         feedbackCamera.transform.LookAt((targetSphere.transform.position + feedbackAvatar_joint.position) * 0.5f);
                     }
                     else
                     {
-                        feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized, Time.deltaTime * 1);
+                        feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, (feedbackAvatar_joint.position + targetSphere.transform.position) * 0.5f + camDistance * Vector3.Cross(targetSphere.transform.position - feedbackAvatar_joint.position, Vector3.up).normalized, fracComplete);
                         //feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, , Time.deltaTime * 1);
                         feedbackCamera.transform.LookAt((targetSphere.transform.position + feedbackAvatar_joint.position) * 0.5f);
                     }
@@ -402,12 +474,12 @@ public class UserStudyLogic : MonoBehaviour
                     {
                         if (crossProduct.x - hip.position.x > 0)
                         {
-                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -crossProduct, Time.deltaTime);
+                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -crossProduct, fracComplete);
                         }
 
                         else
                         {
-                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * crossProduct, Time.deltaTime);
+                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * crossProduct, fracComplete);
                         }
                         // ToDo Calculate smoothed normal position
                         feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
@@ -417,11 +489,11 @@ public class UserStudyLogic : MonoBehaviour
                         // ToDo Calculate smoothed normal position
                         if (crossProduct.x - hip.position.x > 0)
                         {
-                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * crossProduct, Time.deltaTime);
+                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * crossProduct, fracComplete);
                         }
                         else
                         {
-                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -crossProduct, Time.deltaTime);
+                            feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -crossProduct, fracComplete);
                         }
                         feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
                     }
