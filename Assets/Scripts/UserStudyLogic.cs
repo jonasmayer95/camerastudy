@@ -72,6 +72,8 @@ public class UserStudyLogic : MonoBehaviour
     public GameObject cameraFeedbackPrefab;
     public GameObject targetSpherePrefab;
     public Transform leftShoulder, rightShoulder, hip, leftHand, rightHand;
+    public AudioClip startSound, endSound;
+    private AudioSource audioSource;
     private CameraFeedback cameraFeedback;
     private Camera feedbackCamera;
     private Vector3 camStartPos;
@@ -138,6 +140,7 @@ public class UserStudyLogic : MonoBehaviour
         SpawnUserStudyComponents();
         camStartPos = feedbackCamera.transform.position;
         camStartOrientation = feedbackCamera.transform.rotation;
+        audioSource = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -222,8 +225,9 @@ public class UserStudyLogic : MonoBehaviour
         camMotion = true;
         targetSphere.transform.localScale = new Vector3(targetSphereSmallScale, targetSphereSmallScale, targetSphereSmallScale);
         targetSphereRenderer.material.color = Color.red;
-        
-        //TODO play nice start sound here
+
+        audioSource.clip = startSound;
+        audioSource.Play();
 
         if (handedness == Handedness.LeftHanded)
         {
@@ -254,7 +258,9 @@ public class UserStudyLogic : MonoBehaviour
         feedbackCamera.transform.rotation = camStartOrientation;
         ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.EndTrial(Time.time));
 
-        //TODO play nice end sound here
+        audioSource.Stop();
+        audioSource.clip = endSound;
+        audioSource.Play();
 
         if (trialCounter < numTrials)
         {
@@ -478,7 +484,7 @@ public class UserStudyLogic : MonoBehaviour
 
             if (cameraPerspective == CameraPerspectives.Normal)
             {
-                // Continiously updating normal position
+                // Continiously updating normal position: even during an exercise
                 if (camUpdateMode == CameraUpdateMode.Updated)
                 {
                     if (cameraSide == CameraSide.Left)
@@ -495,9 +501,12 @@ public class UserStudyLogic : MonoBehaviour
                     }
                 }
 
+                // Pre computing target position: position will not be updated during the exercise
                 else
                 {
                     Vector3 crossProduct = Vector3.Cross((hip.position + endPosition) - (hip.position + startPosition), Vector3.up).normalized;
+
+                    //TODO: Code below is relevant for new camera motion with RotateAround
 
                     if (cameraSide == CameraSide.Left)
                     {
@@ -505,12 +514,10 @@ public class UserStudyLogic : MonoBehaviour
                         {
                             feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -crossProduct, fracComplete);
                         }
-
                         else
                         {
                             feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * crossProduct, fracComplete);
                         }
-                        // ToDo Calculate smoothed normal position
                         feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
                     }
                     else

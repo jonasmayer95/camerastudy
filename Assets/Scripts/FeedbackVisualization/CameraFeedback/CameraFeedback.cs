@@ -367,7 +367,7 @@ public class CameraFeedback : MonoBehaviour {
                 feedbackCylinder.SetActive(false);
                 //targetSphereRenderer.enabled = false;
 
-                dockingArrow2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.position - feedbackCamera.transform.position).normalized;
+                dockingArrow2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.position + feedbackAvatar_joint.GetComponent<SphereCollider>().center - feedbackCamera.transform.position).normalized;
                 arrowDock2D.transform.position = feedbackCamera.transform.position + spriteDistance * (targetSphere.transform.position - feedbackCamera.transform.position).normalized;
 
                 dockingArrow2D.transform.localRotation = Quaternion.identity;
@@ -398,7 +398,7 @@ public class CameraFeedback : MonoBehaviour {
                 feedbackCylinder.SetActive(false);
                 //targetSphereRenderer.enabled = false;
 
-                dockingBall2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.position - feedbackCamera.transform.position).normalized;
+                dockingBall2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.position + feedbackAvatar_joint.GetComponent<SphereCollider>().center - feedbackCamera.transform.position).normalized;
                 ballDock2D.transform.position = feedbackCamera.transform.position + spriteDistance * (targetSphere.transform.position - feedbackCamera.transform.position).normalized;
 
                 dockingBall2D.transform.localRotation = Quaternion.identity;
@@ -428,7 +428,7 @@ public class CameraFeedback : MonoBehaviour {
                 feedbackCylinder.SetActive(false);
                 //targetSphereRenderer.enabled = false;
 
-                dockingPuzzle2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.position - feedbackCamera.transform.position).normalized;
+                dockingPuzzle2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.position + feedbackAvatar_joint.GetComponent<SphereCollider>().center - feedbackCamera.transform.position).normalized;
                 puzzleDock2D.transform.position = feedbackCamera.transform.position + spriteDistance * (targetSphere.transform.position - feedbackCamera.transform.position).normalized;
 
                 dockingPuzzle2D.transform.localRotation = Quaternion.identity;
@@ -459,7 +459,7 @@ public class CameraFeedback : MonoBehaviour {
                 feedbackCylinder.SetActive(false);
                 //targetSphereRenderer.enabled = false;
 
-                dockingSpike2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.position - feedbackCamera.transform.position).normalized;
+                dockingSpike2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.position + feedbackAvatar_joint.GetComponent<SphereCollider>().center - feedbackCamera.transform.position).normalized;
                 spikeDock2D.transform.position = feedbackCamera.transform.position + spriteDistance * (targetSphere.transform.position - feedbackCamera.transform.position).normalized;
 
                 dockingSpike2D.transform.localRotation = Quaternion.identity;
@@ -522,7 +522,7 @@ public class CameraFeedback : MonoBehaviour {
     {
         if (initialized)
         { 
-            targetSphere.SetActive(false);
+            //targetSphere.SetActive(false);
             arrow3D.SetActive(false);
             feedbackCylinder.SetActive(false);
             rigedArrow.SetActive(false);
