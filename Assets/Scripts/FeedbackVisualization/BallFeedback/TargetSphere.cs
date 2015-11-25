@@ -40,7 +40,8 @@ public class TargetSphere : MonoBehaviour {
             {
                 transform.position = hip.position + pos.EndPosition;
                 float pulse = Mathf.PingPong((Time.time - pulseStartTime) * pulseSpeed, pulseWidth);
-                transform.GetChild(0).localScale = new Vector3(pulse, pulse, pulse) * 80;
+                transform.GetChild(0).localScale = new Vector3(pulse, pulse, pulse);
+                Debug.Log(transform.GetChild(0).name);
             }
         }
 	}

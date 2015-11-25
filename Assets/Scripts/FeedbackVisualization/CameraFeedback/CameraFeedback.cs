@@ -24,7 +24,7 @@ public class CameraFeedback : MonoBehaviour {
     //private Vector3 targetPosition;
     public float tolerance;
     private int index;
-
+    private Vector3 startPosition;
     // Feedback mode
     public CameraFeedbackMode cameraFeedbackMode = CameraFeedbackMode.DockingArrow2D;
 
@@ -189,7 +189,7 @@ public class CameraFeedback : MonoBehaviour {
         showingWindow = false;
     }*/
 
-    public void InitCorrectionCamera(Transform hip, Transform hand, Vector3 targetOrbRelPosition, GameObject targetSphere, CameraFeedbackMode camMode)
+    public void InitCorrectionCamera(Transform hip, Transform hand, Vector3 targetOrbRelPosition, GameObject targetSphere, CameraFeedbackMode camMode, Vector3 startPos)
     {
         feedbackCamera = Camera.main;
         feedbackAvatar_hip = hip;
@@ -198,6 +198,7 @@ public class CameraFeedback : MonoBehaviour {
         this.targetSphere = targetSphere;
         targetSphereRenderer = targetSphere.GetComponent<Renderer>();
         cameraFeedbackMode = camMode;
+        startPosition = startPos;
         initialized = true;
     }
 
@@ -367,7 +368,7 @@ public class CameraFeedback : MonoBehaviour {
                 feedbackCylinder.SetActive(false);
                 //targetSphereRenderer.enabled = false;
 
-                dockingArrow2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.position + feedbackAvatar_joint.GetComponent<SphereCollider>().center - feedbackCamera.transform.position).normalized;
+                dockingArrow2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.TransformPoint(transform.TransformPoint(feedbackAvatar_joint.GetComponent<SphereCollider>().center)) - feedbackCamera.transform.position).normalized;
                 arrowDock2D.transform.position = feedbackCamera.transform.position + spriteDistance * (targetSphere.transform.position - feedbackCamera.transform.position).normalized;
 
                 dockingArrow2D.transform.localRotation = Quaternion.identity;
@@ -398,7 +399,7 @@ public class CameraFeedback : MonoBehaviour {
                 feedbackCylinder.SetActive(false);
                 //targetSphereRenderer.enabled = false;
 
-                dockingBall2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.position + feedbackAvatar_joint.GetComponent<SphereCollider>().center - feedbackCamera.transform.position).normalized;
+                dockingBall2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.TransformPoint(transform.TransformPoint(feedbackAvatar_joint.GetComponent<SphereCollider>().center)) - feedbackCamera.transform.position).normalized;
                 ballDock2D.transform.position = feedbackCamera.transform.position + spriteDistance * (targetSphere.transform.position - feedbackCamera.transform.position).normalized;
 
                 dockingBall2D.transform.localRotation = Quaternion.identity;
@@ -428,7 +429,7 @@ public class CameraFeedback : MonoBehaviour {
                 feedbackCylinder.SetActive(false);
                 //targetSphereRenderer.enabled = false;
 
-                dockingPuzzle2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.position + feedbackAvatar_joint.GetComponent<SphereCollider>().center - feedbackCamera.transform.position).normalized;
+                dockingPuzzle2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.TransformPoint(transform.TransformPoint(feedbackAvatar_joint.GetComponent<SphereCollider>().center))- feedbackCamera.transform.position).normalized;
                 puzzleDock2D.transform.position = feedbackCamera.transform.position + spriteDistance * (targetSphere.transform.position - feedbackCamera.transform.position).normalized;
 
                 dockingPuzzle2D.transform.localRotation = Quaternion.identity;
@@ -459,19 +460,26 @@ public class CameraFeedback : MonoBehaviour {
                 feedbackCylinder.SetActive(false);
                 //targetSphereRenderer.enabled = false;
 
-                dockingSpike2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.position + feedbackAvatar_joint.GetComponent<SphereCollider>().center - feedbackCamera.transform.position).normalized;
+                dockingSpike2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.TransformPoint(transform.TransformPoint(feedbackAvatar_joint.GetComponent<SphereCollider>().center)) - feedbackCamera.transform.position).normalized;
                 spikeDock2D.transform.position = feedbackCamera.transform.position + spriteDistance * (targetSphere.transform.position - feedbackCamera.transform.position).normalized;
 
-                dockingSpike2D.transform.localRotation = Quaternion.identity;
-                spikeDock2D.transform.localRotation = Quaternion.identity;
+                //dockingSpike2D.transform.localRotation = Quaternion.identity;
+                //spikeDock2D.transform.localRotation = Quaternion.identity;
 
                 Vector2 dir = spikeDock2D.transform.localPosition - dockingSpike2D.transform.localPosition;
                 dir.Normalize();
 
                 float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-                dockingSpike2D.transform.localRotation = Quaternion.Euler(dockingSpike2D.transform.localRotation.x, 0, angle);
-                spikeDock2D.transform.localRotation = Quaternion.Euler(dockingSpike2D.transform.localRotation.x, 0, angle);
-
+                Debug.Log(string.Format("sprites: {0} start-end: {1}" ,Vector3.Distance(dockingSpike2D.transform.position, spikeDock2D.transform.position) , 0.005f * Vector3.Distance(startPosition, targetSphere.transform.position)));
+                if (Vector3.Distance(dockingSpike2D.transform.position, spikeDock2D.transform.position) > 0.005f * Vector3.Distance(startPosition,targetSphere.transform.position))
+                {
+                    dockingSpike2D.transform.localRotation = Quaternion.Euler(dockingSpike2D.transform.localRotation.x, 0, angle);
+                    spikeDock2D.transform.localRotation = Quaternion.Euler(dockingSpike2D.transform.localRotation.x, 0, angle);
+                }
+                else
+                {
+                    dockingSpike2D.transform.position = spikeDock2D.transform.position;
+                }
                 //Activate the Dock and arrow 
                 dockingSpike2D.SetActive(true);
                 spikeDock2D.SetActive(true);
@@ -585,10 +593,10 @@ public class CameraFeedback : MonoBehaviour {
         if (spriteScaling)
         {
             float distance = Mathf.Abs((feedbackCamera.transform.rotation * targetSphere.transform.position).z - (feedbackCamera.transform.rotation * feedbackAvatar_joint.position).z);
-            if (distance < colorDistance)
+            if (distance < 4 * colorDistance)
             {
-                float scaleFactor = distance / colorDistance;
-                objToScale.transform.localScale = Vector3.one * Mathf.Max(scaleFactor, 0.2f);
+                float scaleFactor = distance / (4 * colorDistance);
+                objToScale.transform.localScale = Vector3.one * Mathf.Max(scaleFactor, 0.15f);
             }
         }
     }
