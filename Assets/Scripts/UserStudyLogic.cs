@@ -68,7 +68,7 @@ public class UserStudyLogic : MonoBehaviour
     private Color targetSphereStartColor;
 
     public static UserStudyLogic instance;
-    public float camDistance = 2.5f;
+    public float camDistance = 1.5f;
     public GameObject cameraFeedbackPrefab;
     public GameObject targetSpherePrefab;
     public Transform leftShoulder, rightShoulder, hip, leftHand, rightHand;
@@ -95,6 +95,7 @@ public class UserStudyLogic : MonoBehaviour
     private Handedness handedness;
     private float startTime;
     private float journeyTime = 5;
+    private float camHeightOffset;
 
     // Object that has an attached MovementRecorder
     public GameObject userStudyObject;
@@ -130,15 +131,18 @@ public class UserStudyLogic : MonoBehaviour
 
     void Awake()
     {
-        instance = this;
+        instance = this;        
+        Random.seed = System.Environment.TickCount;
     }
 
 
     void Start()
     {
         SpawnUserStudyComponents();
+        feedbackCamera.transform.position = hip.position - Vector3.forward * camDistance;
         camStartPos = feedbackCamera.transform.position;
         camStartOrientation = feedbackCamera.transform.rotation;
+        camHeightOffset = feedbackCamera.transform.position.y - hip.position.y;
         audioSource = GetComponent<AudioSource>();
     }
 
@@ -149,6 +153,12 @@ public class UserStudyLogic : MonoBehaviour
         {
             UpdateCameraPosition();
         }
+        else
+        {
+            feedbackCamera.transform.position = hip.position - Vector3.forward * camDistance;
+        }
+
+        Debug.Log("CamDistance: " + Vector3.Distance(feedbackCamera.transform.position, hip.position));
     }
 
     private void SpawnUserStudyComponents()
@@ -198,7 +208,7 @@ public class UserStudyLogic : MonoBehaviour
         }
         else
         {
-            //ShuffleArray<PositionSet>(targetPos);
+            ShuffleArray<PositionSet>(targetPos);
 
             InitNewTrial();
         }
@@ -344,31 +354,31 @@ public class UserStudyLogic : MonoBehaviour
             if (cameraPerspective == CameraPerspectives.Front)
             {
                 feedbackCamera.transform.rotation = Quaternion.identity;
-                feedbackCamera.transform.position = hip.position + (startPosition + endPosition) * 0.5f + camDistance * -Vector3.forward;
+                feedbackCamera.transform.position = hip.position + camDistance * -Vector3.forward;
             }
 
             if (cameraPerspective == CameraPerspectives.Behind)
             {
                 feedbackCamera.transform.rotation = Quaternion.Euler(0, 180, 0);
-                feedbackCamera.transform.position = hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.forward;
+                feedbackCamera.transform.position = hip.position + camDistance * Vector3.forward;
             }
 
             if (cameraPerspective == CameraPerspectives.Side && cameraSide == CameraSide.Left)
             {
                 feedbackCamera.transform.rotation = Quaternion.Euler(0, 90, 0);
-                feedbackCamera.transform.position = hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.left;
+                feedbackCamera.transform.position = hip.position +  camDistance * Vector3.left;
             }
 
             if (cameraPerspective == CameraPerspectives.Side && cameraSide == CameraSide.Right)
             {
                 feedbackCamera.transform.rotation = Quaternion.Euler(0, -90, 0);
-                feedbackCamera.transform.position = hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.right;
+                feedbackCamera.transform.position = hip.position + camDistance * Vector3.right;
             }
 
             if (cameraPerspective == CameraPerspectives.Up)
             {
                 feedbackCamera.transform.rotation = Quaternion.Euler(90, 0, 0);
-                feedbackCamera.transform.position = hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.up;
+                feedbackCamera.transform.position = hip.position + camDistance * Vector3.up;
             }
 
             if (cameraPerspective == CameraPerspectives.Normal)
@@ -392,31 +402,39 @@ public class UserStudyLogic : MonoBehaviour
                 else
                 {
                     Vector3 crossProduct = Vector3.Cross((hip.position + endPosition) - (hip.position + startPosition), Vector3.up).normalized;
+
+                    if (Mathf.Abs(crossProduct.z) > Mathf.Abs(crossProduct.x) && (hip.position + camDistance * crossProduct).z < hip.position.z)
+                    {
+                        crossProduct *= -1;
+                    }
+
                     if (cameraSide == CameraSide.Left)
                     {
                         // Calculate static normal position
                         if (crossProduct.x - hip.position.x > 0)
                         {
-                            feedbackCamera.transform.position = ((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f + camDistance * -crossProduct;
+                            feedbackCamera.transform.position = hip.position + camDistance * -crossProduct;
                         }
                         else
                         {
-                            feedbackCamera.transform.position = ((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f + camDistance * crossProduct;
+                            feedbackCamera.transform.position = hip.position + camDistance * -crossProduct;
                         }
-                        feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
+                        //feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
+                        feedbackCamera.transform.LookAt(hip.position + new Vector3(0,camHeightOffset,0));
                     }
                     else
                     {
                         // Calculate static normal position
                         if (crossProduct.x - hip.position.x < 0)
                         {
-                            feedbackCamera.transform.position = ((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f + camDistance * -crossProduct;
+                            feedbackCamera.transform.position = hip.position + camDistance * -crossProduct;
                         }
                         else
                         {
-                            feedbackCamera.transform.position = ((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f + camDistance * crossProduct;
+                            feedbackCamera.transform.position = hip.position + camDistance * -crossProduct;
                         }
-                        feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
+                        //feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
+                        feedbackCamera.transform.LookAt(hip.position + new Vector3(0, camHeightOffset, 0));
                     }
                 }
             }
@@ -430,26 +448,26 @@ public class UserStudyLogic : MonoBehaviour
             if (cameraPerspective == CameraPerspectives.Front)
             {
                 feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.identity, fracComplete);
-                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -Vector3.forward, fracComplete);
+                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + camDistance * -Vector3.forward, fracComplete);
             }
 
             if (cameraPerspective == CameraPerspectives.Behind)
             {
                 feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(0, 180, 0), fracComplete);
-                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.forward, fracComplete);
+                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + camDistance * Vector3.forward, fracComplete);
             }
 
             if (cameraPerspective == CameraPerspectives.Side && cameraSide == CameraSide.Left)
             {
                 if (Vector3.Angle(feedbackCamera.transform.forward, Vector3.right) > 30)
                 {
-                    feedbackCamera.transform.RotateAround(hip.position + (startPosition + endPosition) * 0.5f, Vector3.up, 135 * Time.deltaTime);
-                    feedbackCamera.transform.position = feedbackCamera.transform.position + feedbackCamera.transform.forward * (Vector3.Distance(hip.position + (startPosition + endPosition) * 0.5f, feedbackCamera.transform.position) - camDistance);
+                    feedbackCamera.transform.RotateAround(hip.position, Vector3.up, 135 * Time.deltaTime);
+                    feedbackCamera.transform.position = feedbackCamera.transform.position + feedbackCamera.transform.forward * (Vector3.Distance(hip.position, feedbackCamera.transform.position) - camDistance);
                 }
                 else
                 {
                     feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(0, 90, 0), fracComplete);
-                    feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.left, fracComplete);
+                    feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + camDistance * Vector3.left, fracComplete);
                 }
             }
 
@@ -457,13 +475,13 @@ public class UserStudyLogic : MonoBehaviour
             {
                 if (Vector3.Angle(feedbackCamera.transform.forward, Vector3.left) > 30)
                 {
-                    feedbackCamera.transform.RotateAround(hip.position + (startPosition + endPosition) * 0.5f, Vector3.up, -135 * Time.deltaTime);
-                    feedbackCamera.transform.position = feedbackCamera.transform.position + feedbackCamera.transform.forward * (Vector3.Distance(hip.position + (startPosition + endPosition) * 0.5f, feedbackCamera.transform.position) - camDistance);
+                    feedbackCamera.transform.RotateAround(hip.position, Vector3.up, -135 * Time.deltaTime);
+                    feedbackCamera.transform.position = feedbackCamera.transform.position + feedbackCamera.transform.forward * (Vector3.Distance(hip.position, feedbackCamera.transform.position) - camDistance);
                 }
                 else
                 {
                     feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(0, -90, 0), fracComplete);
-                    feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.right, fracComplete);
+                    feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + camDistance * Vector3.right, fracComplete);
                 }
             }
 
@@ -471,13 +489,13 @@ public class UserStudyLogic : MonoBehaviour
             {
                 if (Vector3.Angle(feedbackCamera.transform.forward, Vector3.down) > 30)
                 {
-                    feedbackCamera.transform.RotateAround(hip.position + (startPosition + endPosition) * 0.5f, Vector3.right, 135 * Time.deltaTime);
-                    feedbackCamera.transform.position = feedbackCamera.transform.position + feedbackCamera.transform.forward * (Vector3.Distance(hip.position + (startPosition + endPosition) * 0.5f, feedbackCamera.transform.position) - camDistance);
+                    feedbackCamera.transform.RotateAround(hip.position, Vector3.right, 135 * Time.deltaTime);
+                    feedbackCamera.transform.position = feedbackCamera.transform.position + feedbackCamera.transform.forward * (Vector3.Distance(hip.position, feedbackCamera.transform.position) - camDistance);
                 }
                 else
                 {
                     feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(90, 0, 0), fracComplete);
-                    feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * Vector3.up, fracComplete);
+                    feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + camDistance * Vector3.up, fracComplete);
                 }
             }
 
@@ -505,69 +523,75 @@ public class UserStudyLogic : MonoBehaviour
                 {
                     Vector3 crossProduct = Vector3.Cross((hip.position + endPosition) - (hip.position + startPosition), Vector3.up).normalized;
 
-                    //TODO: Code below is relevant for new camera motion with RotateAround
+                    if (Mathf.Abs(crossProduct.z) > Mathf.Abs(crossProduct.x) && (hip.position + camDistance * crossProduct).z < hip.position.z)
+                    {
+                        crossProduct *= -1;
+                    }
 
                     if (cameraSide == CameraSide.Left)
                     {
                         if (crossProduct.x - hip.position.x > 0)
                         {
-                            if (Vector3.Angle(new Vector3(feedbackCamera.transform.position.x, 0 ,feedbackCamera.transform.position.z), new Vector3((hip.position + (startPosition + endPosition) * 0.5f + camDistance * -crossProduct).x,0,(hip.position + (startPosition + endPosition) * 0.5f + camDistance * -crossProduct).z)) > 30)
+                            if (Vector3.Angle(new Vector3(feedbackCamera.transform.position.x, 0 ,feedbackCamera.transform.position.z), new Vector3((hip.position + camDistance * -crossProduct).x,0,(hip.position + camDistance * -crossProduct).z)) > 30)
                             {
-                                feedbackCamera.transform.RotateAround(hip.position + (startPosition + endPosition) * 0.5f, Vector3.up, 135 * Time.deltaTime);
-                                feedbackCamera.transform.position = feedbackCamera.transform.position + feedbackCamera.transform.forward * (Vector3.Distance(hip.position + (startPosition + endPosition) * 0.5f, feedbackCamera.transform.position) - camDistance);
+                                feedbackCamera.transform.RotateAround(hip.position, Vector3.up, 135 * Time.deltaTime);
+                                feedbackCamera.transform.position = feedbackCamera.transform.position + feedbackCamera.transform.forward * (Vector3.Distance(hip.position, feedbackCamera.transform.position) - camDistance);
                             }
                             else
                             {
-                                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -crossProduct, fracComplete);
-                                feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
-                                
-                                Debug.Log("Trial: " + trialCounter + ": " + hip.position + (startPosition + endPosition) * 0.5f + camDistance * crossProduct);
+                                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + camDistance * -crossProduct, fracComplete);
+                                //feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
+                                feedbackCamera.transform.LookAt(hip.position + new Vector3(0, camHeightOffset, 0));
                             }
                         }
+                        // Double Check for steep angles to rotate around the other directiction
                         else
                         {
-                            if (Vector3.Angle(new Vector3(feedbackCamera.transform.position.x, 0, feedbackCamera.transform.position.z), new Vector3((hip.position + (startPosition + endPosition) * 0.5f + camDistance * crossProduct).x, 0, (hip.position + (startPosition + endPosition) * 0.5f + camDistance * crossProduct).z)) > 30)
+                            if (Vector3.Angle(new Vector3(feedbackCamera.transform.position.x, 0, feedbackCamera.transform.position.z), new Vector3((hip.position + camDistance * -crossProduct).x, 0, (hip.position + camDistance * -crossProduct).z)) > 30)
                             {
-                                feedbackCamera.transform.RotateAround(hip.position + (startPosition + endPosition) * 0.5f, Vector3.up, 135 * Time.deltaTime);
-                                feedbackCamera.transform.position = feedbackCamera.transform.position + feedbackCamera.transform.forward * (Vector3.Distance(hip.position + (startPosition + endPosition) * 0.5f, feedbackCamera.transform.position) - camDistance);
+                                feedbackCamera.transform.RotateAround(hip.position, Vector3.up, -135 * Time.deltaTime);
+                                feedbackCamera.transform.position = feedbackCamera.transform.position + feedbackCamera.transform.forward * (Vector3.Distance(hip.position, feedbackCamera.transform.position) - camDistance);
                             }
                             else
                             {
-                                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * crossProduct, fracComplete);
-                                feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
-                                
+                                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + camDistance * -crossProduct, fracComplete);
+                                //feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
+                                feedbackCamera.transform.LookAt(hip.position + new Vector3(0, camHeightOffset, 0));
                             }
                         }
                     }
                     else
                     {
-                        // ToDo Calculate smoothed normal position
+                        // Double Check for steep angles to rotate around the other directiction
                         if (crossProduct.x - hip.position.x > 0)
                         {
-                            if (Vector3.Angle(new Vector3(feedbackCamera.transform.position.x, 0, feedbackCamera.transform.position.z), new Vector3((hip.position + (startPosition + endPosition) * 0.5f + camDistance * crossProduct).x, 0, (hip.position + (startPosition + endPosition) * 0.5f + camDistance * crossProduct).z)) > 30)
+                            if (Vector3.Angle(new Vector3(feedbackCamera.transform.position.x, 0, feedbackCamera.transform.position.z), new Vector3((hip.position + camDistance * -crossProduct).x, 0, (hip.position + camDistance * -crossProduct).z)) > 30)
                             {
-                                feedbackCamera.transform.RotateAround(hip.position + (startPosition + endPosition) * 0.5f, Vector3.up, -135 * Time.deltaTime);
-                                feedbackCamera.transform.position = feedbackCamera.transform.position + feedbackCamera.transform.forward * (Vector3.Distance(hip.position + (startPosition + endPosition) * 0.5f, feedbackCamera.transform.position) - camDistance);
+                                feedbackCamera.transform.RotateAround(hip.position + (startPosition + endPosition) * 0.5f, Vector3.up, 135 * Time.deltaTime);
+                                feedbackCamera.transform.position = feedbackCamera.transform.position + feedbackCamera.transform.forward * (Vector3.Distance(hip.position, feedbackCamera.transform.position) - camDistance);
                             }
                             else
                             {
-                                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * crossProduct, fracComplete);
-                                feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
+                                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + camDistance * -crossProduct, fracComplete);
+                                //feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
+                                feedbackCamera.transform.LookAt(hip.position + new Vector3(0, camHeightOffset, 0));
                             }
                         }
+                        
                         else
                         {
-                            if (Vector3.Angle(new Vector3(feedbackCamera.transform.position.x, 0, feedbackCamera.transform.position.z), new Vector3((hip.position + (startPosition + endPosition) * 0.5f + camDistance * -crossProduct).x, 0, (hip.position + (startPosition + endPosition) * 0.5f + camDistance * -crossProduct).z)) > 30)
+                            if (Vector3.Angle(new Vector3(feedbackCamera.transform.position.x, 0, feedbackCamera.transform.position.z), new Vector3((hip.position + camDistance * -crossProduct).x, 0, (hip.position  + camDistance * -crossProduct).z)) > 30)
                             {
                                 feedbackCamera.transform.RotateAround(hip.position + (startPosition + endPosition) * 0.5f, Vector3.up, -135 * Time.deltaTime);
-                                feedbackCamera.transform.position = feedbackCamera.transform.position + feedbackCamera.transform.forward * (Vector3.Distance(hip.position + (startPosition + endPosition) * 0.5f, feedbackCamera.transform.position) - camDistance);
+                                feedbackCamera.transform.position = feedbackCamera.transform.position + feedbackCamera.transform.forward * (Vector3.Distance(hip.position, feedbackCamera.transform.position) - camDistance);
                             }
                             else
                             {
-                                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -crossProduct, fracComplete);
-                                feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
+                                feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + camDistance * -crossProduct, fracComplete);
+                                //feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
+                                feedbackCamera.transform.LookAt(hip.position + new Vector3(0, camHeightOffset, 0));
                             }
-                        }                       
+                        }                     
                     }
                 }
             }
