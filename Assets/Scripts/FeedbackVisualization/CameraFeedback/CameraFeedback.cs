@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public enum CameraFeedbackMode
 {
-    DockingArrow2D, DockingBall2D, DockingPuzzle2D, DockingSpike2D, LinearArrow, RigedArrow, PokeBall3D
+    DockingArrow2D, DockingBall2D, DockingPuzzle2D, DockingSpike2D, LinearArrow, RigedArrow, PokeBall3D, PokeBall3DPlanar
 }
 
 
@@ -90,6 +90,9 @@ public class CameraFeedback : MonoBehaviour {
     private Material dockingPuzzle2DMaterial;
     private Material spikeDock2DMaterial;
     private Material dockingSpike2DMaterial;
+
+    private Material pokeball3DMaterial;
+    private Material pokedock3DMaterial;
 
     public float colorDistance;
 
@@ -187,6 +190,10 @@ public class CameraFeedback : MonoBehaviour {
 
         Pokeball3D = Instantiate(Pokeball3DPrefab, Vector3.zero, Quaternion.identity) as GameObject;
         PokeDock3D = Instantiate(PokeDock3DPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+        Pokeball3D.transform.parent = transform;
+        PokeDock3D.transform.parent = transform;
+        pokeball3DMaterial = Pokeball3D.GetComponent<Renderer>().materials[1];
+        pokedock3DMaterial = PokeDock3D.GetComponent<Renderer>().materials[1];
 
         PokeDock3D.SetActive(false);
         PokeDock3D.SetActive(false);
@@ -505,6 +512,8 @@ public class CameraFeedback : MonoBehaviour {
 
             if (cameraFeedbackMode == CameraFeedbackMode.PokeBall3D)
             {
+                Pokeball3D.transform.parent = transform;
+                PokeDock3D.transform.parent = transform;
                 arrow3D.SetActive(false);
                 rigedArrow.SetActive(false);
                 feedbackCylinder.SetActive(false);
@@ -512,17 +521,62 @@ public class CameraFeedback : MonoBehaviour {
                 Pokeball3D.transform.position = feedbackAvatar_joint.TransformPoint(transform.TransformPoint(handCollider.center));
                 PokeDock3D.transform.position = targetSphere.transform.position;
 
-                //rotate pokedock and pokeball
-                Vector3 dir = (PokeDock3D.transform.position - Pokeball3D.transform.position).normalized;
+                        
+                Pokeball3D.SetActive(true);
+                PokeDock3D.SetActive(true);
 
-                Pokeball3D.transform.right = -dir;
-                PokeDock3D.transform.right = -dir;
+                UpdateSpriteColor(pokedock3DMaterial);
+                UpdateSpriteColor(pokeball3DMaterial);
 
                 
+                if (Vector3.Distance(Pokeball3D.transform.position, PokeDock3D.transform.position) > 0.1f)
+                {
+                    Vector3 dir = (PokeDock3D.transform.position - Pokeball3D.transform.position).normalized;    
+                    Pokeball3D.transform.right = -dir;
+                    PokeDock3D.transform.right = -dir;  
+                }
+                else
+                {
+                    Pokeball3D.transform.position = PokeDock3D.transform.position;
+                    Pokeball3D.transform.rotation = PokeDock3D.transform.rotation;
+                }
+            }
+
+            if (cameraFeedbackMode == CameraFeedbackMode.PokeBall3DPlanar)
+            {
+                PokeDock3D.transform.parent = feedbackCamera.transform;
+                Pokeball3D.transform.parent = feedbackCamera.transform;
+                Pokeball3D.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                PokeDock3D.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
+                arrow3D.SetActive(false);
+                rigedArrow.SetActive(false);
+                feedbackCylinder.SetActive(false);
 
                 Pokeball3D.SetActive(true);
                 PokeDock3D.SetActive(true);
-                
+
+                Pokeball3D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.TransformPoint(transform.TransformPoint(handCollider.center)) - feedbackCamera.transform.position).normalized;
+                PokeDock3D.transform.position = feedbackCamera.transform.position + spriteDistance * (targetSphere.transform.position - feedbackCamera.transform.position).normalized;
+
+                UpdateSpriteColor(pokedock3DMaterial);
+                UpdateSpriteColor(pokeball3DMaterial);
+
+
+                Vector3 dir = PokeDock3D.transform.position - Pokeball3D.transform.position;
+                dir.Normalize();
+
+                float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+                if (Vector3.Distance(Pokeball3D.transform.position, PokeDock3D.transform.position) > 0.005f * Vector3.Distance(startPosition, targetSphere.transform.position))
+                {
+                    Pokeball3D.transform.forward = -feedbackCamera.transform.forward;
+                    PokeDock3D.transform.forward = -feedbackCamera.transform.forward;
+                    Pokeball3D.transform.right = -dir;
+                    PokeDock3D.transform.right = -dir;
+                }
+                else
+                {
+                    Pokeball3D.transform.position = spikeDock2D.transform.position;
+                }              
             }
         }
 
@@ -578,6 +632,8 @@ public class CameraFeedback : MonoBehaviour {
             dockingPuzzle2D.SetActive(false);
             spikeDock2D.SetActive(false);
             dockingSpike2D.SetActive(false);
+            Pokeball3D.SetActive(false);
+            PokeDock3D.SetActive(false);
         }
     }
 
@@ -610,7 +666,7 @@ public class CameraFeedback : MonoBehaviour {
         if (spriteColoring)
         {
             //float distance = Vector3.Distance(targetSphere.transform.position, feedbackAvatar_joint.position);
-            float distance = Mathf.Abs((feedbackCamera.transform.rotation * targetSphere.transform.position).z - (feedbackCamera.transform.rotation * feedbackAvatar_joint.position).z);
+            float distance = Mathf.Abs((feedbackCamera.transform.rotation * targetSphere.transform.position).z - (feedbackCamera.transform.rotation * feedbackAvatar_joint.TransformPoint(transform.TransformPoint(handCollider.center))).z);
             if (distance < colorDistance)
             {
                 float redFactor = distance / colorDistance;
@@ -628,7 +684,7 @@ public class CameraFeedback : MonoBehaviour {
     {
         if (spriteScaling)
         {
-            float distance = Mathf.Abs((feedbackCamera.transform.rotation * targetSphere.transform.position).z - (feedbackCamera.transform.rotation * feedbackAvatar_joint.position).z);
+            float distance = Mathf.Abs((feedbackCamera.transform.rotation * targetSphere.transform.position).z - (feedbackCamera.transform.rotation * feedbackAvatar_joint.TransformPoint(transform.TransformPoint(handCollider.center))).z);
             if (distance < 4 * colorDistance)
             {
                 float scaleFactor = distance / (4 * colorDistance);
