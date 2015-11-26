@@ -90,6 +90,8 @@ MonoBehaviour:
   feedbackAvatar_joint: {fileID: 0}
   tolerance: .200000003
   cameraFeedbackMode: 2
+  spriteColoring: 0
+  spriteScaling: 0
   targetSpherePrefab: {fileID: 162198, guid: 4d932e12d8da59746990cd4af1135d9d, type: 2}
   targetSphereColor: {r: 0, g: .503448486, b: 1, a: 0}
   arrow3DPrefab: {fileID: 172930, guid: 980ad7de033d3874e8cc8e1e180ae89b, type: 2}
@@ -105,6 +107,8 @@ MonoBehaviour:
     type: 2}
   spikeDock2DPrefab: {fileID: 116456, guid: 7aaa3463b14703b45ab04563399a6aad, type: 2}
   dockingSpike2DPrefab: {fileID: 123396, guid: c8f90cb8c129c88439dfc4c924aae041, type: 2}
+  Pokeball3DPrefab: {fileID: 113346, guid: fef68f94f8f351f41b40ba34094f44d7, type: 2}
+  PokeDock3DPrefab: {fileID: 163156, guid: 4f80ea5a54a20d54a8c94c35fc0c0732, type: 2}
   spriteDistance: .310000002
   colorDistance: .5
 --- !u!1001 &100100000
@@ -170,6 +174,14 @@ Prefab:
       propertyPath: colorDistance
       value: .5
       objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: Pokeball3DPrefab
+      value: 
+      objectReference: {fileID: 113346, guid: fef68f94f8f351f41b40ba34094f44d7, type: 2}
+    - target: {fileID: 0}
+      propertyPath: PokeDock3DPrefab
+      value: 
+      objectReference: {fileID: 163156, guid: 4f80ea5a54a20d54a8c94c35fc0c0732, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 176790}

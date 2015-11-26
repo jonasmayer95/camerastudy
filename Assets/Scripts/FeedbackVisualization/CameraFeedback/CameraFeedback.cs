@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public enum CameraFeedbackMode
 {
-    DockingArrow2D, DockingBall2D, DockingPuzzle2D, DockingSpike2D, LinearArrow, RigedArrow, 
+    DockingArrow2D, DockingBall2D, DockingPuzzle2D, DockingSpike2D, LinearArrow, RigedArrow, PokeBall3D
 }
 
 
@@ -25,6 +25,7 @@ public class CameraFeedback : MonoBehaviour {
     public float tolerance;
     private int index;
     private Vector3 startPosition;
+    private SphereCollider handCollider;
     // Feedback mode
     public CameraFeedbackMode cameraFeedbackMode = CameraFeedbackMode.DockingArrow2D;
 
@@ -59,6 +60,11 @@ public class CameraFeedback : MonoBehaviour {
     public GameObject dockingSpike2DPrefab;
     private GameObject spikeDock2D;
     private GameObject dockingSpike2D;
+
+    public GameObject Pokeball3DPrefab;
+    public GameObject PokeDock3DPrefab;
+    private GameObject Pokeball3D;
+    private GameObject PokeDock3D;
    
     // Variables used for referencing
     private GameObject feedbackCylinder;    
@@ -179,6 +185,12 @@ public class CameraFeedback : MonoBehaviour {
 
         dockingSpike2DMaterial = dockingSpike2D.GetComponent<SpriteRenderer>().material;
 
+        Pokeball3D = Instantiate(Pokeball3DPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+        PokeDock3D = Instantiate(PokeDock3DPrefab, Vector3.zero, Quaternion.identity) as GameObject;
+
+        PokeDock3D.SetActive(false);
+        PokeDock3D.SetActive(false);
+
         // Init camera position
         //UpdateCameraPosition();
         //targetPosition = Vector3.zero;
@@ -200,6 +212,7 @@ public class CameraFeedback : MonoBehaviour {
         cameraFeedbackMode = camMode;
         startPosition = startPos;
         initialized = true;
+        handCollider = feedbackAvatar_joint.GetComponent<SphereCollider>();
     }
 
     /*public void InitCorrectionWindow(StaticJoint joint, FeedbackCamera_Avatar cameraAvatar, BoneMap basicAvatar, Vector3 windowPosition, bool enabled, float lineAlpha, bool left)
@@ -368,7 +381,7 @@ public class CameraFeedback : MonoBehaviour {
                 feedbackCylinder.SetActive(false);
                 //targetSphereRenderer.enabled = false;
 
-                dockingArrow2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.TransformPoint(transform.TransformPoint(feedbackAvatar_joint.GetComponent<SphereCollider>().center)) - feedbackCamera.transform.position).normalized;
+                dockingArrow2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.TransformPoint(transform.TransformPoint(handCollider.center)) - feedbackCamera.transform.position).normalized;
                 arrowDock2D.transform.position = feedbackCamera.transform.position + spriteDistance * (targetSphere.transform.position - feedbackCamera.transform.position).normalized;
 
                 dockingArrow2D.transform.localRotation = Quaternion.identity;
@@ -399,7 +412,7 @@ public class CameraFeedback : MonoBehaviour {
                 feedbackCylinder.SetActive(false);
                 //targetSphereRenderer.enabled = false;
 
-                dockingBall2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.TransformPoint(transform.TransformPoint(feedbackAvatar_joint.GetComponent<SphereCollider>().center)) - feedbackCamera.transform.position).normalized;
+                dockingBall2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.TransformPoint(transform.TransformPoint(handCollider.center)) - feedbackCamera.transform.position).normalized;
                 ballDock2D.transform.position = feedbackCamera.transform.position + spriteDistance * (targetSphere.transform.position - feedbackCamera.transform.position).normalized;
 
                 dockingBall2D.transform.localRotation = Quaternion.identity;
@@ -429,7 +442,7 @@ public class CameraFeedback : MonoBehaviour {
                 feedbackCylinder.SetActive(false);
                 //targetSphereRenderer.enabled = false;
 
-                dockingPuzzle2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.TransformPoint(transform.TransformPoint(feedbackAvatar_joint.GetComponent<SphereCollider>().center))- feedbackCamera.transform.position).normalized;
+                dockingPuzzle2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.TransformPoint(transform.TransformPoint(handCollider.center))- feedbackCamera.transform.position).normalized;
                 puzzleDock2D.transform.position = feedbackCamera.transform.position + spriteDistance * (targetSphere.transform.position - feedbackCamera.transform.position).normalized;
 
                 dockingPuzzle2D.transform.localRotation = Quaternion.identity;
@@ -460,7 +473,7 @@ public class CameraFeedback : MonoBehaviour {
                 feedbackCylinder.SetActive(false);
                 //targetSphereRenderer.enabled = false;
 
-                dockingSpike2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.TransformPoint(transform.TransformPoint(feedbackAvatar_joint.GetComponent<SphereCollider>().center)) - feedbackCamera.transform.position).normalized;
+                dockingSpike2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.TransformPoint(transform.TransformPoint(handCollider.center)) - feedbackCamera.transform.position).normalized;
                 spikeDock2D.transform.position = feedbackCamera.transform.position + spriteDistance * (targetSphere.transform.position - feedbackCamera.transform.position).normalized;
 
                 //dockingSpike2D.transform.localRotation = Quaternion.identity;
@@ -470,7 +483,6 @@ public class CameraFeedback : MonoBehaviour {
                 dir.Normalize();
 
                 float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-                Debug.Log(string.Format("sprites: {0} start-end: {1}" ,Vector3.Distance(dockingSpike2D.transform.position, spikeDock2D.transform.position) , 0.005f * Vector3.Distance(startPosition, targetSphere.transform.position)));
                 if (Vector3.Distance(dockingSpike2D.transform.position, spikeDock2D.transform.position) > 0.005f * Vector3.Distance(startPosition,targetSphere.transform.position))
                 {
                     dockingSpike2D.transform.localRotation = Quaternion.Euler(dockingSpike2D.transform.localRotation.x, 0, angle);
@@ -489,6 +501,28 @@ public class CameraFeedback : MonoBehaviour {
                 UpdateSpriteColor(spikeDock2DMaterial);
 
                 UpdateSpriteScale(dockingSpike2D);
+            }
+
+            if (cameraFeedbackMode == CameraFeedbackMode.PokeBall3D)
+            {
+                arrow3D.SetActive(false);
+                rigedArrow.SetActive(false);
+                feedbackCylinder.SetActive(false);
+
+                Pokeball3D.transform.position = feedbackAvatar_joint.TransformPoint(transform.TransformPoint(handCollider.center));
+                PokeDock3D.transform.position = targetSphere.transform.position;
+
+                //rotate pokedock and pokeball
+                Vector3 dir = (PokeDock3D.transform.position - Pokeball3D.transform.position).normalized;
+
+                Pokeball3D.transform.right = -dir;
+                PokeDock3D.transform.right = -dir;
+
+                
+
+                Pokeball3D.SetActive(true);
+                PokeDock3D.SetActive(true);
+                
             }
         }
 
@@ -509,6 +543,8 @@ public class CameraFeedback : MonoBehaviour {
             dockingPuzzle2D.SetActive(false);
             spikeDock2D.SetActive(false);
             dockingSpike2D.SetActive(false);
+            PokeDock3D.SetActive(false);
+            Pokeball3D.SetActive(false);
         }
 
         // Update Camera position
