@@ -2725,7 +2725,6 @@ Camera:
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
-  m_TargetEye: 3
   m_HDR: 0
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
@@ -3440,7 +3439,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3270d4568fad32a4ab7df5fe48cb44cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camDistance: 1.5
+  camDistance: 2.5
   cameraFeedbackPrefab: {fileID: 176790, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
   targetSpherePrefab: {fileID: 116370, guid: 454da40768f4b6947845b7871f916741, type: 2}
   leftShoulder: {fileID: 30069661}

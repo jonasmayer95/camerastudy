@@ -68,7 +68,7 @@ public class UserStudyLogic : MonoBehaviour
     private Color targetSphereStartColor;
 
     public static UserStudyLogic instance;
-    public float camDistance = 1.5f;
+    public float camDistance = 2.5f;
     public GameObject cameraFeedbackPrefab;
     public GameObject targetSpherePrefab;
     public Transform leftShoulder, rightShoulder, hip, leftHand, rightHand;
@@ -102,6 +102,13 @@ public class UserStudyLogic : MonoBehaviour
     private void InitTargetPositions(Handedness handedness)
     {
         List<Vector3> pos = BuildIcoSphereVertices();
+
+        // Flip to the left side
+        if (handedness == Handedness.LeftHanded)
+        {
+            icoSphereOffset = new Vector3(-icoSphereOffset.x, icoSphereOffset.y, icoSphereOffset.z);
+        }
+
         //First Direction: In->Out
         for (int i = 0; i < pos.Count; i++)
         {
@@ -118,14 +125,6 @@ public class UserStudyLogic : MonoBehaviour
         for (int i = 0; i < targetPositions.Count; i++)
         {
             targetPos[i] = targetPositions[i];
-        }
-
-        if (handedness == Handedness.LeftHanded)
-        {
-            foreach (var positions in targetPos)
-            {
-                positions.FlipHandedness();
-            }
         }
     }
 
@@ -521,6 +520,8 @@ public class UserStudyLogic : MonoBehaviour
                             {
                                 feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * -crossProduct, fracComplete);
                                 feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
+                                
+                                Debug.Log("Trial: " + trialCounter + ": " + hip.position + (startPosition + endPosition) * 0.5f + camDistance * crossProduct);
                             }
                         }
                         else
@@ -534,6 +535,7 @@ public class UserStudyLogic : MonoBehaviour
                             {
                                 feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + (startPosition + endPosition) * 0.5f + camDistance * crossProduct, fracComplete);
                                 feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
+                                
                             }
                         }
                     }
