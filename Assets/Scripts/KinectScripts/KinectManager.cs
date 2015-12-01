@@ -1291,7 +1291,7 @@ public class KinectManager : MonoBehaviour
 
 	void StartKinect() 
 	{
-        Debug.Log("Called StartKinect");
+        //Debug.Log("Called StartKinect");
 		try
 		{
 			// try to initialize the default Kinect2 sensor

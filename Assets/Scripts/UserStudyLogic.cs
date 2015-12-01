@@ -157,8 +157,6 @@ public class UserStudyLogic : MonoBehaviour
         {
             feedbackCamera.transform.position = hip.position - Vector3.forward * camDistance;
         }
-
-        Debug.Log("CamDistance: " + Vector3.Distance(feedbackCamera.transform.position, hip.position));
     }
 
     private void SpawnUserStudyComponents()
@@ -229,6 +227,7 @@ public class UserStudyLogic : MonoBehaviour
 
     public void StartTrial()
     {
+        cameraFeedback.initialized = true;
         cameraFeedback.gameObject.SetActive(true);
         startTime = Time.time;
         camMotion = true;
@@ -261,15 +260,23 @@ public class UserStudyLogic : MonoBehaviour
 
     public void EndTrial()
     {
-        cameraFeedback.gameObject.SetActive(false);
-        camMotion = false;
-        feedbackCamera.transform.position = camStartPos;
-        feedbackCamera.transform.rotation = camStartOrientation;
+        cameraFeedback.initialized = false;
         ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.EndTrial(Time.time));
 
         audioSource.Stop();
         audioSource.clip = endSound;
         audioSource.Play();
+
+        StartCoroutine(ExerciseDelay());
+    }
+
+    IEnumerator ExerciseDelay()
+    {
+        yield return new WaitForSeconds(2.0f);
+        cameraFeedback.gameObject.SetActive(false);
+        camMotion = false;
+        feedbackCamera.transform.position = camStartPos;
+        feedbackCamera.transform.rotation = camStartOrientation;
 
         if (trialCounter < numTrials)
         {

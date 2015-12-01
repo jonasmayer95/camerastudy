@@ -14,6 +14,7 @@ public class TargetSphere : MonoBehaviour {
     private Handedness handedness;
     private Material progressBar;
     public float progressBarTime;
+    public GameObject particles;
     private float progressBarStartTime;
     //private Vector4 color = new Vector4();
     private Transform hip;
@@ -65,6 +66,7 @@ public class TargetSphere : MonoBehaviour {
             {
                 progressBar.SetFloat("_Cutoff", 1);
                 UserStudyLogic.instance.EndTrial();
+                Destroy(Instantiate(particles, transform.position, Quaternion.identity), 2.5f);
             }
             progressBarStartTime = Time.time;
         }

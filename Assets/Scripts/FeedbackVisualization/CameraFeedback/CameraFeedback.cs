@@ -78,7 +78,7 @@ public class CameraFeedback : MonoBehaviour {
     
     private Renderer targetSphereRenderer;
     public float spriteDistance;
-    private bool initialized = false;
+    public bool initialized = false;
     private bool left;
 
 
@@ -391,15 +391,22 @@ public class CameraFeedback : MonoBehaviour {
                 dockingArrow2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.TransformPoint(transform.TransformPoint(handCollider.center)) - feedbackCamera.transform.position).normalized;
                 arrowDock2D.transform.position = feedbackCamera.transform.position + spriteDistance * (targetSphere.transform.position - feedbackCamera.transform.position).normalized;
 
-                dockingArrow2D.transform.localRotation = Quaternion.identity;
-                arrowDock2D.transform.localRotation = Quaternion.identity;                
+                //dockingArrow2D.transform.localRotation = Quaternion.identity;
+                //arrowDock2D.transform.localRotation = Quaternion.identity;                
 
                 Vector2 dir = arrowDock2D.transform.localPosition - dockingArrow2D.transform.localPosition;
                 dir.Normalize();
 
                 float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-                dockingArrow2D.transform.localRotation = Quaternion.Euler(dockingArrow2D.transform.localRotation.x, 0, angle);
-                arrowDock2D.transform.localRotation = Quaternion.Euler(dockingArrow2D.transform.localRotation.x, 0, angle);                
+                if (Vector3.Distance(dockingArrow2D.transform.position, arrowDock2D.transform.position) > 0.005f * Vector3.Distance(startPosition, targetSphere.transform.position))
+                {
+                    dockingArrow2D.transform.localRotation = Quaternion.Euler(dockingArrow2D.transform.localRotation.x, 0, angle);
+                    arrowDock2D.transform.localRotation = Quaternion.Euler(dockingArrow2D.transform.localRotation.x, 0, angle);
+                }
+                else
+                {
+                    dockingArrow2D.transform.position = arrowDock2D.transform.position;
+                }
 
                 //Activate the Dock and arrow 
                 dockingArrow2D.SetActive(true);
@@ -422,15 +429,22 @@ public class CameraFeedback : MonoBehaviour {
                 dockingBall2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.TransformPoint(transform.TransformPoint(handCollider.center)) - feedbackCamera.transform.position).normalized;
                 ballDock2D.transform.position = feedbackCamera.transform.position + spriteDistance * (targetSphere.transform.position - feedbackCamera.transform.position).normalized;
 
-                dockingBall2D.transform.localRotation = Quaternion.identity;
-                ballDock2D.transform.localRotation = Quaternion.identity;
+                //dockingBall2D.transform.localRotation = Quaternion.identity;
+                //ballDock2D.transform.localRotation = Quaternion.identity;
 
                 Vector2 dir = ballDock2D.transform.localPosition - dockingBall2D.transform.localPosition;
                 dir.Normalize();
 
                 float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-                dockingBall2D.transform.localRotation = Quaternion.Euler(dockingBall2D.transform.localRotation.x, 0, angle);
-                ballDock2D.transform.localRotation = Quaternion.Euler(dockingBall2D.transform.localRotation.x, 0, angle);
+                if (Vector3.Distance(dockingBall2D.transform.position, ballDock2D.transform.position) > 0.005f * Vector3.Distance(startPosition, targetSphere.transform.position))
+                {
+                    dockingBall2D.transform.localRotation = Quaternion.Euler(dockingBall2D.transform.localRotation.x, 0, angle);
+                    ballDock2D.transform.localRotation = Quaternion.Euler(dockingBall2D.transform.localRotation.x, 0, angle);
+                }
+                else
+                {
+                    dockingBall2D.transform.position = ballDock2D.transform.position;
+                }
 
                 //Activate the Dock and arrow 
                 dockingBall2D.SetActive(true);
@@ -452,15 +466,22 @@ public class CameraFeedback : MonoBehaviour {
                 dockingPuzzle2D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.TransformPoint(transform.TransformPoint(handCollider.center))- feedbackCamera.transform.position).normalized;
                 puzzleDock2D.transform.position = feedbackCamera.transform.position + spriteDistance * (targetSphere.transform.position - feedbackCamera.transform.position).normalized;
 
-                dockingPuzzle2D.transform.localRotation = Quaternion.identity;
-                puzzleDock2D.transform.localRotation = Quaternion.identity;
+                //dockingPuzzle2D.transform.localRotation = Quaternion.identity;
+                //puzzleDock2D.transform.localRotation = Quaternion.identity;
 
                 Vector2 dir = puzzleDock2D.transform.localPosition - dockingPuzzle2D.transform.localPosition;
                 dir.Normalize();
 
                 float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-                dockingPuzzle2D.transform.localRotation = Quaternion.Euler(dockingPuzzle2D.transform.localRotation.x, 0, angle);
-                puzzleDock2D.transform.localRotation = Quaternion.Euler(dockingPuzzle2D.transform.localRotation.x, 0, angle);
+                if (Vector3.Distance(dockingPuzzle2D.transform.position, puzzleDock2D.transform.position) > 0.005f * Vector3.Distance(startPosition, targetSphere.transform.position))
+                {
+                    dockingPuzzle2D.transform.localRotation = Quaternion.Euler(dockingPuzzle2D.transform.localRotation.x, 0, angle);
+                    puzzleDock2D.transform.localRotation = Quaternion.Euler(dockingPuzzle2D.transform.localRotation.x, 0, angle);
+                }
+                else
+                {
+                    dockingPuzzle2D.transform.position = puzzleDock2D.transform.position;
+                }
 
                 //Activate the Dock and arrow 
                 dockingPuzzle2D.SetActive(true);
@@ -529,7 +550,7 @@ public class CameraFeedback : MonoBehaviour {
                 UpdateSpriteColor(pokeball3DMaterial);
 
                 
-                if (Vector3.Distance(Pokeball3D.transform.position, PokeDock3D.transform.position) > 0.1f)
+                if (Vector3.Distance(Pokeball3D.transform.position, PokeDock3D.transform.position) > 0.15f)
                 {
                     Vector3 dir = (PokeDock3D.transform.position - Pokeball3D.transform.position).normalized;    
                     Pokeball3D.transform.right = -dir;
@@ -575,7 +596,8 @@ public class CameraFeedback : MonoBehaviour {
                 }
                 else
                 {
-                    Pokeball3D.transform.position = spikeDock2D.transform.position;
+                    Pokeball3D.transform.position = PokeDock3D.transform.position;
+                    Pokeball3D.transform.rotation = PokeDock3D.transform.rotation;
                 }              
             }
         }
