@@ -195,7 +195,7 @@ public class CameraFeedback : MonoBehaviour {
         pokeball3DMaterial = Pokeball3D.GetComponent<Renderer>().materials[1];
         pokedock3DMaterial = PokeDock3D.GetComponent<Renderer>().materials[1];
 
-        PokeDock3D.SetActive(false);
+        Pokeball3D.SetActive(false);
         PokeDock3D.SetActive(false);
 
         // Init camera position
