@@ -398,7 +398,7 @@ public class CameraFeedback : MonoBehaviour {
                 dir.Normalize();
 
                 float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-                if (Vector3.Distance(dockingArrow2D.transform.position, arrowDock2D.transform.position) > 0.005f * Vector3.Distance(startPosition, targetSphere.transform.position))
+                if (!UserStudyLogic.instance.snapping)
                 {
                     dockingArrow2D.transform.localRotation = Quaternion.Euler(dockingArrow2D.transform.localRotation.x, 0, angle);
                     arrowDock2D.transform.localRotation = Quaternion.Euler(dockingArrow2D.transform.localRotation.x, 0, angle);
@@ -436,7 +436,7 @@ public class CameraFeedback : MonoBehaviour {
                 dir.Normalize();
 
                 float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-                if (Vector3.Distance(dockingBall2D.transform.position, ballDock2D.transform.position) > 0.005f * Vector3.Distance(startPosition, targetSphere.transform.position))
+                if (!UserStudyLogic.instance.snapping)
                 {
                     dockingBall2D.transform.localRotation = Quaternion.Euler(dockingBall2D.transform.localRotation.x, 0, angle);
                     ballDock2D.transform.localRotation = Quaternion.Euler(dockingBall2D.transform.localRotation.x, 0, angle);
@@ -473,7 +473,7 @@ public class CameraFeedback : MonoBehaviour {
                 dir.Normalize();
 
                 float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-                if (Vector3.Distance(dockingPuzzle2D.transform.position, puzzleDock2D.transform.position) > 0.005f * Vector3.Distance(startPosition, targetSphere.transform.position))
+                if (!UserStudyLogic.instance.snapping)
                 {
                     dockingPuzzle2D.transform.localRotation = Quaternion.Euler(dockingPuzzle2D.transform.localRotation.x, 0, angle);
                     puzzleDock2D.transform.localRotation = Quaternion.Euler(dockingPuzzle2D.transform.localRotation.x, 0, angle);
@@ -511,7 +511,7 @@ public class CameraFeedback : MonoBehaviour {
                 dir.Normalize();
 
                 float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-                if (Vector3.Distance(dockingSpike2D.transform.position, spikeDock2D.transform.position) > 0.005f * Vector3.Distance(startPosition,targetSphere.transform.position))
+                if (!UserStudyLogic.instance.snapping)
                 {
                     dockingSpike2D.transform.localRotation = Quaternion.Euler(dockingSpike2D.transform.localRotation.x, 0, angle);
                     spikeDock2D.transform.localRotation = Quaternion.Euler(dockingSpike2D.transform.localRotation.x, 0, angle);
@@ -549,8 +549,8 @@ public class CameraFeedback : MonoBehaviour {
                 UpdateSpriteColor(pokedock3DMaterial);
                 UpdateSpriteColor(pokeball3DMaterial);
 
-                
-                if (Vector3.Distance(Pokeball3D.transform.position, PokeDock3D.transform.position) > 0.15f)
+
+                if (!UserStudyLogic.instance.snapping)
                 {
                     Vector3 dir = (PokeDock3D.transform.position - Pokeball3D.transform.position).normalized;    
                     Pokeball3D.transform.right = -dir;
@@ -587,7 +587,7 @@ public class CameraFeedback : MonoBehaviour {
                 dir.Normalize();
 
                 float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-                if (Vector3.Distance(Pokeball3D.transform.position, PokeDock3D.transform.position) > 0.005f * Vector3.Distance(startPosition, targetSphere.transform.position))
+                if (!UserStudyLogic.instance.snapping)
                 {
                     Pokeball3D.transform.forward = -feedbackCamera.transform.forward;
                     PokeDock3D.transform.forward = -feedbackCamera.transform.forward;
@@ -637,6 +637,14 @@ public class CameraFeedback : MonoBehaviour {
             rend.enabled = false;
         }*/
 
+    }
+
+    public void DisableSubObjects()
+    {
+        for(int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).gameObject.SetActive(false);
+        }
     }
     void OnDisable()
     {

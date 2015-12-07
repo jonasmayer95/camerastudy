@@ -94,9 +94,11 @@ public class UserStudyLogic : MonoBehaviour
     private uint numTrials;
     private Handedness handedness;
     private float startTime;
-    private float journeyTime = 5;
+    private float journeyTime;
     private float camHeightOffset;
-
+    public float cameraSpeed;
+    public float exercisePrecision;
+    public bool snapping;
     // Object that has an attached MovementRecorder
     public GameObject userStudyObject;
 
@@ -138,6 +140,7 @@ public class UserStudyLogic : MonoBehaviour
 
     void Start()
     {
+        journeyTime = 5 * 150/cameraSpeed;
         SpawnUserStudyComponents();
         feedbackCamera.transform.position = hip.position - Vector3.forward * camDistance;
         camStartPos = feedbackCamera.transform.position;
@@ -172,7 +175,7 @@ public class UserStudyLogic : MonoBehaviour
         targetSphere.gameObject.SetActive(false);
     }
 
-    public void InitNewUserStudy(CameraFeedbackMode feedbackType, Handedness handedness, CameraPerspectives camPerspective, CameraMotionStates camMotion, UserStudyUI userStudyUI, uint numTrials, bool coloring, bool scaling)
+    public void InitNewUserStudy(CameraFeedbackMode feedbackType, Handedness handedness, CameraPerspectives camPerspective, CameraMotionStates camMotion,float precision, UserStudyUI userStudyUI, uint numTrials, bool coloring, bool scaling)
     {
         this.userStudyUI = userStudyUI;
         cameraPerspective = camPerspective;
@@ -180,8 +183,11 @@ public class UserStudyLogic : MonoBehaviour
         camFeedbackMode = feedbackType;
         this.numTrials = numTrials;
         this.handedness = handedness;
+        this.exercisePrecision = precision;
         cameraFeedback.spriteScaling = scaling;
         cameraFeedback.spriteColoring = coloring;
+        leftHand.GetComponent<SphereCollider>().radius = 1 / exercisePrecision * 0.5f;
+        rightHand.GetComponent<SphereCollider>().radius = 1 / exercisePrecision * 0.5f;
         if (handedness == Handedness.LeftHanded)
         {
             feedbackAvatar_joint = rightHand;
@@ -218,7 +224,6 @@ public class UserStudyLogic : MonoBehaviour
     {
         this.startPosition = targetPos[trialCounter].StartPosition;
         this.endPosition = targetPos[trialCounter].EndPosition;
-
         targetSphere.gameObject.SetActive(true);
         targetSphere.transform.GetChild(0).localScale = new Vector3(targetSphereHugeScale, targetSphereHugeScale, targetSphereHugeScale);
         targetSphereRenderer.material.color = targetSphereStartColor;
@@ -231,6 +236,7 @@ public class UserStudyLogic : MonoBehaviour
         cameraFeedback.gameObject.SetActive(true);
         startTime = Time.time;
         camMotion = true;
+        snapping = false;
         targetSphere.transform.GetChild(0).localScale = new Vector3(targetSphereSmallScale, targetSphereSmallScale, targetSphereSmallScale);
         targetSphereRenderer.material.color = Color.red;
 
@@ -260,19 +266,19 @@ public class UserStudyLogic : MonoBehaviour
 
     public void EndTrial()
     {
-        cameraFeedback.initialized = false;
-        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.EndTrial(Time.time));
-
         audioSource.Stop();
         audioSource.clip = endSound;
         audioSource.Play();
-
+        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.EndTrial(Time.time));
         StartCoroutine(ExerciseDelay());
+        
     }
 
     IEnumerator ExerciseDelay()
     {
         yield return new WaitForSeconds(2.0f);
+        cameraFeedback.initialized = false;
+        cameraFeedback.DisableSubObjects();
         cameraFeedback.gameObject.SetActive(false);
         camMotion = false;
         feedbackCamera.transform.position = camStartPos;
@@ -468,7 +474,7 @@ public class UserStudyLogic : MonoBehaviour
             {
                 if (Vector3.Angle(feedbackCamera.transform.forward, Vector3.right) > 30)
                 {
-                    feedbackCamera.transform.RotateAround(hip.position, Vector3.up, 135 * Time.deltaTime);
+                    feedbackCamera.transform.RotateAround(hip.position, Vector3.up, cameraSpeed * Time.deltaTime);
                     feedbackCamera.transform.position = feedbackCamera.transform.position + feedbackCamera.transform.forward * (Vector3.Distance(hip.position, feedbackCamera.transform.position) - camDistance);
                 }
                 else
@@ -482,7 +488,7 @@ public class UserStudyLogic : MonoBehaviour
             {
                 if (Vector3.Angle(feedbackCamera.transform.forward, Vector3.left) > 30)
                 {
-                    feedbackCamera.transform.RotateAround(hip.position, Vector3.up, -135 * Time.deltaTime);
+                    feedbackCamera.transform.RotateAround(hip.position, Vector3.up, -cameraSpeed * Time.deltaTime);
                     feedbackCamera.transform.position = feedbackCamera.transform.position + feedbackCamera.transform.forward * (Vector3.Distance(hip.position, feedbackCamera.transform.position) - camDistance);
                 }
                 else
@@ -496,7 +502,7 @@ public class UserStudyLogic : MonoBehaviour
             {
                 if (Vector3.Angle(feedbackCamera.transform.forward, Vector3.down) > 30)
                 {
-                    feedbackCamera.transform.RotateAround(hip.position, Vector3.right, 135 * Time.deltaTime);
+                    feedbackCamera.transform.RotateAround(hip.position, Vector3.right, cameraSpeed * Time.deltaTime);
                     feedbackCamera.transform.position = feedbackCamera.transform.position + feedbackCamera.transform.forward * (Vector3.Distance(hip.position, feedbackCamera.transform.position) - camDistance);
                 }
                 else
@@ -541,7 +547,7 @@ public class UserStudyLogic : MonoBehaviour
                         {
                             if (Vector3.Angle(new Vector3(feedbackCamera.transform.position.x, 0 ,feedbackCamera.transform.position.z), new Vector3((hip.position + camDistance * -crossProduct).x,0,(hip.position + camDistance * -crossProduct).z)) > 30)
                             {
-                                feedbackCamera.transform.RotateAround(hip.position, Vector3.up, 135 * Time.deltaTime);
+                                feedbackCamera.transform.RotateAround(hip.position, Vector3.up, cameraSpeed * Time.deltaTime);
                                 feedbackCamera.transform.position = feedbackCamera.transform.position + feedbackCamera.transform.forward * (Vector3.Distance(hip.position, feedbackCamera.transform.position) - camDistance);
                             }
                             else
@@ -556,7 +562,7 @@ public class UserStudyLogic : MonoBehaviour
                         {
                             if (Vector3.Angle(new Vector3(feedbackCamera.transform.position.x, 0, feedbackCamera.transform.position.z), new Vector3((hip.position + camDistance * -crossProduct).x, 0, (hip.position + camDistance * -crossProduct).z)) > 30)
                             {
-                                feedbackCamera.transform.RotateAround(hip.position, Vector3.up, -135 * Time.deltaTime);
+                                feedbackCamera.transform.RotateAround(hip.position, Vector3.up, -cameraSpeed * Time.deltaTime);
                                 feedbackCamera.transform.position = feedbackCamera.transform.position + feedbackCamera.transform.forward * (Vector3.Distance(hip.position, feedbackCamera.transform.position) - camDistance);
                             }
                             else
@@ -574,7 +580,7 @@ public class UserStudyLogic : MonoBehaviour
                         {
                             if (Vector3.Angle(new Vector3(feedbackCamera.transform.position.x, 0, feedbackCamera.transform.position.z), new Vector3((hip.position + camDistance * -crossProduct).x, 0, (hip.position + camDistance * -crossProduct).z)) > 30)
                             {
-                                feedbackCamera.transform.RotateAround(hip.position + (startPosition + endPosition) * 0.5f, Vector3.up, 135 * Time.deltaTime);
+                                feedbackCamera.transform.RotateAround(hip.position + (startPosition + endPosition) * 0.5f, Vector3.up, cameraSpeed * Time.deltaTime);
                                 feedbackCamera.transform.position = feedbackCamera.transform.position + feedbackCamera.transform.forward * (Vector3.Distance(hip.position, feedbackCamera.transform.position) - camDistance);
                             }
                             else
@@ -589,7 +595,7 @@ public class UserStudyLogic : MonoBehaviour
                         {
                             if (Vector3.Angle(new Vector3(feedbackCamera.transform.position.x, 0, feedbackCamera.transform.position.z), new Vector3((hip.position + camDistance * -crossProduct).x, 0, (hip.position  + camDistance * -crossProduct).z)) > 30)
                             {
-                                feedbackCamera.transform.RotateAround(hip.position + (startPosition + endPosition) * 0.5f, Vector3.up, -135 * Time.deltaTime);
+                                feedbackCamera.transform.RotateAround(hip.position + (startPosition + endPosition) * 0.5f, Vector3.up, -cameraSpeed * Time.deltaTime);
                                 feedbackCamera.transform.position = feedbackCamera.transform.position + feedbackCamera.transform.forward * (Vector3.Distance(hip.position, feedbackCamera.transform.position) - camDistance);
                             }
                             else

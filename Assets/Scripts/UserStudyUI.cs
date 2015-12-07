@@ -16,6 +16,7 @@ public class UserStudyUI : MonoBehaviour
     public GameObject trialInputField;
     public GameObject setInputField;
     public GameObject ageInputField;
+    public GameObject precisionInputField;
     public GameObject sexToggleGroup;
     public GameObject camPerspectivesToggleGroup;
     public GameObject camMotionToggleGroup;
@@ -24,10 +25,10 @@ public class UserStudyUI : MonoBehaviour
     public GameObject submitButton;
     public GameObject colorToggle;
     public GameObject scalingToggle;
-
+    public GameObject loggingDataToggle;
     //the object that contains a MovementRecorder script
     public GameObject userStudyObject;
-
+    
     /// <summary>
     /// Gets the data from child controls, validates it and sends it to objects
     /// that rely on that data for initialization.
@@ -47,7 +48,7 @@ public class UserStudyUI : MonoBehaviour
             uint trial = uint.Parse(trialInputField.GetComponent<InputField>().text);
             uint age = uint.Parse(ageInputField.GetComponent<InputField>().text);
             uint set = uint.Parse(setInputField.GetComponent<InputField>().text);
-
+            float precision = float.Parse(precisionInputField.GetComponent<InputField>().text);
             Sex sex = (Sex)GetToggleIndex(sexToggleGroup);
             CameraPerspectives camPerspective = (CameraPerspectives)GetToggleIndex(camPerspectivesToggleGroup);
             CameraMotionStates camMotion = (CameraMotionStates)GetToggleIndex(camMotionToggleGroup);
@@ -56,13 +57,16 @@ public class UserStudyUI : MonoBehaviour
             bool coloring = colorToggle.GetComponent<Toggle>().isOn;
             bool scaling = scalingToggle.GetComponent<Toggle>().isOn;
             // TODO: validate enums (Enum.IsDefined)
-
+            bool loggingData = loggingDataToggle.GetComponent<Toggle>().isOn;
             // We've got valid data, send it to MovementRecoreder
-            MovementRecorder.InitializeAndActivateUserStudy(name, trial, set, age, camPerspective, sex);
+            if (loggingData)
+            {
+                MovementRecorder.InitializeAndActivateUserStudy(name, trial, set, age, camPerspective, sex);
+            }
             userStudyObject.SetActive(true);
 
             // Init UserStudyLogic component with userspecific data
-            UserStudyLogic.instance.InitNewUserStudy(feedbackType, hand, camPerspective, camMotion, this, trial, coloring, scaling);
+            UserStudyLogic.instance.InitNewUserStudy(feedbackType, hand, camPerspective, camMotion,precision, this, trial, coloring, scaling);
 
             this.gameObject.SetActive(false);
         }

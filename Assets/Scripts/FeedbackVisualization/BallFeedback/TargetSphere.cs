@@ -27,6 +27,7 @@ public class TargetSphere : MonoBehaviour {
 	void Start () {
         progressBar = transform.GetChild(1).gameObject.GetComponent<Renderer>().material;
         progressBar.SetFloat("_Cutoff", 1);
+
 	}
 	
 	// Update is called once per frame
@@ -42,7 +43,6 @@ public class TargetSphere : MonoBehaviour {
                 transform.position = hip.position + pos.EndPosition;
                 float pulse = Mathf.PingPong((Time.time - pulseStartTime) * pulseSpeed, pulseWidth);
                 transform.GetChild(0).localScale = new Vector3(pulse, pulse, pulse);
-                Debug.Log(transform.GetChild(0).name);
             }
         }
 	}
@@ -56,6 +56,7 @@ public class TargetSphere : MonoBehaviour {
         initialized = true;
         progressBarStartTime = 0.0f;
         trialState = TrialState.start;
+        this.GetComponent<SphereCollider>().radius = 1 / UserStudyLogic.instance.exercisePrecision * 0.5f;
     }
 
     void OnTriggerEnter(Collider other)
@@ -64,12 +65,14 @@ public class TargetSphere : MonoBehaviour {
         {
             if (trialState == TrialState.end)
             {
+                UserStudyLogic.instance.snapping = true;
                 progressBar.SetFloat("_Cutoff", 1);
                 UserStudyLogic.instance.EndTrial();
                 Destroy(Instantiate(particles, transform.position, Quaternion.identity), 2.5f);
             }
             progressBarStartTime = Time.time;
         }
+        
     }
 
     void OnTriggerStay(Collider other)
@@ -84,6 +87,14 @@ public class TargetSphere : MonoBehaviour {
                 progressBar.SetFloat("_Cutoff", 1);
                 UserStudyLogic.instance.StartTrial();        
             }
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if(handedness == Handedness.LeftHanded && other.name == "RightHand" || handedness == Handedness.RightHanded && other.name == "LeftHand")
+        {
+            progressBar.SetFloat("_Cutoff", 1);
         }
     }
 }
