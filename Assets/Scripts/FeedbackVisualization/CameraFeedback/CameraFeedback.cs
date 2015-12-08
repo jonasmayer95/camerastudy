@@ -643,8 +643,18 @@ public class CameraFeedback : MonoBehaviour {
     {
         for(int i = 0; i < transform.childCount; i++)
         {
-            transform.GetChild(i).gameObject.SetActive(false);
+            transform.GetChild(i).gameObject.SetActive(false);            
         }
+
+        // Disabling also children of camera
+        dockingArrow2D.SetActive(false);
+        arrowDock2D.SetActive(false);
+        ballDock2D.SetActive(false);
+        dockingBall2D.SetActive(false);
+        puzzleDock2D.SetActive(false);
+        dockingPuzzle2D.SetActive(false);
+        spikeDock2D.SetActive(false);
+        dockingSpike2D.SetActive(false);
     }
     void OnDisable()
     {

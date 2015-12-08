@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 enum TrialState 
 {
-    start,end
+    start,end, waiting
 }
 
 public class TargetSphere : MonoBehaviour {
@@ -65,6 +65,7 @@ public class TargetSphere : MonoBehaviour {
         {
             if (trialState == TrialState.end)
             {
+                trialState = TrialState.waiting;
                 UserStudyLogic.instance.snapping = true;
                 progressBar.SetFloat("_Cutoff", 1);
                 UserStudyLogic.instance.EndTrial();

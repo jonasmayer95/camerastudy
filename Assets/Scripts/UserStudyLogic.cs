@@ -60,7 +60,7 @@ public class UserStudyLogic : MonoBehaviour
                                         new PositionSet(new Vector3(0.1f, 0.3f, -0.75f), new Vector3(0.2f, 0.8f, -0.1f), 4)
                                       };
     private List<PositionSet> targetPositions = new List<PositionSet>();
-    private Vector3 icoSphereOffset = new Vector3(0.25f, 0.25f, -0.5f);
+    private Vector3 icoSphereOffset = new Vector3(0.25f, 0.25f, -0.45f);
     private float icoSphereScale = 0.125f;
     private float targetSphereHugeScale;
     private float targetSphereSmallScale = 0.025f;
@@ -105,25 +105,32 @@ public class UserStudyLogic : MonoBehaviour
     private void InitTargetPositions(Handedness handedness)
     {
         List<Vector3> pos = BuildIcoSphereVertices();
+        targetPositions.Clear();
+
+        Vector3 icoSOffset;
 
         // Flip to the left side
         if (handedness == Handedness.LeftHanded)
         {
-            icoSphereOffset = new Vector3(-icoSphereOffset.x, icoSphereOffset.y, icoSphereOffset.z);
+            icoSOffset = new Vector3(-icoSphereOffset.x, icoSphereOffset.y, icoSphereOffset.z);
+        }
+        else
+        {
+            icoSOffset = icoSphereOffset;
         }
 
         //First Direction: In->Out
         for (int i = 0; i < pos.Count; i++)
         {
-            targetPositions.Add(new PositionSet(icoSphereOffset - pos[i] * icoSphereScale, icoSphereOffset +  pos[i] * icoSphereScale, (uint)i));
+            targetPositions.Add(new PositionSet(icoSOffset - pos[i] * icoSphereScale, icoSOffset + pos[i] * icoSphereScale, (uint)i));
         }
         //Second Direction: Out->In
         for (int i = 0; i < pos.Count; i++)
         {
-            targetPositions.Add(new PositionSet(icoSphereOffset + pos[i] * icoSphereScale, icoSphereOffset  - pos[i] * icoSphereScale, (uint)(i + pos.Count)));
+            targetPositions.Add(new PositionSet(icoSOffset + pos[i] * icoSphereScale, icoSOffset - pos[i] * icoSphereScale, (uint)(i + pos.Count)));
         }
 
-        //Applying to targetPos array
+        //Applying to targetPos array        
         targetPos = new PositionSet[pos.Count * 2];
         for (int i = 0; i < targetPositions.Count; i++)
         {
@@ -276,9 +283,10 @@ public class UserStudyLogic : MonoBehaviour
 
     IEnumerator ExerciseDelay()
     {
-        yield return new WaitForSeconds(2.0f);
-        cameraFeedback.initialized = false;
+        yield return new WaitForSeconds(1.0f);
+        cameraFeedback.initialized = false; 
         cameraFeedback.DisableSubObjects();
+        yield return new WaitForSeconds(0.5f);               
         cameraFeedback.gameObject.SetActive(false);
         camMotion = false;
         feedbackCamera.transform.position = camStartPos;
