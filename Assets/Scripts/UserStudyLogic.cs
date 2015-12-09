@@ -271,12 +271,12 @@ public class UserStudyLogic : MonoBehaviour
         //Debug.Log(trialCounter + " TrialCounter" + numTrials + " numTrials");
     }
 
-    public void EndTrial()
+    public void EndTrial(GameObject endEffector)
     {
         audioSource.Stop();
         audioSource.clip = endSound;
         audioSource.Play();
-        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.EndTrial(Time.time));
+        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.EndTrial(Time.time, endEffector.transform.position));
         StartCoroutine(ExerciseDelay());
         
     }

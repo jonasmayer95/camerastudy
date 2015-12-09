@@ -68,7 +68,7 @@ public class TargetSphere : MonoBehaviour {
                 trialState = TrialState.waiting;
                 UserStudyLogic.instance.snapping = true;
                 progressBar.SetFloat("_Cutoff", 1);
-                UserStudyLogic.instance.EndTrial();
+                UserStudyLogic.instance.EndTrial(other.gameObject);
                 Destroy(Instantiate(particles, transform.position, Quaternion.identity), 2.5f);
             }
             progressBarStartTime = Time.time;

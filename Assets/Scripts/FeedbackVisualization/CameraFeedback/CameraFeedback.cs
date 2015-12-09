@@ -413,7 +413,6 @@ public class CameraFeedback : MonoBehaviour {
                 arrowDock2D.SetActive(true);
 
                 UpdateSpriteColor(dockingArrow2DMaterial);
-                UpdateSpriteColor(arrowDock2DMaterial);
 
                 UpdateSpriteScale(dockingArrow2D);
             }
@@ -451,7 +450,6 @@ public class CameraFeedback : MonoBehaviour {
                 ballDock2D.SetActive(true);
 
                 UpdateSpriteColor(dockingBall2DMaterial);
-                UpdateSpriteColor(ballDock2DMaterial);
                 UpdateSpriteScale(dockingBall2D);
             }
 
@@ -488,7 +486,6 @@ public class CameraFeedback : MonoBehaviour {
                 puzzleDock2D.SetActive(true);
 
                 UpdateSpriteColor(dockingPuzzle2DMaterial);
-                UpdateSpriteColor(puzzleDock2DMaterial);
 
                 UpdateSpriteScale(dockingPuzzle2D);
             }
@@ -526,7 +523,6 @@ public class CameraFeedback : MonoBehaviour {
 
                 //Set color
                 UpdateSpriteColor(dockingSpike2DMaterial);
-                UpdateSpriteColor(spikeDock2DMaterial);
 
                 UpdateSpriteScale(dockingSpike2D);
             }
@@ -546,7 +542,6 @@ public class CameraFeedback : MonoBehaviour {
                 Pokeball3D.SetActive(true);
                 PokeDock3D.SetActive(true);
 
-                UpdateSpriteColor(pokedock3DMaterial);
                 UpdateSpriteColor(pokeball3DMaterial);
 
 
@@ -579,7 +574,6 @@ public class CameraFeedback : MonoBehaviour {
                 Pokeball3D.transform.position = feedbackCamera.transform.position + spriteDistance * (feedbackAvatar_joint.TransformPoint(transform.TransformPoint(handCollider.center)) - feedbackCamera.transform.position).normalized;
                 PokeDock3D.transform.position = feedbackCamera.transform.position + spriteDistance * (targetSphere.transform.position - feedbackCamera.transform.position).normalized;
 
-                UpdateSpriteColor(pokedock3DMaterial);
                 UpdateSpriteColor(pokeball3DMaterial);
 
 
@@ -724,11 +718,23 @@ public class CameraFeedback : MonoBehaviour {
     {
         if (spriteScaling)
         {
-            float distance = Mathf.Abs((feedbackCamera.transform.rotation * targetSphere.transform.position).z - (feedbackCamera.transform.rotation * feedbackAvatar_joint.TransformPoint(transform.TransformPoint(handCollider.center))).z);
-            if (distance < 4 * colorDistance)
+            float distance = (feedbackCamera.transform.rotation * targetSphere.transform.position).z - (feedbackCamera.transform.rotation * feedbackAvatar_joint.TransformPoint(transform.TransformPoint(handCollider.center))).z;
+            if (distance < 0)
             {
-                float scaleFactor = distance / (4 * colorDistance);
-                objToScale.transform.localScale = Vector3.one * Mathf.Max(scaleFactor, 0.15f);
+                if (distance < 4 * colorDistance)
+                {
+                    float scaleFactor = Mathf.Abs(distance) / (4 * colorDistance);
+                    objToScale.transform.localScale = Vector3.one * Mathf.Max(scaleFactor, 0.15f);
+                }
+            }
+            else
+            {
+                if (Mathf.Abs(distance) < 4 * colorDistance)
+                {
+                    float scaleFactor = Mathf.Abs(distance) / (4 * colorDistance);
+                    Debug.Log(scaleFactor);
+                    objToScale.transform.localScale = Vector3.one * 0.15f * Mathf.Min(1 / scaleFactor, 1.0f);
+                }
             }
         }
     }

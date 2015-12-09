@@ -62,8 +62,9 @@ public class UserStudyUI : MonoBehaviour
             if (loggingData)
             {
                 MovementRecorder.InitializeAndActivateUserStudy(name, trial, set, age, camPerspective, sex);
+                userStudyObject.SetActive(true);
             }
-            userStudyObject.SetActive(true);
+            
 
             // Init UserStudyLogic component with userspecific data
             UserStudyLogic.instance.InitNewUserStudy(feedbackType, hand, camPerspective, camMotion,precision, this, trial, coloring, scaling);

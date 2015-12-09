@@ -42,7 +42,7 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
                 //write raw header to file
                 string rawHeader = string.Concat("name;set;age;camera;sex;trial_code;start_frame;end_frame;completion_time;current_frame;current_time;",
                     GetBoneDescriptions(controller));
-                string detailedHeader = "name;set;age;camera;sex;trial_code;completion_time;";
+                string detailedHeader = "name;set;age;camera;sex;trial_code;completion_time;hand_position";
 
                 rawWriter.WriteLine(rawHeader);
                 filteredWriter.WriteLine(detailedHeader);
@@ -173,14 +173,19 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
         userData.endTime = null;
     }
 
-    public void EndTrial(float endTime)
+    public void EndTrial(float endTime, Vector3 handPosition)
     {
         userData.endFrame = frameCount;
         userData.endTime = endTime;
         userData.completionTime = userData.endTime - userData.startTime;
+        userData.handPosition = handPosition;
 
-        filteredWriter.WriteLine(string.Format("{0};{1};{2};{3};{4};{5};{6};", userData.name, userData.set, userData.age, userData.camType,
-            userData.sex, userData.trialCode, userData.completionTime));
+
+        string pos = "\"" + userData.handPosition.Value.x.ToString() + " " + userData.handPosition.Value.y.ToString() + " "
+            + userData.handPosition.Value.z.ToString() + "\"";
+
+        filteredWriter.WriteLine(string.Format("{0};{1};{2};{3};{4};{5};{6};{7};", userData.name, userData.set, userData.age, userData.camType,
+            userData.sex, userData.trialCode, userData.completionTime, pos));
 
         //flush after trial completion
         rawWriter.Flush();
@@ -191,23 +196,24 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
     {
         userData.trialCode = trialCode;
 
-        ResetTimesAndFrames(ref userData);
+        Reset(ref userData);
     }
 
     public void SetCamera(CameraPerspectives cam)
     {
         userData.camType = cam;
 
-        ResetTimesAndFrames(ref userData);
+        Reset(ref userData);
     }
 
-    private void ResetTimesAndFrames(ref UserStudyData data)
+    private void Reset(ref UserStudyData data)
     {
         data.startTime = null;
         data.startFrame = null;
         data.endTime = null;
         data.endFrame = null;
         data.completionTime = null;
+        data.handPosition = null;
     }
 }
 
@@ -225,7 +231,7 @@ public interface IUserStudyMessageTarget : IEventSystemHandler
     /// time difference in milliseconds.
     /// </summary>
     /// <param name="endTime">Absolute time this was called (from program start).</param>
-    void EndTrial(float endTime);
+    void EndTrial(float endTime, Vector3 handPosition);
 
     /// <summary>
     /// Called when the trial (ball positions) should be changed. Should reset
@@ -259,6 +265,7 @@ struct UserStudyData
         this.endTime = null;
         this.completionTime = null;
         this.trialCode = null;
+        this.handPosition = null;
     }
 
     public string name;
@@ -277,6 +284,8 @@ struct UserStudyData
 
     public uint? trialCode;
     public uint? set;
+
+    public Vector3? handPosition;
 }
 
 
