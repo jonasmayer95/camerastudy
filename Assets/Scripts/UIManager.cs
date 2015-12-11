@@ -15,7 +15,7 @@ public class UIManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        if (Input.GetKeyUp(KeyCode.Tab))
+        /*if (Up(KeyCode.Tab))
         {
             if (!showUI)
             {
@@ -36,9 +36,9 @@ public class UIManager : MonoBehaviour {
 
                 showUI = false;
             }
-        }
+        }*/
 
-        if (Input.GetButtonUp("UserStudyButton"))
+        /*if (Input.GetButtonUp("UserStudyButton"))
         {
             if (userStudyUi != null)
             {
@@ -52,7 +52,7 @@ public class UIManager : MonoBehaviour {
                 }
             }
             
-        }
+        }*/
 	
 	}
 }

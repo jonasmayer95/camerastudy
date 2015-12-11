@@ -95,7 +95,7 @@ public class FeedbackManager : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-        if(Input.GetKeyDown(KeyCode.Space))
+        /*if(Input.GetKeyDown(KeyCode.Space))
         {
             SwitchExercise((index + 1) % exercises.Count);
         }
@@ -104,7 +104,7 @@ public class FeedbackManager : MonoBehaviour {
         if(Input.GetKeyDown("h") || Input.GetKeyDown(KeyCode.Tab))
         {
             EnableUI(!canvas.activeInHierarchy);
-        }
+        }*/
 
         // Print exercise Info into external files
         //exercises[index].PrintExersiceInfo();
