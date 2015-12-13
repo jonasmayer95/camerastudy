@@ -27,6 +27,7 @@ public class TargetSphere : MonoBehaviour {
 	void Start () {
         progressBar = transform.GetChild(1).gameObject.GetComponent<Renderer>().material;
         progressBar.SetFloat("_Cutoff", 1);
+        transform.GetChild(1).gameObject.SetActive(false);
 
 	}
 	
@@ -63,12 +64,13 @@ public class TargetSphere : MonoBehaviour {
     {
         if (handedness == Handedness.LeftHanded && other.name == "RightHand" || handedness == Handedness.RightHanded && other.name == "LeftHand")
         {
+            transform.GetChild(1).gameObject.SetActive(true);
             if (trialState == TrialState.end)
             {
                 trialState = TrialState.waiting;
                 UserStudyLogic.instance.snapping = true;
                 progressBar.SetFloat("_Cutoff", 1);
-                transform.GetChild(0).gameObject.SetActive(false);
+                transform.GetChild(1).gameObject.SetActive(false);
                 UserStudyLogic.instance.EndTrial(other.gameObject);
                 Destroy(Instantiate(particles, transform.position, Quaternion.identity), 2.5f);
             }
@@ -87,7 +89,7 @@ public class TargetSphere : MonoBehaviour {
                 trialState = TrialState.end;
                 pulseStartTime = Time.time;
                 progressBar.SetFloat("_Cutoff", 1);
-                transform.GetChild(0).gameObject.SetActive(false);
+                transform.GetChild(1).gameObject.SetActive(false);
                 UserStudyLogic.instance.StartTrial();        
             }
         }
@@ -98,7 +100,7 @@ public class TargetSphere : MonoBehaviour {
         if(handedness == Handedness.LeftHanded && other.name == "RightHand" || handedness == Handedness.RightHanded && other.name == "LeftHand")
         {
             progressBar.SetFloat("_Cutoff", 1);
-            transform.GetChild(0).gameObject.SetActive(false);
+            transform.GetChild(1).gameObject.SetActive(false);
         }
     }
 }

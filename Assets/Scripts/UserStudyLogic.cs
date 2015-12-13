@@ -99,6 +99,7 @@ public class UserStudyLogic : MonoBehaviour
     public float cameraSpeed;
     public float exercisePrecision;
     public bool snapping;
+    private bool camMotionComplete = false;
     // Object that has an attached MovementRecorder
     public GameObject userStudyObject;
 
@@ -246,10 +247,8 @@ public class UserStudyLogic : MonoBehaviour
         snapping = false;
         targetSphere.transform.GetChild(0).localScale = new Vector3(targetSphereSmallScale, targetSphereSmallScale, targetSphereSmallScale);
         targetSphereRenderer.material.color = Color.red;
-
-        audioSource.clip = startSound;
-        audioSource.Play();
-
+     
+        
         if (handedness == Handedness.LeftHanded)
         {
             cameraFeedback.InitCorrectionCamera(hip, rightHand, targetSphere.transform.position - hip.position, targetSphere.gameObject, camFeedbackMode, startPosition);
@@ -261,12 +260,19 @@ public class UserStudyLogic : MonoBehaviour
             feedbackAvatar_joint = leftHand;
         }
 
-        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
+        if (cameraMotion == CameraMotionStates.Jumping)
+        {
+            audioSource.clip = startSound;
+            audioSource.Play();
 
-        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
+            ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
 
-        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
+            ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
 
+            ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
+        }
+        else
+            camMotionComplete = false;
         trialCounter++;
         //Debug.Log(trialCounter + " TrialCounter" + numTrials + " numTrials");
     }
@@ -278,7 +284,7 @@ public class UserStudyLogic : MonoBehaviour
         audioSource.Play();
         ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.EndTrial(Time.time, endEffector.transform.position));
         StartCoroutine(ExerciseDelay());
-        
+        //camMotionComplete = false;
     }
 
     IEnumerator ExerciseDelay()
@@ -489,6 +495,19 @@ public class UserStudyLogic : MonoBehaviour
                 {
                     feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(0, 90, 0), fracComplete);
                     feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + camDistance * Vector3.left, fracComplete);
+                    if (Vector3.Angle(feedbackCamera.transform.forward, Vector3.right) < 1.0f && !camMotionComplete)
+                    {
+                        camMotionComplete = true;
+                        audioSource.clip = startSound;
+                        audioSource.Play();
+
+                        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
+
+                        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
+
+                        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
+
+                    }
                 }
             }
 
@@ -503,6 +522,19 @@ public class UserStudyLogic : MonoBehaviour
                 {
                     feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(0, -90, 0), fracComplete);
                     feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + camDistance * Vector3.right, fracComplete);
+                    if (Vector3.Angle(feedbackCamera.transform.forward, Vector3.left) < 1.0f && !camMotionComplete)
+                    {
+                        camMotionComplete = true;
+                        audioSource.clip = startSound;
+                        audioSource.Play();
+
+                        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
+
+                        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
+
+                        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
+
+                    }
                 }
             }
 
@@ -517,6 +549,19 @@ public class UserStudyLogic : MonoBehaviour
                 {
                     feedbackCamera.transform.rotation = Quaternion.Slerp(feedbackCamera.transform.rotation, Quaternion.Euler(90, 0, 0), fracComplete);
                     feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + camDistance * Vector3.up, fracComplete);
+                    if (Vector3.Angle(feedbackCamera.transform.forward, Vector3.down) < 1.0f && !camMotionComplete)
+                    {
+                        camMotionComplete = true;
+                        audioSource.clip = startSound;
+                        audioSource.Play();
+
+                        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
+
+                        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
+
+                        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
+
+                    }
                 }
             }
 
@@ -563,6 +608,19 @@ public class UserStudyLogic : MonoBehaviour
                                 feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + camDistance * -crossProduct, fracComplete);
                                 //feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
                                 feedbackCamera.transform.LookAt(hip.position + new Vector3(0, camHeightOffset, 0));
+                                if (Vector3.Angle(feedbackCamera.transform.forward, crossProduct) < 1.0f && !camMotionComplete)
+                                {
+                                    camMotionComplete = true;
+                                    audioSource.clip = startSound;
+                                    audioSource.Play();
+
+                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
+
+                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
+
+                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
+
+                                }
                             }
                         }
                         // Double Check for steep angles to rotate around the other directiction
@@ -578,6 +636,19 @@ public class UserStudyLogic : MonoBehaviour
                                 feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + camDistance * -crossProduct, fracComplete);
                                 //feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
                                 feedbackCamera.transform.LookAt(hip.position + new Vector3(0, camHeightOffset, 0));
+                                if (Vector3.Angle(feedbackCamera.transform.forward, crossProduct) < 1.0f && !camMotionComplete)
+                                {
+                                    camMotionComplete = true;
+                                    audioSource.clip = startSound;
+                                    audioSource.Play();
+
+                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
+
+                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
+
+                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
+
+                                }
                             }
                         }
                     }
@@ -596,6 +667,19 @@ public class UserStudyLogic : MonoBehaviour
                                 feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + camDistance * -crossProduct, fracComplete);
                                 //feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
                                 feedbackCamera.transform.LookAt(hip.position + new Vector3(0, camHeightOffset, 0));
+                                if (Vector3.Angle(feedbackCamera.transform.forward, crossProduct) < 1.0f && !camMotionComplete)
+                                {
+                                    camMotionComplete = true;
+                                    audioSource.clip = startSound;
+                                    audioSource.Play();
+
+                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
+
+                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
+
+                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
+
+                                }
                             }
                         }
                         
@@ -611,6 +695,19 @@ public class UserStudyLogic : MonoBehaviour
                                 feedbackCamera.transform.position = Vector3.Slerp(feedbackCamera.transform.position, hip.position + camDistance * -crossProduct, fracComplete);
                                 //feedbackCamera.transform.LookAt(((hip.position + startPosition) + (hip.position + endPosition)) * 0.5f);
                                 feedbackCamera.transform.LookAt(hip.position + new Vector3(0, camHeightOffset, 0));
+                                if (Vector3.Angle(feedbackCamera.transform.forward, crossProduct) < 1.0f && !camMotionComplete)
+                                {
+                                    camMotionComplete = true;
+                                    audioSource.clip = startSound;
+                                    audioSource.Play();
+
+                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
+
+                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
+
+                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
+
+                                }
                             }
                         }                     
                     }

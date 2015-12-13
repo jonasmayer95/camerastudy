@@ -4308,8 +4308,8 @@ MonoBehaviour:
   hip: {fileID: 30069646}
   leftHand: {fileID: 30069663}
   rightHand: {fileID: 30069652}
-  startSound: {fileID: 8300000, guid: 7e759fe9a23a92640924fe0afbbe7243, type: 3}
-  endSound: {fileID: 8300000, guid: 2b88771e538eceb4fae8d19622e56fba, type: 3}
+  startSound: {fileID: 8300000, guid: 559b669224653dd4fbe06638ec6439f2, type: 3}
+  endSound: {fileID: 8300000, guid: d082f52b92908d34f85dc8e951ee1b4b, type: 3}
   cameraMotion: 0
   cameraSpeed: 60
   exercisePrecision: 10

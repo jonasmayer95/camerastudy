@@ -729,11 +729,11 @@ public class CameraFeedback : MonoBehaviour {
             }
             else
             {
+                
                 if (Mathf.Abs(distance) < 4 * colorDistance)
                 {
-                    float scaleFactor = Mathf.Abs(distance) / (4 * colorDistance);
-                    Debug.Log(scaleFactor);
-                    objToScale.transform.localScale = Vector3.one * 0.15f * Mathf.Min(1 / scaleFactor, 1.0f);
+                    float scaleFactor = ((4 * colorDistance) - Mathf.Abs(distance)) / (4 * colorDistance);
+                    objToScale.transform.localScale = Vector3.one * Mathf.Min(scaleFactor, 1) * 0.15f;
                 }
             }
         }
