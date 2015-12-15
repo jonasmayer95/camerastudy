@@ -181,8 +181,8 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
         userData.handPosition = handPosition;
 
 
-        string pos = "\"" + userData.handPosition.Value.x.ToString() + " " + userData.handPosition.Value.y.ToString() + " "
-            + userData.handPosition.Value.z.ToString() + "\"";
+        string pos = userData.handPosition.Value.x.ToString() + ';' + userData.handPosition.Value.y.ToString() + ';'
+            + userData.handPosition.Value.z.ToString();
 
         filteredWriter.WriteLine(string.Format("{0};{1};{2};{3};{4};{5};{6};{7};", userData.name, userData.set, userData.age, userData.camType,
             userData.sex, userData.trialCode, userData.completionTime, pos));
