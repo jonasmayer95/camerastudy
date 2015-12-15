@@ -103,6 +103,10 @@ public class UserStudyLogic : MonoBehaviour
     // Object that has an attached MovementRecorder
     public GameObject userStudyObject;
 
+    // Timer for random shuffle
+    private System.DateTime dTime;
+    private float dayTime;
+
     private void InitTargetPositions(Handedness handedness)
     {
         List<Vector3> pos = BuildIcoSphereVertices();
@@ -141,8 +145,12 @@ public class UserStudyLogic : MonoBehaviour
 
     void Awake()
     {
-        instance = this;        
-        Random.seed = System.Environment.TickCount;
+        instance = this;      
+
+        // Calculating random seed based on exact daytime (up to seconds)
+        dTime = System.DateTime.Now;
+        dayTime = dTime.Hour * 360 + dTime.Minute * 60 + dTime.Second;
+        Random.seed = (int) dayTime;
     }
 
 
