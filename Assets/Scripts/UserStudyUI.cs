@@ -17,17 +17,25 @@ public class UserStudyUI : MonoBehaviour
     public GameObject setInputField;
     public GameObject ageInputField;
     public GameObject precisionInputField;
-    public GameObject sexToggleGroup;
-    public GameObject camPerspectivesToggleGroup;
-    public GameObject camMotionToggleGroup;
-    public GameObject handednessToggleGroup;
-    public GameObject feedbackToggleGroup;
+    //public GameObject sexToggleGroup;
+    //public GameObject camPerspectivesToggleGroup;
+    //public GameObject camMotionToggleGroup;
+    //public GameObject handednessToggleGroup;
+    //public GameObject feedbackToggleGroup;
     public GameObject submitButton;
     public GameObject colorToggle;
     public GameObject scalingToggle;
     public GameObject loggingDataToggle;
     //the object that contains a MovementRecorder script
     public GameObject userStudyObject;
+
+    // DropdownStats
+    public UserStudyUIDropdownMenu genderDropdownMenu;
+    public UserStudyUIDropdownMenu handednessDropdownMenu;
+    public UserStudyUIDropdownMenu cameraPerspectiveDropdownMenu;
+    public UserStudyUIDropdownMenu cameraMotionDropdownMenu;
+    public UserStudyUIDropdownMenu feedbackTypeDropdownMenu;
+
     
     /// <summary>
     /// Gets the data from child controls, validates it and sends it to objects
@@ -49,11 +57,12 @@ public class UserStudyUI : MonoBehaviour
             uint age = uint.Parse(ageInputField.GetComponent<InputField>().text);
             uint set = uint.Parse(setInputField.GetComponent<InputField>().text);
             float precision = float.Parse(precisionInputField.GetComponent<InputField>().text);
-            Sex sex = (Sex)GetToggleIndex(sexToggleGroup);
-            CameraPerspectives camPerspective = (CameraPerspectives)GetToggleIndex(camPerspectivesToggleGroup);
-            CameraMotionStates camMotion = (CameraMotionStates)GetToggleIndex(camMotionToggleGroup);
-            Handedness hand = (Handedness)GetToggleIndex(handednessToggleGroup);
-            CameraFeedbackMode feedbackType = (CameraFeedbackMode)GetToggleIndex(feedbackToggleGroup);
+
+            Sex sex = (Sex)genderDropdownMenu.value;
+            CameraPerspectives camPerspective = (CameraPerspectives)cameraPerspectiveDropdownMenu.value;
+            CameraMotionStates camMotion = (CameraMotionStates)cameraMotionDropdownMenu.value;
+            Handedness hand = (Handedness)handednessDropdownMenu.value;
+            CameraFeedbackMode feedbackType = (CameraFeedbackMode)feedbackTypeDropdownMenu.value;
             bool coloring = colorToggle.GetComponent<Toggle>().isOn;
             bool scaling = scalingToggle.GetComponent<Toggle>().isOn;
             // TODO: validate enums (Enum.IsDefined)
