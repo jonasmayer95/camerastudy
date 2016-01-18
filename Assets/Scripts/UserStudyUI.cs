@@ -100,5 +100,5 @@ public class UserStudyUI : MonoBehaviour
             }
         }
         return k;
-    }
+    }    
 }

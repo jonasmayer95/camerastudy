@@ -176,6 +176,11 @@ public class UserStudyLogic : MonoBehaviour
         {
             feedbackCamera.transform.position = hip.position - Vector3.forward * camDistance;
         }
+
+        if (Input.GetKeyUp(KeyCode.Tab))
+        {
+            //userStudyUI.gameObject.SetActive(true);
+        }    
     }
 
     private void SpawnUserStudyComponents()

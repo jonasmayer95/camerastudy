@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public enum CameraFeedbackMode
 {
-    DockingArrow2D, DockingBall2D, DockingPuzzle2D, DockingSpike2D, LinearArrow, RigedArrow, PokeBall3D, PokeBall3DPlanar
+    DockingArrow2D, DockingBall2D, DockingPuzzle2D, DockingSpike2D, PokeBall3D, PokeBall3DPlanar, BicepsCurl , LinearArrow, RigedArrow, 
 }
 
 
