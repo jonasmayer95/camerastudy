@@ -164,6 +164,10 @@ public class KinectManager : MonoBehaviour
 
     private bool characterScaled = false;
 
+    // ART client objects for receiving hand tracking data
+    private ArtClient artClient = new ArtClient();
+    private ArtClientState artClientState = new ArtClientState();
+
 	// returns the single KinectManager instance
     public static KinectManager Instance
     {
@@ -1275,6 +1279,9 @@ public class KinectManager : MonoBehaviour
 			{
 				// start the sensor
 				StartKinect();
+
+                // connect to ART server
+                artClient.Connect();
 			}
 		} 
 		catch (Exception ex) 
@@ -1543,6 +1550,7 @@ public class KinectManager : MonoBehaviour
 	void Update() 
 	{
         //TODO: receive data from ART here, then integrate it into the body frame
+        
 
 		if(kinectInitialized)
 		{

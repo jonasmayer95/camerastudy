@@ -12,19 +12,19 @@ using UnityEngine;
 class ArtClient
 {
     private Socket artSocket;
-    private const IPEndPoint trackingEndpoint = new IPEndPoint(new IPAddress(new byte[] {131,159,10,200}), 5000);
+    private IPEndPoint trackingEndpoint = new IPEndPoint(new IPAddress(new byte[] {131,159,10,200}), 5000);
 
     public ArtClient()
     {
-        artSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.IPv4);
+        //artSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.IPv4);
         
         //get ip address, connect, set up listening, listen each frame (from somewhere inside kinectmanager,
         //so we can combine the data more easily)
     }
 
-    public void Connect(EndPoint remoteEP)
+    public void Connect()
     {
-        artSocket.BeginConnect(remoteEP, new AsyncCallback(ConnectCallback), artSocket);
+        artSocket.BeginConnect(trackingEndpoint, new AsyncCallback(ConnectCallback), artSocket);
     }
 
     private void ConnectCallback(IAsyncResult ar)
