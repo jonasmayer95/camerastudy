@@ -53,6 +53,10 @@ public class UIManager : MonoBehaviour {
             }
             
         }*/
-	
+
+        //if (Up(KeyCode.Escape))
+        //{
+        //    Application.Quit();
+       // }
 	}
 }
