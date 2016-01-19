@@ -1542,6 +1542,8 @@ public class KinectManager : MonoBehaviour
 	
 	void Update() 
 	{
+        //TODO: receive data from ART here, then integrate it into the body frame
+
 		if(kinectInitialized)
 		{
 			KinectInterop.UpdateSensorData(sensorData);
