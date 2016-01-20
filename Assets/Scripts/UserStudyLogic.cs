@@ -79,14 +79,14 @@ public class UserStudyLogic : MonoBehaviour
     private Vector3 camStartPos;
     private Quaternion camStartOrientation;
     private TargetSphere targetSphere;
-    private CameraFeedbackMode camFeedbackMode;
+    public CameraFeedbackMode camFeedbackMode;
     private Transform feedbackAvatar_joint;
     //private bool initialized;
     private CameraPerspectives cameraPerspective = CameraPerspectives.Front;
     public CameraMotionStates cameraMotion = CameraMotionStates.Jumping;
     private CameraSide cameraSide = CameraSide.Left;
     private CameraUpdateMode camUpdateMode = CameraUpdateMode.Static;
-    private UserStudyUI userStudyUI;
+    public UserStudyUI userStudyUI;
     private bool camMotion;
     private Vector3 startPosition;
     private Vector3 endPosition;
@@ -102,6 +102,7 @@ public class UserStudyLogic : MonoBehaviour
     private bool camMotionComplete = false;
     // Object that has an attached MovementRecorder
     public GameObject userStudyObject;
+    public GameObject bicepsCurl;
 
     // Timer for random shuffle
     private System.DateTime dTime;
@@ -176,11 +177,16 @@ public class UserStudyLogic : MonoBehaviour
         {
             feedbackCamera.transform.position = hip.position - Vector3.forward * camDistance;
         }
-
-        if (Input.GetKeyUp(KeyCode.Tab))
+        if (Input.GetKeyUp(KeyCode.Tab) && camFeedbackMode == CameraFeedbackMode.BicepsCurl)
         {
-            //userStudyUI.gameObject.SetActive(true);
+            userStudyUI.gameObject.SetActive(true);
+            bicepsCurl.SetActive(false);
         }    
+    }
+
+    public void ActivateBicepsCurl()
+    {
+        bicepsCurl.SetActive(true);
     }
 
     private void SpawnUserStudyComponents()

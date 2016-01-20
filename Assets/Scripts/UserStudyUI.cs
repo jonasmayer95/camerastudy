@@ -73,10 +73,19 @@ public class UserStudyUI : MonoBehaviour
                 MovementRecorder.InitializeAndActivateUserStudy(name, trial, set, age, camPerspective, sex);
                 userStudyObject.SetActive(true);
             }
-            
 
-            // Init UserStudyLogic component with userspecific data
-            UserStudyLogic.instance.InitNewUserStudy(feedbackType, hand, camPerspective, camMotion,precision, this, trial, coloring, scaling);
+            if (feedbackType !=CameraFeedbackMode.BicepsCurl)
+            {
+                // Init UserStudyLogic component with userspecific data
+                UserStudyLogic.instance.InitNewUserStudy(feedbackType, hand, camPerspective, camMotion, precision, this, trial, coloring, scaling);
+            }
+
+            else if (feedbackType == CameraFeedbackMode.BicepsCurl)
+            {
+                UserStudyLogic.instance.userStudyUI = this;
+                UserStudyLogic.instance.camFeedbackMode = feedbackType;
+                UserStudyLogic.instance.ActivateBicepsCurl();
+            }
 
             this.gameObject.SetActive(false);
         }

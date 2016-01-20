@@ -23,12 +23,22 @@ public class BallFeedback : InseilFeedback {
     private float currHoldingTime;
     private Renderer ballRenderer;
     private bool motionjoint;
+    public float userHeight = 1.8f;
+
+    void Awake()
+    {
+        for (int i = 0; i < positions.Count; i++)
+        {
+            positions[i] *= userHeight;
+        }
+    }
     
 
 	// Use this for initialization
 	void Start () {
 
-        InitBallFeedback();	
+        
+        InitBallFeedback();
 	}
 	
 	// Update is called once per frame
