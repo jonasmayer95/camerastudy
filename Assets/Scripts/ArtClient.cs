@@ -12,58 +12,45 @@ using UnityEngine;
 class ArtClient
 {
     private Socket artSocket;
-    private IPEndPoint trackingEndpoint = new IPEndPoint(new IPAddress(new byte[] {131,159,10,200}), 5000);
+    private EndPoint trackingEndpoint = new IPEndPoint(IPAddress.Parse("131.159.10.100"), 5000);
+
+    public volatile bool dataReceived;
 
     public ArtClient()
     {
-        //artSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.IPv4);
-        
-        //get ip address, connect, set up listening, listen each frame (from somewhere inside kinectmanager,
+        artSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+        //get ip address, set up listening, listen each frame (from somewhere inside kinectmanager,
         //so we can combine the data more easily)
-    }
-
-    public void Connect()
-    {
-        artSocket.BeginConnect(trackingEndpoint, new AsyncCallback(ConnectCallback), artSocket);
-    }
-
-    private void ConnectCallback(IAsyncResult ar)
-    {
-        try
-        {
-            Socket client = (Socket)ar.AsyncState;
-            client.EndConnect(ar);
-
-            Debug.Log(client.RemoteEndPoint.ToString());
-        }
-        catch (Exception e)
-        {
-            Debug.LogError(e.ToString());
-        }
     }
 
     public void Receive(ArtClientState stateObject)
     {
         //clear stringbuilder before receiving new data instead of allocating new instance
-        stateObject.Reset();
+        //stateObject.Reset();
         stateObject.socket = artSocket;
 
-        artSocket.BeginReceive(stateObject.buffer, 0, ArtClientState.BufferSize, 0, new AsyncCallback(ReceiveCallback), stateObject);
+        artSocket.BeginReceiveFrom(stateObject.buffer, 0, ArtClientState.BufferSize, 0, ref trackingEndpoint, new AsyncCallback(ReceiveCallback), stateObject);
     }
 
     private void ReceiveCallback(IAsyncResult ar)
     {
         try
         {
-            ArtClientState state = (ArtClientState)ar.AsyncState;
-            Socket client = state.socket;
+            ArtClientState stateObject = (ArtClientState)ar.AsyncState;
+            Socket client = stateObject.socket;
 
             //reads the first enqueued datagram in the network buffer according to
             //https://msdn.microsoft.com/en-us/library/w7wtt64b(v=vs.110).aspx
-            int bytesRead = client.EndReceive(ar);
+            int bytesRead = client.EndReceiveFrom(ar, ref trackingEndpoint);
 
             //parse data, extract useful stuff, write into some variable useful to kinectmanager and carry on
-            state.sb.Append(Encoding.ASCII.GetString(state.buffer));
+            stateObject.sb.Append(Encoding.ASCII.GetString(stateObject.buffer));
+            
+            //assume our useful data is in a stringbuilder
+
+            //signal when data has been processed
+            dataReceived = true;
         }
         catch (Exception ex)
         {
@@ -78,7 +65,7 @@ class ArtClientState
 
     public Socket socket;
     public byte[] buffer = new byte[BufferSize];
-    public StringBuilder sb;
+    public StringBuilder sb = new StringBuilder(BufferSize);
 
     /// <summary>
     /// Resets the contents of our StringBuilder instance.

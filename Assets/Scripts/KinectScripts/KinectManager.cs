@@ -165,8 +165,8 @@ public class KinectManager : MonoBehaviour
     private bool characterScaled = false;
 
     // ART client objects for receiving hand tracking data
-    private ArtClient artClient = new ArtClient();
-    private ArtClientState artClientState = new ArtClientState();
+    private ArtClient artClient;
+    private ArtClientState artClientState;
 
 	// returns the single KinectManager instance
     public static KinectManager Instance
@@ -1280,8 +1280,10 @@ public class KinectManager : MonoBehaviour
 				// start the sensor
 				StartKinect();
 
-                // connect to ART server
-                artClient.Connect();
+                //set up ART stuff
+                artClient = new ArtClient();
+                artClientState = new ArtClientState();
+
 			}
 		} 
 		catch (Exception ex) 
@@ -1550,7 +1552,11 @@ public class KinectManager : MonoBehaviour
 	void Update() 
 	{
         //TODO: receive data from ART here, then integrate it into the body frame
-        
+        //TODO: implement async socket IO without allocating a new state object each frame.
+        //I could pass a volatile bool here to set in the callback when the datagram has been received
+        //and check for that right before creating body frame data. If it's not received, just discard it and wait for another update.
+        //I wonder if that'd have sync problems, though.
+        artClient.Receive(artClientState);
 
 		if(kinectInitialized)
 		{
@@ -1594,6 +1600,12 @@ public class KinectManager : MonoBehaviour
 				{
 					jointPositionFilter.UpdateFilter(ref bodyFrame);
 				}
+
+                //check if ART data has been processed (atomic read), get it and integrate it into body frame data
+                if (artClient.dataReceived)
+                {
+
+                }
 
 				ProcessBodyFrameData();
 			}
@@ -1936,6 +1948,10 @@ public class KinectManager : MonoBehaviour
 		{
 			KinectInterop.BodyData bodyData = bodyFrame.bodyData[i];
 			Int64 userId = bodyData.liTrackingID;
+
+            //TODO: if it's the first user (because we always assume one for training)
+            //      substitute the hand data with ART data instead of kinect and set the tracking
+            //      state to "tracked" if we have meaningful values from ART, then reset dataReceived
 			
 			if(bodyData.bIsTracked != 0 && Mathf.Abs(bodyData.position.z) >= minUserDistance &&
 			   (maxUserDistance <= 0f || Mathf.Abs(bodyData.position.z) <= maxUserDistance) &&
