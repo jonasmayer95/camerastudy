@@ -1283,7 +1283,7 @@ public class KinectManager : MonoBehaviour
                 //set up ART stuff
                 artClient = new ArtClient();
                 artClientState = new ArtClientState();
-
+                artClient.Receive(artClientState); //this kicks off the async receiving loop
 			}
 		} 
 		catch (Exception ex) 
@@ -1556,7 +1556,7 @@ public class KinectManager : MonoBehaviour
         //I could pass a volatile bool here to set in the callback when the datagram has been received
         //and check for that right before creating body frame data. If it's not received, just discard it and wait for another update.
         //I wonder if that'd have sync problems, though.
-        artClient.Receive(artClientState);
+        
 
 		if(kinectInitialized)
 		{
