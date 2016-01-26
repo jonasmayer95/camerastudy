@@ -165,8 +165,8 @@ public class KinectManager : MonoBehaviour
     private bool characterScaled = false;
 
     // ART client objects for receiving hand tracking data
+    public GameObject artClientObject;
     private ArtClient artClient;
-    private ArtClientState artClientState;
 
 	// returns the single KinectManager instance
     public static KinectManager Instance
@@ -1281,9 +1281,7 @@ public class KinectManager : MonoBehaviour
 				StartKinect();
 
                 //set up ART stuff
-                artClient = new ArtClient();
-                artClientState = new ArtClientState();
-                artClient.Receive(artClientState); //this kicks off the async receiving loop
+                artClient = artClientObject.GetComponent<ArtClient>();
 			}
 		} 
 		catch (Exception ex) 
@@ -1486,6 +1484,8 @@ public class KinectManager : MonoBehaviour
 
 			instance = null;
 		}
+
+        //artClient.shutDown = true;
 	}
 
 	void OnGUI()
@@ -1604,7 +1604,8 @@ public class KinectManager : MonoBehaviour
                 //check if ART data has been processed (atomic read), get it and integrate it into body frame data
                 if (artClient.dataReceived)
                 {
-
+                    Debug.Log(artClient.State.sb.ToString());
+                    artClient.dataReceived = false;
                 }
 
 				ProcessBodyFrameData();
