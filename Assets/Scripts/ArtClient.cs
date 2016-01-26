@@ -25,7 +25,7 @@ class ArtClient : MonoBehaviour
 
     private Socket artSocket;
     private Thread recvThread;
-    private List<ArtBodyData> artBodies = new List<ArtBodyData>(2); //initialize for hands
+    private ArtBodyData[] artBodies = new ArtBodyData[2]; //initialize for hands
 
     //this port doesn't seem to be important, but our local one certainly is, as the server sends to remote port 5000
     private EndPoint trackingEndpoint = new IPEndPoint(IPAddress.Parse("131.159.10.100"), 0);
@@ -65,7 +65,7 @@ class ArtClient : MonoBehaviour
         }
     }
 
-    public List<ArtBodyData> GetBodyData()
+    public ArtBodyData[] GetBodyData()
     {
         string data;
 
@@ -135,6 +135,12 @@ class ArtClient : MonoBehaviour
 
                     //parse positions and write them into our struct
                     //rotations seem to be in euler angles
+                    //int id;
+                    //double qual, px, py, pz, rx, ry, rz;
+                    artBodies[i] = new ArtBodyData(recordType, int.Parse(positions[0]), double.Parse(positions[1]),
+                        double.Parse(positions[2]), double.Parse(positions[3]), double.Parse(positions[4]), double.Parse(positions[5]), double.Parse(positions[6]),
+                        double.Parse(positions[7]));
+                    
                 }
             }
         }
@@ -151,7 +157,7 @@ class ArtClient : MonoBehaviour
 
 struct ArtBodyData
 {
-    ArtBodyData(string type, int id, double qual, double px, double py, double pz, double rx, double ry, double rz)
+    public ArtBodyData(string type, int id, double qual, double px, double py, double pz, double rx, double ry, double rz)
     {
         this.type = type;
         this.id = id;
@@ -160,9 +166,10 @@ struct ArtBodyData
         rot = Quaternion.Euler((float)rx, (float)ry, (float)rz);
     }
 
-    string type;
-    int id;
-    double qual;
-    InseilPosition pos; //either use floats here as well or do that inside kinectmanager...hmm
-    Quaternion rot; //this sucks but there is no method for doubles
+
+    public string type;
+    public int id;
+    public double qual;
+    public InseilPosition pos; //either use floats here as well or do that inside kinectmanager...hmm
+    public Quaternion rot; //this sucks but there is no method for doubles
 }

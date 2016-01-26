@@ -1602,7 +1602,7 @@ public class KinectManager : MonoBehaviour
 				}
 
                 //get body data from ART (locks the recv buffer)
-                artClient.GetBodyData();
+                var artBodies = artClient.GetBodyData();
 
 				ProcessBodyFrameData();
 			}
