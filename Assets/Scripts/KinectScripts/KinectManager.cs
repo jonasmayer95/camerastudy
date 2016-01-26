@@ -1601,12 +1601,8 @@ public class KinectManager : MonoBehaviour
 					jointPositionFilter.UpdateFilter(ref bodyFrame);
 				}
 
-                //check if ART data has been processed (atomic read), get it and integrate it into body frame data
-                if (artClient.dataReceived)
-                {
-                    Debug.Log(artClient.State.sb.ToString());
-                    artClient.dataReceived = false;
-                }
+                //get body data from ART (locks the recv buffer)
+                artClient.GetBodyData();
 
 				ProcessBodyFrameData();
 			}
