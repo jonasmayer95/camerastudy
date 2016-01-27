@@ -141,6 +141,7 @@ class ArtClient : MonoBehaviour
                         double.Parse(positions[2]), double.Parse(positions[3]), double.Parse(positions[4]), double.Parse(positions[5]), double.Parse(positions[6]),
                         double.Parse(positions[7]));
                     
+                    //we could still parse the matrix here, its seems to be used for rotation
                 }
             }
         }
@@ -162,7 +163,13 @@ struct ArtBodyData
         this.type = type;
         this.id = id;
         this.qual = qual;
-        pos = new InseilPosition(px, py, pz);
+
+        //convert art measurements (mm) to kinect (m)
+        double x = px / 1000.0;
+        double y = py / 1000.0;
+        double z = pz / 1000.0;
+
+        pos = new Vector3((float)x, (float)y, (float)z);
         rot = Quaternion.Euler((float)rx, (float)ry, (float)rz);
     }
 
@@ -170,6 +177,6 @@ struct ArtBodyData
     public string type;
     public int id;
     public double qual;
-    public InseilPosition pos; //either use floats here as well or do that inside kinectmanager...hmm
+    public Vector3 pos; //either use floats here as well or do that inside kinectmanager...hmm
     public Quaternion rot; //this sucks but there is no method for doubles
 }

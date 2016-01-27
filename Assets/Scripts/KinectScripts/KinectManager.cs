@@ -1604,7 +1604,7 @@ public class KinectManager : MonoBehaviour
                 //get body data from ART (locks the recv buffer)
                 var artBodies = artClient.GetBodyData();
 
-				ProcessBodyFrameData();
+				ProcessBodyFrameData(artBodies);
 			}
 
 			if(useMultiSourceReader)
@@ -1906,7 +1906,7 @@ public class KinectManager : MonoBehaviour
 	}
 	
 	// Processes body frame data
-	private void ProcessBodyFrameData()
+	private void ProcessBodyFrameData(ArtBodyData[] handData)
 	{
 		List<Int64> addedUsers = new List<Int64>();
 		List<int> addedIndexes = new List<int>();
@@ -1946,9 +1946,7 @@ public class KinectManager : MonoBehaviour
 			KinectInterop.BodyData bodyData = bodyFrame.bodyData[i];
 			Int64 userId = bodyData.liTrackingID;
 
-            //TODO: if it's the first user (because we always assume one for training)
-            //      substitute the hand data with ART data instead of kinect and set the tracking
-            //      state to "tracked" if we have meaningful values from ART, then reset dataReceived
+            
 			
 			if(bodyData.bIsTracked != 0 && Mathf.Abs(bodyData.position.z) >= minUserDistance &&
 			   (maxUserDistance <= 0f || Mathf.Abs(bodyData.position.z) <= maxUserDistance) &&
@@ -1980,8 +1978,26 @@ public class KinectManager : MonoBehaviour
 								}
 							}
 						}
+
+                        //we should write into wrist as bones[] in our avatar does not contain "hand" bones
+                        var rightHand = bodyData.joint[(int)KinectInterop.JointType.WristRight];
+                        
+                        
+                        rightHand.position = handData[0].pos;
+                        rightHand.orientation = handData[0].rot;
+                        Debug.Log(string.Format("ProcessBodyFrameData() set position from ART: {0}", rightHand.position));
+                        rightHand.trackingState = KinectInterop.TrackingState.Tracked;
+                        bodyData.joint[(int)KinectInterop.JointType.WristRight] = rightHand;
 					}
-					
+
+                    //TODO: if it's the first user (because we always assume one for training)
+                    //      substitute the hand data with ART data instead of kinect and set the tracking
+                    //      state to "tracked" if we have meaningful values from ART
+                    //if (i == iClosestUserIndex)
+                    //{
+                        
+                    //}
+
 					if(bClosestUser)
 					{
 						// add the first or closest userId to the list of new users
@@ -2279,6 +2295,10 @@ public class KinectManager : MonoBehaviour
 
 				// calculate world orientations of the body joints
 				CalculateJointOrients(ref bodyData);
+
+                //override hands with raw art data here, TODO: mirror properly
+                //bodyData.joint[(int)KinectInterop.JointType.WristRight].normalRotation = handData[0].rot;
+                //bodyData.joint[(int)KinectInterop.JointType.WristRight].mirroredRotation = handData[0].rot;
 
                 if(!characterScaled)
                 {

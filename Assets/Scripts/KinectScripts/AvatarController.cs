@@ -164,6 +164,7 @@ public class AvatarController : MonoBehaviour
 				}
 			}
 		}
+
 	}
 	
 	// Set bones to their initial positions and rotations.
