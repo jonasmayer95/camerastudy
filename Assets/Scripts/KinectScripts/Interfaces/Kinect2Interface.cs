@@ -539,8 +539,6 @@ public class Kinect2Interface : DepthSensorInterface
 				frame.Dispose();
 				frame = null;
 				
-                //get ART data here instead of KM, as directions are calculated in kinectinterop
-                
 
 				for(int i = 0; i < sensorData.bodyCount; i++)
 				{

@@ -1603,6 +1603,25 @@ public class KinectManager : MonoBehaviour
                 //get body data from ART (locks the recv buffer)
                 var artBodies = artClient.GetBodyData();
 
+                //substitute kinect wrist with ART data, recalculate joint directions
+                //1. get primary user
+                //2. call calibrate on his body data
+                
+                //TODO: insert tracking handling if ART loses a body
+                var id = GetPrimaryUserID();
+                if (id != 0)
+                {
+                    var index = GetUserIndexById(id);
+
+                    artCalibration.Calibrate(ref bodyFrame.bodyData[index], artBodies, ref kinectToWorld);
+                    var wristParent = sensorData.sensorInterface.GetParentJoint(KinectInterop.JointType.WristRight);
+
+                    //3. recalculate directions as in kinectinterop PollBodyFrame
+                    bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].direction =
+                        bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position -
+                        bodyFrame.bodyData[index].joint[(int)wristParent].position;
+                }
+
 				ProcessBodyFrameData(artBodies);
 			}
 
@@ -2292,7 +2311,7 @@ public class KinectManager : MonoBehaviour
 //				}
 //////// 		turnaround mode end
 
-                artCalibration.Calibrate(ref bodyData, handData);
+                //artCalibration.Calibrate(ref bodyData, handData);
 
 				// calculate world orientations of the body joints
 				CalculateJointOrients(ref bodyData);
