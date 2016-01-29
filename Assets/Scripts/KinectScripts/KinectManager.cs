@@ -1485,7 +1485,7 @@ public class KinectManager : MonoBehaviour
 			instance = null;
 		}
 
-        //artClient.shutDown = true;
+        //artClient.terminate = true;
 	}
 
 	void OnGUI()

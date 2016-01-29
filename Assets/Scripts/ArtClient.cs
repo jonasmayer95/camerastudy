@@ -36,6 +36,7 @@ class ArtClient : MonoBehaviour
         //TODO: exception handling here
         artSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         artSocket.Bind(new IPEndPoint(IPAddress.Parse("131.159.10.200"), 5000)); //TODO: make this more resilient if the port is used
+        artSocket.ReceiveTimeout = 3000; //3sec timeout, then close the socket
 
         //set up thread, kick off recv loop
         if (recvThread == null)
@@ -56,12 +57,16 @@ class ArtClient : MonoBehaviour
                 Debug.Log(Encoding.ASCII.GetString(buffer));
             }
 
-
             artSocket.Close();
+            Debug.Log("ArtClient: closed artSocket");
         }
-        catch (Exception ex)
+        catch (SocketException ex)
         {
-            Debug.LogError(ex.Message.ToString());
+            if (artSocket != null && ex.SocketErrorCode == SocketError.TimedOut)
+            {
+                artSocket.Close();
+                Debug.Log("ArtClient: closed artSocket due to timeout");
+            }
         }
     }
 
