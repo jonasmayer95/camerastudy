@@ -539,6 +539,9 @@ public class Kinect2Interface : DepthSensorInterface
 				frame.Dispose();
 				frame = null;
 				
+                //get ART data here instead of KM, as directions are calculated in kinectinterop
+                
+
 				for(int i = 0; i < sensorData.bodyCount; i++)
 				{
 					Body body = bodyData[i];
@@ -585,6 +588,10 @@ public class Kinect2Interface : DepthSensorInterface
 							
 							bodyFrame.bodyData[i].joint[j] = jointData;
 						}
+
+                        //HACK: fill wrist joint with ART data here:
+                        //bodyFrame.bodyData[i].joint[(int)KinectInterop.JointType.WristRight].kinectPos = artPos
+                        //bodyFrame.bodyData[i].joint[(int)KinectInterop.JointType.WristRight].position = kinectToWorld.MultiplyPoint3x4(artPos)
 
 						// tranfer hand states
 						bodyFrame.bodyData[i].leftHandState = (KinectInterop.HandState)body.HandLeftState;

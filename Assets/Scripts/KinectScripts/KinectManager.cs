@@ -167,6 +167,7 @@ public class KinectManager : MonoBehaviour
     // ART client objects for receiving hand tracking data
     public GameObject artClientObject;
     private ArtClient artClient;
+    private ArtCalibration artCalibration = new ArtCalibration();
 
 	// returns the single KinectManager instance
     public static KinectManager Instance
@@ -1484,8 +1485,6 @@ public class KinectManager : MonoBehaviour
 
 			instance = null;
 		}
-
-        //artClient.terminate = true;
 	}
 
 	void OnGUI()
@@ -1980,14 +1979,14 @@ public class KinectManager : MonoBehaviour
 						}
 
                         //we should write into wrist as bones[] in our avatar does not contain "hand" bones
-                        var rightHand = bodyData.joint[(int)KinectInterop.JointType.WristRight];
+                        //var rightHand = bodyData.joint[(int)KinectInterop.JointType.WristRight];
                         
                         
-                        rightHand.position = handData[0].pos;
-                        rightHand.orientation = handData[0].rot;
-                        Debug.Log(string.Format("ProcessBodyFrameData() set position from ART: {0}", rightHand.position));
-                        rightHand.trackingState = KinectInterop.TrackingState.Tracked;
-                        bodyData.joint[(int)KinectInterop.JointType.WristRight] = rightHand;
+                        //rightHand.position = handData[0].pos;
+                        //rightHand.orientation = handData[0].rot;
+                        //Debug.Log(string.Format("ProcessBodyFrameData() set position from ART: {0}", rightHand.position));
+                        //rightHand.trackingState = KinectInterop.TrackingState.Tracked;
+                        //bodyData.joint[(int)KinectInterop.JointType.WristRight] = rightHand;
 					}
 
                     //TODO: if it's the first user (because we always assume one for training)
@@ -2293,12 +2292,15 @@ public class KinectManager : MonoBehaviour
 //				}
 //////// 		turnaround mode end
 
+                artCalibration.Calibrate(ref bodyData, handData);
+
 				// calculate world orientations of the body joints
 				CalculateJointOrients(ref bodyData);
 
                 //override hands with raw art data here, TODO: mirror properly
                 //bodyData.joint[(int)KinectInterop.JointType.WristRight].normalRotation = handData[0].rot;
                 //bodyData.joint[(int)KinectInterop.JointType.WristRight].mirroredRotation = handData[0].rot;
+                
 
                 if(!characterScaled)
                 {

@@ -102,9 +102,11 @@ class ArtClient : MonoBehaviour
             {
                 //frame logic
             }
-            else if (recordType == "ts")
+            else if (recordType == "3d")
             {
+                //Debug.Log(data);
 
+                //we should calculate a mean value of all marker positions or something, otherwise this case is pretty fucking useless
             }
             else if (recordType == "6d")
             {
@@ -161,7 +163,7 @@ class ArtClient : MonoBehaviour
     }
 }
 
-struct ArtBodyData
+public struct ArtBodyData
 {
     public ArtBodyData(string type, int id, double qual, double px, double py, double pz, double rx, double ry, double rz)
     {
@@ -182,6 +184,6 @@ struct ArtBodyData
     public string type;
     public int id;
     public double qual;
-    public Vector3 pos; //either use floats here as well or do that inside kinectmanager...hmm
-    public Quaternion rot; //this sucks but there is no method for doubles
+    public Vector3 pos; 
+    public Quaternion rot;
 }
