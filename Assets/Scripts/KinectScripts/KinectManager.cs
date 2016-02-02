@@ -1605,13 +1605,15 @@ public class KinectManager : MonoBehaviour
 
                 //substitute kinect wrist with ART data, recalculate joint directions
                 //1. get primary user
-                //2. call calibrate on his body data
+                //2. call calibrate on his body data to transform positions from art to kinect
                 
                 //TODO: insert tracking handling if ART loses a body
                 var id = GetPrimaryUserID();
-                if (id != 0)
+                var index = GetUserIndexById(id);
+
+                if (id != 0 && bodyFrame.bodyData[index].bIsTracked != 0)
                 {
-                    var index = GetUserIndexById(id);
+                    
 
                     artCalibration.Calibrate(ref bodyFrame.bodyData[index], artBodies, ref kinectToWorld);
                     var wristParent = sensorData.sensorInterface.GetParentJoint(KinectInterop.JointType.WristRight);
@@ -1620,9 +1622,17 @@ public class KinectManager : MonoBehaviour
                     bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].direction =
                         bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position -
                         bodyFrame.bodyData[index].joint[(int)wristParent].position;
+
+                    bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].trackingState = KinectInterop.TrackingState.Tracked;
                 }
 
-				ProcessBodyFrameData(artBodies);
+				ProcessBodyFrameData();
+
+                if (index >= 0)
+                {
+                    var wristData = bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight];
+                    Debug.Log(string.Format("after ProcessBodyFrameData: kinectPos: {0}, worldPos: {1}", wristData.kinectPos, wristData.position));
+                }
 			}
 
 			if(useMultiSourceReader)
@@ -1924,7 +1934,7 @@ public class KinectManager : MonoBehaviour
 	}
 	
 	// Processes body frame data
-	private void ProcessBodyFrameData(ArtBodyData[] handData)
+	private void ProcessBodyFrameData()
 	{
 		List<Int64> addedUsers = new List<Int64>();
 		List<int> addedIndexes = new List<int>();
@@ -1997,24 +2007,7 @@ public class KinectManager : MonoBehaviour
 							}
 						}
 
-                        //we should write into wrist as bones[] in our avatar does not contain "hand" bones
-                        //var rightHand = bodyData.joint[(int)KinectInterop.JointType.WristRight];
-                        
-                        
-                        //rightHand.position = handData[0].pos;
-                        //rightHand.orientation = handData[0].rot;
-                        //Debug.Log(string.Format("ProcessBodyFrameData() set position from ART: {0}", rightHand.position));
-                        //rightHand.trackingState = KinectInterop.TrackingState.Tracked;
-                        //bodyData.joint[(int)KinectInterop.JointType.WristRight] = rightHand;
 					}
-
-                    //TODO: if it's the first user (because we always assume one for training)
-                    //      substitute the hand data with ART data instead of kinect and set the tracking
-                    //      state to "tracked" if we have meaningful values from ART
-                    //if (i == iClosestUserIndex)
-                    //{
-                        
-                    //}
 
 					if(bClosestUser)
 					{

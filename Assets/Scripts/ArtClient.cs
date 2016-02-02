@@ -54,7 +54,7 @@ class ArtClient : MonoBehaviour
             while (!terminate)
             {
                 int bytesRead = artSocket.ReceiveFrom(buffer, BufferSize, SocketFlags.None, ref trackingEndpoint);
-                Debug.Log(Encoding.ASCII.GetString(buffer));
+                //Debug.Log(Encoding.ASCII.GetString(buffer));
             }
 
             artSocket.Close();
