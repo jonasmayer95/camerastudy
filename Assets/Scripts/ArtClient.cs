@@ -18,9 +18,14 @@ class ArtClient : MonoBehaviour
     public const int BufferSize = 8192; //up this to theoretical UDP limit if required.
     private readonly string[] frameDelimiters = { "\r\n" };
     private readonly string[] bodyDelimiters = { " ", "]", "[" };
+
+    [HideInInspector]
     public byte[] buffer = new byte[BufferSize];
 
+    [HideInInspector]
     public volatile bool dataReceived = false;
+
+    [HideInInspector]
     public volatile bool terminate = false;
 
     private Socket artSocket;

@@ -7,6 +7,10 @@ public class ArtCalibration : MonoBehaviour
     public bool Calibrated { get; set; }
     private Matrix4x4 artToKinect = new Matrix4x4();
 
+    void Awake()
+    {
+        //do art to kinect calibration here
+    }
 
     public void Calibrate(ref KinectInterop.BodyData kinectData, ArtBodyData[] artData, ref Matrix4x4 kinectToWorld)
     {
