@@ -12,8 +12,6 @@ using UnityEngine;
 /// </summary>
 class ArtClient : MonoBehaviour
 {
-    //public ArtClientState State { get { return state; } }
-    //private ArtClientState state = new ArtClientState();
 
     public const int BufferSize = 8192; //up this to theoretical UDP limit if required.
     private readonly string[] frameDelimiters = { "\r\n" };
@@ -21,9 +19,6 @@ class ArtClient : MonoBehaviour
 
     [HideInInspector]
     public byte[] buffer = new byte[BufferSize];
-
-    [HideInInspector]
-    public volatile bool dataReceived = false;
 
     [HideInInspector]
     public volatile bool terminate = false;
@@ -34,7 +29,7 @@ class ArtClient : MonoBehaviour
 
     //this port doesn't seem to be important, but our local one certainly is, as the server sends to remote port 5000
     private EndPoint trackingEndpoint = new IPEndPoint(IPAddress.Parse("131.159.10.100"), 0);
-
+    
 
     void Awake()
     {
@@ -72,6 +67,18 @@ class ArtClient : MonoBehaviour
                 artSocket.Close();
                 Debug.Log("ArtClient: closed artSocket due to timeout");
             }
+        }
+    }
+
+    void Update()
+    {
+        var data = GetBodyData();
+
+        //we always want 6d poses, otherwise ignore the data
+        if (data[0].type == "6d")
+        {
+            this.transform.position = data[0].pos;
+            this.transform.rotation = data[0].rot;
         }
     }
 

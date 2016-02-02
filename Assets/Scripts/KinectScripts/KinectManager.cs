@@ -167,7 +167,9 @@ public class KinectManager : MonoBehaviour
     // ART client objects for receiving hand tracking data
     public GameObject artClientObject;
     private ArtClient artClient;
-    private ArtCalibration artCalibration = new ArtCalibration();
+
+    public GameObject artCalibrationObject;
+    private ArtCalibration artCalibration;
 
 	// returns the single KinectManager instance
     public static KinectManager Instance
@@ -1282,7 +1284,8 @@ public class KinectManager : MonoBehaviour
 				StartKinect();
 
                 //set up ART stuff
-                artClient = artClientObject.GetComponent<ArtClient>();
+                //artClient = artClientObject.GetComponent<ArtClient>();
+                //artCalibration = artCalibrationObject.GetComponent<ArtCalibration>();
 			}
 		} 
 		catch (Exception ex) 
@@ -1601,38 +1604,38 @@ public class KinectManager : MonoBehaviour
 				}
 
                 //get body data from ART (locks the recv buffer)
-                var artBodies = artClient.GetBodyData();
+                //var artBodies = artClient.GetBodyData();
 
                 //substitute kinect wrist with ART data, recalculate joint directions
                 //1. get primary user
                 //2. call calibrate on his body data to transform positions from art to kinect
                 
                 //TODO: insert tracking handling if ART loses a body
-                var id = GetPrimaryUserID();
-                var index = GetUserIndexById(id);
+                //var id = GetPrimaryUserID();
+                //var index = GetUserIndexById(id);
 
-                if (id != 0 && bodyFrame.bodyData[index].bIsTracked != 0)
-                {
-                    
+                //if (id != 0 && bodyFrame.bodyData[index].bIsTracked != 0)
+                //{
 
-                    artCalibration.Calibrate(ref bodyFrame.bodyData[index], artBodies, ref kinectToWorld);
-                    var wristParent = sensorData.sensorInterface.GetParentJoint(KinectInterop.JointType.WristRight);
 
-                    //3. recalculate directions as in kinectinterop PollBodyFrame
-                    bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].direction =
-                        bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position -
-                        bodyFrame.bodyData[index].joint[(int)wristParent].position;
+                //    artCalibration.Calibrate(ref bodyFrame.bodyData[index], artBodies, ref kinectToWorld);
+                //    var wristParent = sensorData.sensorInterface.GetParentJoint(KinectInterop.JointType.WristRight);
 
-                    bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].trackingState = KinectInterop.TrackingState.Tracked;
-                }
+                //    //3. recalculate directions as in kinectinterop PollBodyFrame
+                //    bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].direction =
+                //        bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position -
+                //        bodyFrame.bodyData[index].joint[(int)wristParent].position;
+
+                //    bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].trackingState = KinectInterop.TrackingState.Tracked;
+                //}
 
 				ProcessBodyFrameData();
 
-                if (index >= 0)
-                {
-                    var wristData = bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight];
-                    Debug.Log(string.Format("after ProcessBodyFrameData: kinectPos: {0}, worldPos: {1}", wristData.kinectPos, wristData.position));
-                }
+                //if (index >= 0)
+                //{
+                //    var wristData = bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight];
+                //    Debug.Log(string.Format("after ProcessBodyFrameData: kinectPos: {0}, worldPos: {1}", wristData.kinectPos, wristData.position));
+                //}
 			}
 
 			if(useMultiSourceReader)
