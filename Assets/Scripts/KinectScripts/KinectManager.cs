@@ -145,6 +145,9 @@ public class KinectManager : MonoBehaviour
 	
 	// Kinect to world matrix
 	private Matrix4x4 kinectToWorld = Matrix4x4.zero;
+
+    // Public accessor for ArtCalibration
+    public Matrix4x4 KinectToWorld { get { return kinectToWorld; } }
 	//private Matrix4x4 mOrient = Matrix4x4.zero;
 
 	// Calibration gesture data for each player
@@ -163,13 +166,6 @@ public class KinectManager : MonoBehaviour
 	//private BoneOrientationsFilter boneOrientationFilter = null;
 
     private bool characterScaled = false;
-
-    // ART client objects for receiving hand tracking data
-    public GameObject artClientObject;
-    private ArtClient artClient;
-
-    public GameObject artCalibrationObject;
-    private ArtCalibration artCalibration;
 
 	// returns the single KinectManager instance
     public static KinectManager Instance

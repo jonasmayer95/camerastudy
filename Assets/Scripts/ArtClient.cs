@@ -12,6 +12,8 @@ using UnityEngine;
 /// </summary>
 class ArtClient : MonoBehaviour
 {
+    public GameObject avatar;
+    private AvatarController controller;
 
     public const int BufferSize = 8192; //up this to theoretical UDP limit if required.
     private readonly string[] frameDelimiters = { "\r\n" };
@@ -45,6 +47,12 @@ class ArtClient : MonoBehaviour
             recvThread.Start();
             Debug.Log("ArtClient: started recvThread");
         }
+
+        
+        if (avatar != null)
+        {
+            controller = avatar.GetComponent<AvatarController>();
+        }
     }
 
     private void Run()
@@ -77,8 +85,23 @@ class ArtClient : MonoBehaviour
         //we always want 6d poses, otherwise ignore the data
         if (data[0].type == "6d")
         {
-            this.transform.position = data[0].pos;
-            this.transform.rotation = data[0].rot;
+            var pos = data[0].pos;
+            var rot = data[0].rot;
+
+            if (controller.mirroredMovement)
+            {
+                this.transform.localPosition = new Vector3(-pos.x, pos.y, -pos.z);
+                //TODO: correct rotation after flipping axes
+                this.transform.localRotation = rot;
+            }
+            else
+            {
+                this.transform.localPosition = pos;
+                this.transform.localRotation = rot;
+            }
+
+            //this.transform.localPosition = controller.Kinect2AvatarPos(pos, true);
+            //this.transform.localRotation = rot;
         }
     }
 

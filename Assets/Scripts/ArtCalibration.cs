@@ -8,7 +8,6 @@ using System.Globalization;
 //the hierarchy or it will screw up calibration.
 public class ArtCalibration : MonoBehaviour
 {
-    //public bool Calibrated { get; set; }
 
     //we expect those to be located inside cfg/
     public string art2KinectFileName;
@@ -16,15 +15,28 @@ public class ArtCalibration : MonoBehaviour
 
     private GameObject artTarget;
     private GameObject squareMarker;
+    private GameObject kinect;
 
-    private Matrix4x4 artToKinect = new Matrix4x4();
+    //private Matrix4x4 artToKinect = new Matrix4x4();
 
     void Awake()
     {
         //do art to kinect calibration here, i.e. read the calibration files and set up
         //stuff inside child gameobjects
+        kinect = transform.parent.gameObject;
         artTarget = transform.GetChild(0).gameObject;
         squareMarker = artTarget.transform.GetChild(0).gameObject;
+
+        //get kinectToWorld from KinectManager
+        var km = kinect.GetComponent<KinectManager>();
+        if (km != null)
+        {
+            //kinect.transform.position = km.KinectToWorld.MultiplyPoint3x4(kinect.transform.position);
+        }
+        else
+        {
+            Debug.Log("ArtCalibration: KinectManager not found on kinect GameObject, calibration will not work");
+        }
 
         Vector3 pos;
         Quaternion rot;
@@ -38,27 +50,27 @@ public class ArtCalibration : MonoBehaviour
         squareMarker.transform.localRotation = rot;
     }
 
-    public void Calibrate(ref KinectInterop.BodyData kinectData, ArtBodyData[] artData, ref Matrix4x4 kinectToWorld)
-    {
-        //record art marker position
-        Vector3 marker = artData[0].pos;
+    //public void Calibrate(ref KinectInterop.BodyData kinectData, ArtBodyData[] artData, ref Matrix4x4 kinectToWorld)
+    //{
+    //    //record art marker position
+    //    Vector3 marker = artData[0].pos;
 
-        //record kinect hand (wrist) position
-        Vector3 rightHand = kinectData.joint[(int)KinectInterop.JointType.WristRight].kinectPos;
+    //    //record kinect hand (wrist) position
+    //    Vector3 rightHand = kinectData.joint[(int)KinectInterop.JointType.WristRight].kinectPos;
 
-        //90° rotation around x should do it, look here: https://msdn.microsoft.com/en-us/library/dn785530.aspx
-        //and in the "room calibration" picture in dtrack
-        artToKinect.SetTRS(rightHand, Quaternion.AngleAxis(Mathf.PI / 2, Vector3.right), Vector3.one);
+    //    //90° rotation around x should do it, look here: https://msdn.microsoft.com/en-us/library/dn785530.aspx
+    //    //and in the "room calibration" picture in dtrack
+    //    artToKinect.SetTRS(rightHand, Quaternion.AngleAxis(Mathf.PI / 2, Vector3.right), Vector3.one);
 
-        //substitute kinect data with art
+    //    //substitute kinect data with art
 
-        //move a sphere around with that data for testing...but we still need kinect to world space transformation
-        var handPos = artToKinect.MultiplyPoint3x4(marker);
-        kinectData.joint[(int)KinectInterop.JointType.WristRight].kinectPos  = handPos;
-        kinectData.joint[(int)KinectInterop.JointType.WristRight].position = kinectToWorld.MultiplyPoint3x4(handPos);
+    //    //move a sphere around with that data for testing...but we still need kinect to world space transformation
+    //    var handPos = artToKinect.MultiplyPoint3x4(marker);
+    //    kinectData.joint[(int)KinectInterop.JointType.WristRight].kinectPos  = handPos;
+    //    kinectData.joint[(int)KinectInterop.JointType.WristRight].position = kinectToWorld.MultiplyPoint3x4(handPos);
 
-        Debug.Log(string.Format("kinectPos: {0}, transformed art pos: {1}", rightHand, handPos));
-    }
+    //    Debug.Log(string.Format("kinectPos: {0}, transformed art pos: {1}", rightHand, handPos));
+    //}
 
     /// <summary>
     /// Reads data from a calibration file and returns position and rotation data in the out parameters.

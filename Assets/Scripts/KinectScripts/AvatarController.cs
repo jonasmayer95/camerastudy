@@ -455,7 +455,7 @@ public class AvatarController : MonoBehaviour
 	}
 	
 	// Converts Kinect position to avatar skeleton position, depending on initial position, mirroring and move rate
-	protected Vector3 Kinect2AvatarPos(Vector3 jointPosition, bool bMoveVertically)
+	public Vector3 Kinect2AvatarPos(Vector3 jointPosition, bool bMoveVertically)
 	{
 		float xPos;
 
