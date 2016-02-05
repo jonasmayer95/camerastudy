@@ -88,645 +88,6 @@ NavMeshSettings:
     cellSize: .166666672
     manualCellSize: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &30069643
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 1883433373}
-    m_Modifications:
-    - target: {fileID: 400062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 400062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: -1.62920685e-07
-      objectReference: {fileID: 0}
-    - target: {fileID: 400062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_RootOrder
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 400000, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: .939999998
-      objectReference: {fileID: 0}
-    - target: {fileID: 100062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Name
-      value: RobotFigure_Kinect_CorrectionCamera
-      objectReference: {fileID: 0}
-    - target: {fileID: 100062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 100032, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100040, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100012, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100060, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100058, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100010, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100030, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100038, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100016, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100006, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100002, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100024, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100000, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100044, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100022, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100066, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100064, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100050, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100052, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100026, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100042, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100014, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100054, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100036, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100046, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100018, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100048, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100004, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100028, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100034, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100008, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100020, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100056, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 100062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Layer
-      value: 13
-      objectReference: {fileID: 0}
-    - target: {fileID: 13700000, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: 05c61c51d86f1dc4d9eb55bad1840550, type: 2}
-    - target: {fileID: 9500000, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_IsPrefabParent: 0
---- !u!4 &30069644 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400052, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069645 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400050, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069646 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400064, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069647 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069648 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400066, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069649 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400056, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069650 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400036, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069651 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400046, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069652 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400048, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069653 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400058, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069654 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400060, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069655 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400038, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069656 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400040, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069657 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400034, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069658 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400004, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069659 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400006, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069660 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400028, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069661 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400008, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069662 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400018, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069663 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400020, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069664 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400030, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069665 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400032, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069666 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400010, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069667 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400012, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069668 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400022, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069669 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400024, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069670 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400026, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069671 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400014, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069672 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400016, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069673 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400054, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069674 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400042, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!4 &30069675 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400044, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!1 &30069676 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 100036, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!1 &30069677 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 100046, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!1 &30069678 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 100018, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!1 &30069679 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 100048, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!1 &30069680 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 100004, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!1 &30069681 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 100028, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!1 &30069682 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 100034, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!1 &30069683 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 100008, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!1 &30069684 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 100020, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!1 &30069685 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 100056, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!1 &30069686 stripped
-GameObject:
-  m_PrefabParentObject: {fileID: 100062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
-  m_PrefabInternal: {fileID: 30069643}
---- !u!135 &30069687
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 30069676}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: .0500000007
-  m_Center: {x: 0, y: .314999998, z: 0}
---- !u!114 &30069688
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 30069686}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dde4f484407270944b5c04692dae8069, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerIndex: 0
-  mirroredMovement: 1
-  verticalMovement: 0
-  scaling: 0
-  moveRate: 1
-  smoothFactor: 5
-  offsetNode: {fileID: 0}
-  posRelativeToCamera: {fileID: 1059045179}
---- !u!135 &30069689
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 30069677}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: .0500000007
-  m_Center: {x: 0, y: .300000012, z: 0}
---- !u!135 &30069690
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 30069678}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: .0500000007
-  m_Center: {x: 0, y: .300000012, z: 0}
---- !u!135 &30069691
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 30069679}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: .0399999991
-  m_Center: {x: -.00499999989, y: .075000003, z: 0}
---- !u!54 &30069692
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 30069679}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: .0500000007
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!135 &30069693
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 30069680}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: .0500000007
-  m_Center: {x: 0, y: .200000003, z: 0}
---- !u!135 &30069694
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 30069681}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: .0500000007
-  m_Center: {x: 0, y: .165000007, z: 0}
---- !u!135 &30069695
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 30069682}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: .0500000007
-  m_Center: {x: 0, y: .0599999987, z: 0}
---- !u!135 &30069696
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 30069683}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: .0500000007
-  m_Center: {x: 0, y: .314999998, z: 0}
---- !u!135 &30069697
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 30069684}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: .0399999991
-  m_Center: {x: -.0149999997, y: .075000003, z: .0299999993}
---- !u!54 &30069698
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 30069684}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: .0500000007
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
---- !u!135 &30069699
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 30069685}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: .0500000007
-  m_Center: {x: 0, y: .165000007, z: 0}
---- !u!114 &30069700
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 30069686}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62c92737097ec3d41b08bad3f75dcc6c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  feedbackCamera: {fileID: 1059045179}
-  bones:
-  - {fileID: 30069646}
-  - {fileID: 30069668}
-  - {fileID: 30069669}
-  - {fileID: 30069670}
-  - {fileID: 30069671}
-  - {fileID: 30069672}
-  - {fileID: 30069645}
-  - {fileID: 30069644}
-  - {fileID: 30069673}
-  - {fileID: 30069674}
-  - {fileID: 30069675}
-  - {fileID: 30069648}
-  - {fileID: 30069660}
-  - {fileID: 30069661}
-  - {fileID: 30069662}
-  - {fileID: 30069663}
-  - {fileID: 30069666}
-  - {fileID: 30069667}
-  - {fileID: 30069664}
-  - {fileID: 30069665}
-  - {fileID: 30069657}
-  - {fileID: 30069658}
-  - {fileID: 30069659}
-  - {fileID: 30069649}
-  - {fileID: 30069650}
-  - {fileID: 30069651}
-  - {fileID: 30069652}
-  - {fileID: 30069655}
-  - {fileID: 30069656}
-  - {fileID: 30069653}
-  - {fileID: 30069654}
---- !u!114 &30069701
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 30069686}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5687444bb9b5524dbc9230d18dbb3c2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  bones:
-  - {fileID: 30069646}
-  - {fileID: 30069668}
-  - {fileID: 30069669}
-  - {fileID: 30069670}
-  - {fileID: 30069671}
-  - {fileID: 30069672}
-  - {fileID: 30069645}
-  - {fileID: 30069644}
-  - {fileID: 30069673}
-  - {fileID: 30069674}
-  - {fileID: 30069675}
-  - {fileID: 30069648}
-  - {fileID: 30069660}
-  - {fileID: 30069661}
-  - {fileID: 30069662}
-  - {fileID: 30069663}
-  - {fileID: 30069666}
-  - {fileID: 30069667}
-  - {fileID: 30069664}
-  - {fileID: 30069665}
-  - {fileID: 30069657}
-  - {fileID: 30069658}
-  - {fileID: 30069659}
-  - {fileID: 30069649}
-  - {fileID: 30069650}
-  - {fileID: 30069651}
-  - {fileID: 30069652}
-  - {fileID: 30069655}
-  - {fileID: 30069656}
-  - {fileID: 30069653}
-  - {fileID: 30069654}
---- !u!114 &30069702
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 30069686}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c6a8ed3620fff084eb7d63e2e5dd3619, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  targetPoint: {fileID: 1590154824}
-  ikActive: 0
 --- !u!1 &35846270
 GameObject:
   m_ObjectHideFlags: 0
@@ -1349,8 +710,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8e48e52eaf5afc84a9a73c0947926feb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hand: {fileID: 30069663}
-  relativeBone: {fileID: 30069661}
+  hand: {fileID: 0}
+  relativeBone: {fileID: 0}
   selectionTime: 2
   eventSystem: {fileID: 913078694}
   slider: {fileID: 1943406625}
@@ -1633,7 +994,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &290775170
 Transform:
   m_ObjectHideFlags: 0
@@ -1645,7 +1006,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
 --- !u!1 &316680830
 GameObject:
   m_ObjectHideFlags: 0
@@ -3415,19 +2776,19 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1053274179}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: .559000015, y: -.180999994, z: .246000007}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1937027825}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
 --- !u!114 &1053274181
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1053274179}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6b531f336dfee5f438f94ed501caefc7, type: 3}
   m_Name: 
@@ -3453,7 +2814,7 @@ MonoBehaviour:
   useBoneOrientationConstraints: 0
   allowedHandRotations: 1
   avatarControllers:
-  - {fileID: 30069688}
+  - {fileID: 0}
   playerCalibrationPose: 0
   playerCommonGestures: 
   minTimeBetweenGestures: .699999988
@@ -3542,11 +2903,11 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1059045175}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.34300005, z: -1}
+  m_LocalPosition: {x: 0, y: 1.00999999, z: -1.82000005}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
 --- !u!114 &1059045184
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3946,7 +3307,7 @@ Transform:
   - {fileID: 913078695}
   - {fileID: 685273789}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
 --- !u!114 &1148159913
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4044,6 +3405,23 @@ MonoBehaviour:
     type: 2}
   m_PrefabInternal: {fileID: 700440350}
   m_Script: {fileID: -1184210157, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
+--- !u!1 &1346623579 stripped
+GameObject:
+  m_PrefabParentObject: {fileID: 100062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
+  m_PrefabInternal: {fileID: 2025647620}
+--- !u!114 &1346623581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1346623579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6a8ed3620fff084eb7d63e2e5dd3619, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetPoint: {fileID: 1860773891}
+  ikActive: 0
 --- !u!1 &1366202983
 GameObject:
   m_ObjectHideFlags: 0
@@ -4271,7 +3649,7 @@ Transform:
   m_Children:
   - {fileID: 1794712469}
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
 --- !u!1 &1590154823
 GameObject:
   m_ObjectHideFlags: 0
@@ -4298,7 +3676,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
 --- !u!1 &1602659022
 GameObject:
   m_ObjectHideFlags: 0
@@ -4315,7 +3693,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1602659023
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4330,11 +3708,11 @@ MonoBehaviour:
   camDistance: 1.5
   cameraFeedbackPrefab: {fileID: 176790, guid: 981efc6fb6d15d54b9b997d615e17ec2, type: 2}
   targetSpherePrefab: {fileID: 116370, guid: 454da40768f4b6947845b7871f916741, type: 2}
-  leftShoulder: {fileID: 30069661}
-  rightShoulder: {fileID: 30069650}
-  hip: {fileID: 30069646}
-  leftHand: {fileID: 30069663}
-  rightHand: {fileID: 30069652}
+  leftShoulder: {fileID: 0}
+  rightShoulder: {fileID: 0}
+  hip: {fileID: 0}
+  leftHand: {fileID: 0}
+  rightHand: {fileID: 0}
   startSound: {fileID: 8300000, guid: 559b669224653dd4fbe06638ec6439f2, type: 3}
   endSound: {fileID: 8300000, guid: d082f52b92908d34f85dc8e951ee1b4b, type: 3}
   cameraMotion: 0
@@ -4353,7 +3731,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
 --- !u!82 &1602659025
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4518,7 +3896,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   filePath: 
   fileName: kinect
-  avatar: {fileID: 30069686}
+  avatar: {fileID: 0}
 --- !u!4 &1713408142
 Transform:
   m_ObjectHideFlags: 0
@@ -4530,7 +3908,81 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
+--- !u!1 &1763525205
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1763525206}
+  - 33: {fileID: 1763525209}
+  - 65: {fileID: 1763525208}
+  - 23: {fileID: 1763525207}
+  m_Layer: 0
+  m_Name: Cube
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &1763525206
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1763525205}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: -1.62920685e-07}
+  m_LocalPosition: {x: -3.38843989, y: .236283302, z: .516796589}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 2097983490}
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+--- !u!23 &1763525207
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1763525205}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_Materials:
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 1
+  m_ReflectionProbeUsage: 1
+  m_ProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 1
+  m_ImportantGI: 0
+  m_AutoUVMaxDistance: .5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!65 &1763525208
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1763525205}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!33 &1763525209
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1763525205}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &1789876343
 GameObject:
   m_ObjectHideFlags: 0
@@ -4955,7 +4407,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6347b0b088d54b9488a8a7333712e64d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  avatar: {fileID: 30069686}
+  avatar: {fileID: 0}
   buffer: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
   terminate: 0
 --- !u!1 &1883433372
@@ -4982,10 +4434,9 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 30069647}
+  m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
 --- !u!1 &1937027824
 GameObject:
   m_ObjectHideFlags: 0
@@ -5089,6 +4540,79 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1943406624}
+--- !u!1 &1969706894
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1969706895}
+  - 33: {fileID: 1969706898}
+  - 65: {fileID: 1969706897}
+  - 23: {fileID: 1969706896}
+  m_Layer: 0
+  m_Name: Cube
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1969706895
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1969706894}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2097983490}
+  m_RootOrder: 0
+--- !u!23 &1969706896
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1969706894}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_Materials:
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 1
+  m_ReflectionProbeUsage: 1
+  m_ProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 1
+  m_ImportantGI: 0
+  m_AutoUVMaxDistance: .5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!65 &1969706897
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1969706894}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!33 &1969706898
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1969706894}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &2000153559
 GameObject:
   m_ObjectHideFlags: 0
@@ -5151,6 +4675,56 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2000153559}
+--- !u!1001 &2025647620
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 400062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 400062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 400062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -1.62920685e-07
+      objectReference: {fileID: 0}
+    - target: {fileID: 400062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9500000, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: c924f4df51ebe9d48819ba7c384c7a91, type: 2}
+    - target: {fileID: 9500000, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_ParentPrefab: {fileID: 100100000, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
+  m_IsPrefabParent: 0
 --- !u!1 &2065797845
 GameObject:
   m_ObjectHideFlags: 0
@@ -5292,6 +4866,80 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2073046620}
+--- !u!1 &2097983486
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 2097983490}
+  - 33: {fileID: 2097983489}
+  - 135: {fileID: 2097983488}
+  - 23: {fileID: 2097983487}
+  m_Layer: 0
+  m_Name: Sphere
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!23 &2097983487
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2097983486}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_Materials:
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  m_SubsetIndices: 
+  m_StaticBatchRoot: {fileID: 0}
+  m_UseLightProbes: 1
+  m_ReflectionProbeUsage: 1
+  m_ProbeAnchor: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 1
+  m_ImportantGI: 0
+  m_AutoUVMaxDistance: .5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingOrder: 0
+--- !u!135 &2097983488
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2097983486}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: .5
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!33 &2097983489
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2097983486}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &2097983490
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2097983486}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 1, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 1969706895}
+  m_Father: {fileID: 1763525206}
+  m_RootOrder: 0
 --- !u!1 &2122460125
 GameObject:
   m_ObjectHideFlags: 0

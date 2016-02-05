@@ -141,6 +141,10 @@ public class AvatarController : MonoBehaviour
 		// move the avatar to its Kinect position
 		MoveAvatar(UserID);
 
+        //TODO: remove this if everything is fixed
+        var wrist = kinectManager.GetUserBodyData(UserID).joint[(int)KinectInterop.JointType.WristRight];
+        Debug.Log(string.Format("wrist kinectPos: {0}, pos: {0}", wrist.kinectPos, wrist.position));
+
 		for (var boneIndex = 0; boneIndex < bones.Length; boneIndex++)
 		{
 			if (!bones[boneIndex]) 
@@ -437,7 +441,7 @@ public class AvatarController : MonoBehaviour
 	}
 	
 	// Converts kinect joint rotation to avatar joint rotation, depending on joint initial rotation and offset rotation
-	protected Quaternion Kinect2AvatarRot(Quaternion jointRotation, int boneIndex)
+	public Quaternion Kinect2AvatarRot(Quaternion jointRotation, int boneIndex)
 	{
 		Quaternion newRotation = jointRotation * initialRotations[boneIndex];
 		//newRotation = initialRotation * newRotation;

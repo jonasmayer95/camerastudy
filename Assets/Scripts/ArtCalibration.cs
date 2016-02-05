@@ -13,18 +13,15 @@ public class ArtCalibration : MonoBehaviour
     public string art2KinectFileName;
     public string artTarget2MarkerFileName;
 
-    private GameObject artTarget;
     private GameObject squareMarker;
     private GameObject kinect;
-
-    //private Matrix4x4 artToKinect = new Matrix4x4();
 
     void Awake()
     {
         //do art to kinect calibration here, i.e. read the calibration files and set up
         //stuff inside child gameobjects
         kinect = transform.parent.gameObject;
-        artTarget = transform.GetChild(0).gameObject;
+        var artTarget = transform.GetChild(0).gameObject;
         squareMarker = artTarget.transform.GetChild(0).gameObject;
 
         //get kinectToWorld from KinectManager
@@ -50,28 +47,6 @@ public class ArtCalibration : MonoBehaviour
         squareMarker.transform.localRotation = rot;
     }
 
-    //public void Calibrate(ref KinectInterop.BodyData kinectData, ArtBodyData[] artData, ref Matrix4x4 kinectToWorld)
-    //{
-    //    //record art marker position
-    //    Vector3 marker = artData[0].pos;
-
-    //    //record kinect hand (wrist) position
-    //    Vector3 rightHand = kinectData.joint[(int)KinectInterop.JointType.WristRight].kinectPos;
-
-    //    //90° rotation around x should do it, look here: https://msdn.microsoft.com/en-us/library/dn785530.aspx
-    //    //and in the "room calibration" picture in dtrack
-    //    artToKinect.SetTRS(rightHand, Quaternion.AngleAxis(Mathf.PI / 2, Vector3.right), Vector3.one);
-
-    //    //substitute kinect data with art
-
-    //    //move a sphere around with that data for testing...but we still need kinect to world space transformation
-    //    var handPos = artToKinect.MultiplyPoint3x4(marker);
-    //    kinectData.joint[(int)KinectInterop.JointType.WristRight].kinectPos  = handPos;
-    //    kinectData.joint[(int)KinectInterop.JointType.WristRight].position = kinectToWorld.MultiplyPoint3x4(handPos);
-
-    //    Debug.Log(string.Format("kinectPos: {0}, transformed art pos: {1}", rightHand, handPos));
-    //}
-
     /// <summary>
     /// Reads data from a calibration file and returns position and rotation data in the out parameters.
     /// </summary>
@@ -94,8 +69,8 @@ public class ArtCalibration : MonoBehaviour
         rotation = new Quaternion(float.Parse(strList[0 + 10], nfi), float.Parse(strList[1 + 10], nfi), float.Parse(strList[2 + 10], nfi), float.Parse(strList[3 + 10], nfi));
 
         //well...might not be the prettiest way to do that.
-        ArtToKinectPosition(position, ref position);
-        ArtToKinectRotation(rotation, ref rotation);
+        ArtCalibration.ArtToKinectPosition(position, ref position);
+        ArtCalibration.ArtToKinectRotation(rotation, ref rotation);
     }
 
     

@@ -14,6 +14,8 @@ class ArtClient : MonoBehaviour
 {
     public GameObject avatar;
     private AvatarController controller;
+    private Transform hand;
+    private Matrix4x4 fix = new Matrix4x4();
 
     public const int BufferSize = 8192; //up this to theoretical UDP limit if required.
     private readonly string[] frameDelimiters = { "\r\n" };
@@ -53,6 +55,9 @@ class ArtClient : MonoBehaviour
         {
             controller = avatar.GetComponent<AvatarController>();
         }
+
+        hand = this.transform.GetChild(0);
+        fix = Matrix4x4.TRS(Vector3.zero, Quaternion.AngleAxis(Mathf.PI, Vector3.up), Vector3.one);
     }
 
     private void Run()
@@ -88,20 +93,21 @@ class ArtClient : MonoBehaviour
             var pos = data[0].pos;
             var rot = data[0].rot;
 
-            if (controller.mirroredMovement)
-            {
-                this.transform.localPosition = new Vector3(-pos.x, pos.y, -pos.z);
-                //TODO: correct rotation after flipping axes
-                this.transform.localRotation = rot;
-            }
-            else
-            {
-                this.transform.localPosition = pos;
-                this.transform.localRotation = rot;
-            }
+            //if (controller.mirroredMovement)
+            //{
+            //    this.transform.localPosition = new Vector3(-pos.x, pos.y, -pos.z);
+            //    //TODO: correct rotation after flipping axes
+            //    this.transform.localRotation = rot;
+            //}
+            //else
+            //{
+            //    this.transform.localPosition = pos;
+            //    this.transform.localRotation = rot;
+            //}
 
-            //this.transform.localPosition = controller.Kinect2AvatarPos(pos, true);
-            //this.transform.localRotation = rot;
+            this.transform.localPosition = new Vector3(-pos.x, pos.y, -pos.z );
+            //TODO: 180° around y should do instead of fucking with position AND rotation
+            this.transform.localRotation = rot;
         }
     }
 
