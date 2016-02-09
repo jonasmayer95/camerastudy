@@ -106,8 +106,10 @@ class ArtClient : MonoBehaviour
             //}
 
             this.transform.localPosition = new Vector3(-pos.x, pos.y, -pos.z );
+            Debug.Log(string.Format("ART wrist/marker position: {0}", pos));
             //TODO: 180° around y should do instead of fucking with position AND rotation
-            this.transform.localRotation = rot;
+            
+            this.transform.localRotation = Quaternion.Inverse(rot);
         }
     }
 
@@ -218,7 +220,8 @@ public struct ArtBodyData
         double z = pz / 1000.0;
 
         pos = new Vector3((float)x, (float)y, (float)z);
-        rot = Quaternion.Euler((float)rx, (float)ry, (float)rz);
+        rot = Quaternion.Euler(-(float)rx, (float)ry, -(float)rz);
+
     }
 
 

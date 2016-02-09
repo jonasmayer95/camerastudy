@@ -1549,12 +1549,6 @@ public class KinectManager : MonoBehaviour
 	
 	void Update() 
 	{
-        //TODO: receive data from ART here, then integrate it into the body frame
-        //TODO: implement async socket IO without allocating a new state object each frame.
-        //I could pass a volatile bool here to set in the callback when the datagram has been received
-        //and check for that right before creating body frame data. If it's not received, just discard it and wait for another update.
-        //I wonder if that'd have sync problems, though.
-        
 
 		if(kinectInitialized)
 		{
@@ -1592,46 +1586,15 @@ public class KinectManager : MonoBehaviour
 			if(KinectInterop.PollBodyFrame(sensorData, ref bodyFrame, ref kinectToWorld))
 			{
 				//lastFrameTime = bodyFrame.liRelativeTime;
-
+                //Debug.Log(kinectToWorld.ToString());
 				// filter the tracked joint positions
 				if(smoothing != Smoothing.None)
 				{
 					jointPositionFilter.UpdateFilter(ref bodyFrame);
 				}
 
-                //get body data from ART (locks the recv buffer)
-                //var artBodies = artClient.GetBodyData();
-
-                //substitute kinect wrist with ART data, recalculate joint directions
-                //1. get primary user
-                //2. call calibrate on his body data to transform positions from art to kinect
-                
-                //TODO: insert tracking handling if ART loses a body
-                //var id = GetPrimaryUserID();
-                //var index = GetUserIndexById(id);
-
-                //if (id != 0 && bodyFrame.bodyData[index].bIsTracked != 0)
-                //{
-
-
-                //    artCalibration.Calibrate(ref bodyFrame.bodyData[index], artBodies, ref kinectToWorld);
-                //    var wristParent = sensorData.sensorInterface.GetParentJoint(KinectInterop.JointType.WristRight);
-
-                //    //3. recalculate directions as in kinectinterop PollBodyFrame
-                //    bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].direction =
-                //        bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position -
-                //        bodyFrame.bodyData[index].joint[(int)wristParent].position;
-
-                //    bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].trackingState = KinectInterop.TrackingState.Tracked;
-                //}
 
 				ProcessBodyFrameData();
-
-                //if (index >= 0)
-                //{
-                //    var wristData = bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight];
-                //    Debug.Log(string.Format("after ProcessBodyFrameData: kinectPos: {0}, worldPos: {1}", wristData.kinectPos, wristData.position));
-                //}
 			}
 
 			if(useMultiSourceReader)

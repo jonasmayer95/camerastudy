@@ -12,23 +12,25 @@ public class ArtCalibration : MonoBehaviour
     //we expect those to be located inside cfg/
     public string art2KinectFileName;
     public string artTarget2MarkerFileName;
+    public string kinectDepthToRgb;
 
-    private GameObject squareMarker;
-    private GameObject kinect;
+    public GameObject squareMarker;
+    public GameObject kinectRGB;
+    public GameObject kinectIR;
 
     void Awake()
     {
         //do art to kinect calibration here, i.e. read the calibration files and set up
         //stuff inside child gameobjects
-        kinect = transform.parent.gameObject;
-        var artTarget = transform.GetChild(0).gameObject;
-        squareMarker = artTarget.transform.GetChild(0).gameObject;
+        //kinectRGB = transform.parent.gameObject;
+        //var artTarget = transform.GetChild(0).gameObject;
+        //squareMarker = artTarget.transform.GetChild(0).gameObject;
 
         //get kinectToWorld from KinectManager
-        var km = kinect.GetComponent<KinectManager>();
+        var km = kinectRGB.GetComponent<KinectManager>();
         if (km != null)
         {
-            //kinect.transform.position = km.KinectToWorld.MultiplyPoint3x4(kinect.transform.position);
+            //kinectRGB.transform.position = km.KinectToWorld.MultiplyPoint3x4(kinectRGB.transform.position);
         }
         else
         {
@@ -37,6 +39,10 @@ public class ArtCalibration : MonoBehaviour
 
         Vector3 pos;
         Quaternion rot;
+
+        ArtCalibration.ReadCalibrationFile(out pos, out rot, kinectDepthToRgb);
+        kinectIR.transform.localPosition = pos;
+        kinectIR.transform.localRotation = rot;
 
         ArtCalibration.ReadCalibrationFile(out pos, out rot, art2KinectFileName);
         this.transform.localPosition = pos;
