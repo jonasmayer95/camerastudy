@@ -306,8 +306,6 @@ public class AvatarController : MonoBehaviour
 			yOffset = trans.y;  // trans.y * moveRate;
 			zOffset = !mirroredMovement ? -trans.z : trans.z;  // -trans.z * moveRate;
 
-            Debug.Log(string.Format("avatar offset: ({0}, {1}, {2})", xOffset, yOffset, zOffset));
-
 			if(posRelativeToCamera)
 			{
 				Vector3 cameraPos = posRelativeToCamera.transform.position;

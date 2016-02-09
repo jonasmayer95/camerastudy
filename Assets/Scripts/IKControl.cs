@@ -24,15 +24,15 @@ public class IKControl : MonoBehaviour
             if (targetPoint != null)
             {
                 anim.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1);
-                anim.SetIKRotationWeight(AvatarIKGoal.LeftHand, 1);
+                //anim.SetIKRotationWeight(AvatarIKGoal.LeftHand, 1);
                 anim.SetIKPosition(AvatarIKGoal.LeftHand, targetPoint.position);
-                anim.SetIKRotation(AvatarIKGoal.LeftHand, targetPoint.rotation);
+                //anim.SetIKRotation(AvatarIKGoal.LeftHand, targetPoint.rotation);
             }
         }
         else
         {
             anim.SetIKPositionWeight(AvatarIKGoal.LeftHand, 0);
-            anim.SetIKRotationWeight(AvatarIKGoal.LeftHand, 0);
+            //anim.SetIKRotationWeight(AvatarIKGoal.LeftHand, 0);
         }
     }
 }
