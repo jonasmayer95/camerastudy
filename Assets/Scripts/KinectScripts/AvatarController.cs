@@ -143,7 +143,7 @@ public class AvatarController : MonoBehaviour
 
         //TODO: remove this if everything is fixed
         var wrist = kinectManager.GetUserBodyData(UserID).joint[(int)KinectInterop.JointType.WristRight];
-        Debug.Log(string.Format("wrist kinectPos: {0}, pos: {0}", wrist.kinectPos, wrist.position));
+        //Debug.Log(string.Format("wrist kinectPos: {0}, pos: {0}", wrist.kinectPos, wrist.position));
 
 		for (var boneIndex = 0; boneIndex < bones.Length; boneIndex++)
 		{
@@ -305,6 +305,8 @@ public class AvatarController : MonoBehaviour
 			xOffset = trans.x;  // !mirroredMovement ? trans.x * moveRate : -trans.x * moveRate;
 			yOffset = trans.y;  // trans.y * moveRate;
 			zOffset = !mirroredMovement ? -trans.z : trans.z;  // -trans.z * moveRate;
+
+            Debug.Log(string.Format("avatar offset: ({0}, {1}, {2})", xOffset, yOffset, zOffset));
 
 			if(posRelativeToCamera)
 			{
