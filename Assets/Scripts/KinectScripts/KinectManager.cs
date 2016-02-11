@@ -103,6 +103,8 @@ public class KinectManager : MonoBehaviour
 
     public GameObject TestObject;
 
+    // Object that corresponds to the square marker on our target
+    public GameObject handMarker;
 	
 	// Bool to keep track of whether Kinect has been initialized
 	private bool kinectInitialized = false; 
@@ -1281,10 +1283,6 @@ public class KinectManager : MonoBehaviour
 			{
 				// start the sensor
 				StartKinect();
-
-                //set up ART stuff
-                //artClient = artClientObject.GetComponent<ArtClient>();
-                //artCalibration = artCalibrationObject.GetComponent<ArtCalibration>();
 			}
 		} 
 		catch (Exception ex) 
@@ -1589,7 +1587,7 @@ public class KinectManager : MonoBehaviour
 			if(KinectInterop.PollBodyFrame(sensorData, ref bodyFrame, ref kinectToWorld))
 			{
 				//lastFrameTime = bodyFrame.liRelativeTime;
-                //Debug.Log(kinectToWorld.ToString());
+
 				// filter the tracked joint positions
 				if(smoothing != Smoothing.None)
 				{
@@ -1597,6 +1595,7 @@ public class KinectManager : MonoBehaviour
 				}
 
 
+                //TODO: remove this when debugging is done
                 if (GetPrimaryUserID() != 0)
                 {
                     int index = GetUserIndexById(GetPrimaryUserID());
@@ -2276,15 +2275,9 @@ public class KinectManager : MonoBehaviour
 //				}
 //////// 		turnaround mode end
 
-                //artCalibration.Calibrate(ref bodyData, handData);
 
 				// calculate world orientations of the body joints
-				CalculateJointOrients(ref bodyData);
-
-                //override hands with raw art data here, TODO: mirror properly
-                //bodyData.joint[(int)KinectInterop.JointType.WristRight].normalRotation = handData[0].rot;
-                //bodyData.joint[(int)KinectInterop.JointType.WristRight].mirroredRotation = handData[0].rot;
-                
+				CalculateJointOrients(ref bodyData); 
 
                 if(!characterScaled)
                 {
