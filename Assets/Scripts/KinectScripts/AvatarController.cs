@@ -54,6 +54,9 @@ public class AvatarController : MonoBehaviour
 	protected Vector3 offsetNodePos;
 	protected Quaternion offsetNodeRot;
 	protected Vector3 bodyRootPosition;
+
+    // Last frame's rotations for overriding mecanim with smoothing
+    private Quaternion[] previousRotation;
 	
 	// Calibration Offset Variables for Character Position.
 	protected bool offsetCalibrated = false;
@@ -100,9 +103,6 @@ public class AvatarController : MonoBehaviour
 		}
 	}
 
-    private Animator anim;
-    public Transform target;
-
 	public void Awake()
     {	
 		// check for double start
@@ -126,8 +126,6 @@ public class AvatarController : MonoBehaviour
 		// if parent transform uses physics
 		isRigidBody = gameObject.GetComponent<Rigidbody>();
         bonemap = gameObject.GetComponent<BoneMap>();
-
-        anim = gameObject.GetComponent<Animator>();
 	}
 	
 	// Update the avatar each frame.
@@ -173,17 +171,6 @@ public class AvatarController : MonoBehaviour
 			}
 		}
 	}
-
-    //void OnAnimatorIK()
-    //{
-    //    if (target != null)
-    //    {
-    //        anim.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1);
-    //        //anim.SetIKRotationWeight(AvatarIKGoal.LeftHand, 1);
-    //        anim.SetIKPosition(AvatarIKGoal.LeftHand, target.position);
-    //        //anim.SetIKRotation(AvatarIKGoal.LeftHand, targetPoint.rotation);
-    //    }
-    //}
 	
 	// Set bones to their initial positions and rotations.
 	public void ResetToInitialPosition()
