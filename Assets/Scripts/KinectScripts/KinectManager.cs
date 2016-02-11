@@ -100,6 +100,9 @@ public class KinectManager : MonoBehaviour
 	// GUI Text to show gesture debug message.
 	public GUIText gesturesDebugText;
 
+
+    public GameObject TestObject;
+
 	
 	// Bool to keep track of whether Kinect has been initialized
 	private bool kinectInitialized = false; 
@@ -1586,13 +1589,20 @@ public class KinectManager : MonoBehaviour
 			if(KinectInterop.PollBodyFrame(sensorData, ref bodyFrame, ref kinectToWorld))
 			{
 				//lastFrameTime = bodyFrame.liRelativeTime;
-                Debug.Log(kinectToWorld.ToString());
+                //Debug.Log(kinectToWorld.ToString());
 				// filter the tracked joint positions
 				if(smoothing != Smoothing.None)
 				{
 					jointPositionFilter.UpdateFilter(ref bodyFrame);
 				}
 
+
+                if (GetPrimaryUserID() != 0)
+                {
+                    int index = GetUserIndexById(GetPrimaryUserID());
+                    TestObject.transform.position = bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].kinectPos;
+
+                }
 
 				ProcessBodyFrameData();
 			}
