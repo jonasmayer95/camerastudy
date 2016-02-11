@@ -17,7 +17,7 @@ public class IKControl : MonoBehaviour
     }
 
 
-    void OnAnimatorIK()
+    public void OnAnimatorIK()
     {
         if (ikActive)
         {

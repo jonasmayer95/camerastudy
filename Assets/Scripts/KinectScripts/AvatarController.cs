@@ -100,6 +100,8 @@ public class AvatarController : MonoBehaviour
 		}
 	}
 
+    private Animator anim;
+    public Transform target;
 
 	public void Awake()
     {	
@@ -124,6 +126,8 @@ public class AvatarController : MonoBehaviour
 		// if parent transform uses physics
 		isRigidBody = gameObject.GetComponent<Rigidbody>();
         bonemap = gameObject.GetComponent<BoneMap>();
+
+        anim = gameObject.GetComponent<Animator>();
 	}
 	
 	// Update the avatar each frame.
@@ -143,7 +147,7 @@ public class AvatarController : MonoBehaviour
 
         //TODO: remove this if everything is fixed
         var wrist = kinectManager.GetUserBodyData(UserID).joint[(int)KinectInterop.JointType.WristRight];
-        Debug.Log(string.Format("wrist kinectPos: {0}, pos: {0}", wrist.kinectPos, wrist.position));
+        Debug.Log(string.Format("wrist kinectPos: {0}, world pos: {1}", wrist.kinectPos, wrist.position));
 
 		for (var boneIndex = 0; boneIndex < bones.Length; boneIndex++)
 		{
@@ -168,8 +172,18 @@ public class AvatarController : MonoBehaviour
 				}
 			}
 		}
-
 	}
+
+    //void OnAnimatorIK()
+    //{
+    //    if (target != null)
+    //    {
+    //        anim.SetIKPositionWeight(AvatarIKGoal.LeftHand, 1);
+    //        //anim.SetIKRotationWeight(AvatarIKGoal.LeftHand, 1);
+    //        anim.SetIKPosition(AvatarIKGoal.LeftHand, target.position);
+    //        //anim.SetIKRotation(AvatarIKGoal.LeftHand, targetPoint.rotation);
+    //    }
+    //}
 	
 	// Set bones to their initial positions and rotations.
 	public void ResetToInitialPosition()

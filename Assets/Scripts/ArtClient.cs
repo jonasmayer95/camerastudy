@@ -12,11 +12,6 @@ using UnityEngine;
 /// </summary>
 class ArtClient : MonoBehaviour
 {
-    public GameObject avatar;
-    private AvatarController controller;
-    private Transform hand;
-    private Matrix4x4 fix = new Matrix4x4();
-
     public const int BufferSize = 8192; //up this to theoretical UDP limit if required.
     private readonly string[] frameDelimiters = { "\r\n" };
     private readonly string[] bodyDelimiters = { " ", "]", "[" };
@@ -49,15 +44,6 @@ class ArtClient : MonoBehaviour
             recvThread.Start();
             Debug.Log("ArtClient: started recvThread");
         }
-
-        
-        if (avatar != null)
-        {
-            controller = avatar.GetComponent<AvatarController>();
-        }
-
-        hand = this.transform.GetChild(0);
-        fix = Matrix4x4.TRS(Vector3.zero, Quaternion.AngleAxis(Mathf.PI, Vector3.up), Vector3.one);
     }
 
     private void Run()
@@ -93,23 +79,10 @@ class ArtClient : MonoBehaviour
             var pos = data[0].pos;
             var rot = data[0].rot;
 
-            //if (controller.mirroredMovement)
-            //{
-            //    this.transform.localPosition = new Vector3(-pos.x, pos.y, -pos.z);
-            //    //TODO: correct rotation after flipping axes
-            //    this.transform.localRotation = rot;
-            //}
-            //else
-            //{
-            //    this.transform.localPosition = pos;
-            //    this.transform.localRotation = rot;
-            //}
-
-            this.transform.localPosition = new Vector3(-pos.x, pos.y, -pos.z );
-            Debug.Log(string.Format("ART wrist/marker position: {0}", pos));
-            //TODO: 180° around y should do instead of fucking with position AND rotation
+            this.transform.localPosition = new Vector3(-pos.x, pos.y, pos.z );
+            Debug.Log(string.Format("ART wrist/marker kinect pos: {0}, world pos: {1}", this.transform.localPosition, this.transform.position));
             
-            this.transform.localRotation = Quaternion.Inverse(rot);
+            this.transform.localRotation = rot;
         }
     }
 
@@ -219,7 +192,7 @@ public struct ArtBodyData
         double y = py / 1000.0;
         double z = pz / 1000.0;
 
-        pos = new Vector3((float)x, (float)y, (float)z);
+        pos = new Vector3((float)x, (float)y, -(float)z);
         rot = Quaternion.Euler(-(float)rx, (float)ry, -(float)rz);
 
     }

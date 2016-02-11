@@ -1586,7 +1586,7 @@ public class KinectManager : MonoBehaviour
 			if(KinectInterop.PollBodyFrame(sensorData, ref bodyFrame, ref kinectToWorld))
 			{
 				//lastFrameTime = bodyFrame.liRelativeTime;
-                //Debug.Log(kinectToWorld.ToString());
+                Debug.Log(kinectToWorld.ToString());
 				// filter the tracked joint positions
 				if(smoothing != Smoothing.None)
 				{
