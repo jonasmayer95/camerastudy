@@ -1605,16 +1605,25 @@ public class KinectManager : MonoBehaviour
 
                     //overwrite wrist data with art gameobject data
                     var markerKinectPos = handMarker.transform.position;
-                    Debug.Log(string.Format("kinectPos, worldPos before setting: {0}, {1}", TestObject.transform.position, bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position));
+                    Debug.Log(string.Format("KinectManager: handMarker kinectPos: {0}", markerKinectPos));
+                    Debug.Log(string.Format("KinectManager: kinectPos, worldPos before setting: {0}, {1}", TestObject.transform.position, bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position));
                     bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].kinectPos = markerKinectPos;
-                    bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position = /*kinectToWorld.MultiplyPoint3x4(markerKinectPos)*/ markerKinectPos;
+                    bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position = kinectToWorld.MultiplyPoint3x4(markerKinectPos);
                     bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].orientation = Quaternion.identity;
-                    bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].trackingState = KinectInterop.TrackingState.Tracked;
 
-                    Debug.Log(string.Format("after setting: {0}, {1}", markerKinectPos, kinectToWorld.MultiplyPoint3x4(markerKinectPos)));
+                    //this prevents wrong orientation calc/wrist movement from kinect when art data is used
+                    //bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].trackingState = KinectInterop.TrackingState.NotTracked;
+
+                    //mask right arm components to prevent kinectmanager from calculating wrong directions, use ik instead
+                    //bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.ShoulderRight].trackingState = KinectInterop.TrackingState.NotTracked;
+                    //bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.ElbowRight].trackingState = KinectInterop.TrackingState.NotTracked;
+                    bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.HandRight].trackingState = KinectInterop.TrackingState.NotTracked;
+                    bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.HandTipRight].trackingState = KinectInterop.TrackingState.NotTracked;
+
+                    Debug.Log(string.Format("KinectManager: after setting: {0}, {1}", markerKinectPos, kinectToWorld.MultiplyPoint3x4(markerKinectPos)));
 
                     //recalculate directions
-                    for (int j = (int)KinectInterop.JointType.WristRight; j < sensorData.jointCount; ++j)
+                    for (int j = 1; j < sensorData.jointCount; ++j)
                     {
                         KinectInterop.CalculateJointDirection(index, (int)KinectInterop.JointType.WristRight, ref bodyFrame, sensorData);
                     }

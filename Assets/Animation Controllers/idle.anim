@@ -12,6 +12,7 @@ AnimationClip:
   m_UseHighQualityCurve: 1
   m_RotationCurves: []
   m_CompressedRotationCurves: []
+  m_EulerCurves: []
   m_PositionCurves: []
   m_ScaleCurves: []
   m_FloatCurves:
@@ -30,6 +31,7 @@ AnimationClip:
         tangentMode: 10
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: Left Forearm Stretch
     path: 
     classID: 95
@@ -49,6 +51,7 @@ AnimationClip:
         tangentMode: 10
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: Right Forearm Stretch
     path: 
     classID: 95
@@ -68,6 +71,7 @@ AnimationClip:
         tangentMode: 10
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: Left Lower Leg Stretch
     path: 
     classID: 95
@@ -87,6 +91,7 @@ AnimationClip:
         tangentMode: 10
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: Right Lower Leg Stretch
     path: 
     classID: 95
@@ -95,17 +100,18 @@ AnimationClip:
       serializedVersion: 2
       m_Curve:
       - time: 0
-        value: .600000024
+        value: 0.6
         inSlope: 0
         outSlope: 0
         tangentMode: 10
       - time: 1
-        value: .600000024
+        value: 0.6
         inSlope: 0
         outSlope: 0
         tangentMode: 10
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: Left Upper Leg Front-Back
     path: 
     classID: 95
@@ -114,17 +120,18 @@ AnimationClip:
       serializedVersion: 2
       m_Curve:
       - time: 0
-        value: .600000024
+        value: 0.6
         inSlope: 0
         outSlope: 0
         tangentMode: 10
       - time: 1
-        value: .600000024
+        value: 0.6
         inSlope: 0
         outSlope: 0
         tangentMode: 10
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: Right Upper Leg Front-Back
     path: 
     classID: 95
@@ -133,17 +140,18 @@ AnimationClip:
       serializedVersion: 2
       m_Curve:
       - time: 0
-        value: .300000012
+        value: 0.3
         inSlope: 0
         outSlope: 0
         tangentMode: 10
       - time: 1
-        value: .300000012
+        value: 0.3
         inSlope: 0
         outSlope: 0
         tangentMode: 10
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: Left Arm Down-Up
     path: 
     classID: 95
@@ -152,18 +160,59 @@ AnimationClip:
       serializedVersion: 2
       m_Curve:
       - time: 0
-        value: .300000012
+        value: 0.3
         inSlope: 0
         outSlope: 0
         tangentMode: 10
       - time: 1
-        value: .300000012
+        value: 0.3
         inSlope: 0
         outSlope: 0
         tangentMode: 10
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: Right Arm Down-Up
+    path: 
+    classID: 95
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - time: 0
+        value: 0.17
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 10
+      - time: 1
+        value: 0.17
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 10
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: Left Arm Front-Back
+    path: 
+    classID: 95
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - time: 0
+        value: 0.17
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 10
+      - time: 1
+        value: 0.17
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 10
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: Right Arm Front-Back
     path: 
     classID: 95
     script: {fileID: 0}
@@ -223,14 +272,29 @@ AnimationClip:
       classID: 95
       customType: 8
       isPPtrCurve: 0
+    - path: 0
+      attribute: 79
+      script: {fileID: 0}
+      classID: 95
+      customType: 8
+      isPPtrCurve: 0
+    - path: 0
+      attribute: 88
+      script: {fileID: 0}
+      classID: 95
+      customType: 8
+      isPPtrCurve: 0
     pptrCurveMapping: []
   m_AnimationClipSettings:
     serializedVersion: 2
+    m_AdditiveReferencePoseClip: {fileID: 0}
+    m_AdditiveReferencePoseTime: 0
     m_StartTime: 0
     m_StopTime: 1
     m_OrientationOffsetY: 0
     m_Level: 0
     m_CycleOffset: 0
+    m_HasAdditiveReferencePose: 0
     m_LoopTime: 0
     m_LoopBlend: 0
     m_LoopBlendOrientation: 0
@@ -257,6 +321,7 @@ AnimationClip:
         tangentMode: 10
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: Left Forearm Stretch
     path: 
     classID: 95
@@ -276,6 +341,7 @@ AnimationClip:
         tangentMode: 10
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: Right Forearm Stretch
     path: 
     classID: 95
@@ -295,6 +361,7 @@ AnimationClip:
         tangentMode: 10
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: Left Lower Leg Stretch
     path: 
     classID: 95
@@ -314,6 +381,7 @@ AnimationClip:
         tangentMode: 10
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: Right Lower Leg Stretch
     path: 
     classID: 95
@@ -322,17 +390,18 @@ AnimationClip:
       serializedVersion: 2
       m_Curve:
       - time: 0
-        value: .600000024
+        value: 0.6
         inSlope: 0
         outSlope: 0
         tangentMode: 10
       - time: 1
-        value: .600000024
+        value: 0.6
         inSlope: 0
         outSlope: 0
         tangentMode: 10
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: Left Upper Leg Front-Back
     path: 
     classID: 95
@@ -341,17 +410,18 @@ AnimationClip:
       serializedVersion: 2
       m_Curve:
       - time: 0
-        value: .600000024
+        value: 0.6
         inSlope: 0
         outSlope: 0
         tangentMode: 10
       - time: 1
-        value: .600000024
+        value: 0.6
         inSlope: 0
         outSlope: 0
         tangentMode: 10
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: Right Upper Leg Front-Back
     path: 
     classID: 95
@@ -360,17 +430,18 @@ AnimationClip:
       serializedVersion: 2
       m_Curve:
       - time: 0
-        value: .300000012
+        value: 0.3
         inSlope: 0
         outSlope: 0
         tangentMode: 10
       - time: 1
-        value: .300000012
+        value: 0.3
         inSlope: 0
         outSlope: 0
         tangentMode: 10
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: Left Arm Down-Up
     path: 
     classID: 95
@@ -379,18 +450,59 @@ AnimationClip:
       serializedVersion: 2
       m_Curve:
       - time: 0
-        value: .300000012
+        value: 0.3
         inSlope: 0
         outSlope: 0
         tangentMode: 10
       - time: 1
-        value: .300000012
+        value: 0.3
         inSlope: 0
         outSlope: 0
         tangentMode: 10
       m_PreInfinity: 2
       m_PostInfinity: 2
+      m_RotationOrder: 4
     attribute: Right Arm Down-Up
+    path: 
+    classID: 95
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - time: 0
+        value: 0.17
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 10
+      - time: 1
+        value: 0.17
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 10
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: Left Arm Front-Back
+    path: 
+    classID: 95
+    script: {fileID: 0}
+  - curve:
+      serializedVersion: 2
+      m_Curve:
+      - time: 0
+        value: 0.17
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 10
+      - time: 1
+        value: 0.17
+        inSlope: 0
+        outSlope: 0
+        tangentMode: 10
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    attribute: Right Arm Front-Back
     path: 
     classID: 95
     script: {fileID: 0}

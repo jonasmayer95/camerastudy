@@ -80,7 +80,7 @@ class ArtClient : MonoBehaviour
             var rot = data[0].rot;
 
             this.transform.localPosition = new Vector3(-pos.x, pos.y, -pos.z );
-            Debug.Log(string.Format("ART wrist/marker kinect pos: {0}, world pos: {1}", this.transform.localPosition, this.transform.position));
+            Debug.Log(string.Format("ArtClient: ART wrist/marker kinect pos: {0}, world pos: {1}", this.transform.localPosition, this.transform.position));
             Quaternion test = new Quaternion(-rot.x, -rot.y, rot.z, rot.w);
             this.transform.localRotation = test;
         }
