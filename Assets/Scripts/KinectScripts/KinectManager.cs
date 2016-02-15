@@ -1594,13 +1594,31 @@ public class KinectManager : MonoBehaviour
 					jointPositionFilter.UpdateFilter(ref bodyFrame);
 				}
 
-
-                //TODO: remove this when debugging is done
-                if (GetPrimaryUserID() != 0)
+                var userId = GetPrimaryUserID();
+                
+                if (userId != 0)
                 {
-                    int index = GetUserIndexById(GetPrimaryUserID());
+                    int index = GetBodyIndexByUserId(userId);
+
+                    //TODO: remove this when debugging is done
                     TestObject.transform.position = bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].kinectPos;
 
+                    //overwrite wrist data with art gameobject data
+                    var markerKinectPos = handMarker.transform.position;
+                    Debug.Log(string.Format("kinectPos, worldPos before setting: {0}, {1}", TestObject.transform.position, bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position));
+                    bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].kinectPos = markerKinectPos;
+                    bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position = /*kinectToWorld.MultiplyPoint3x4(markerKinectPos)*/ markerKinectPos;
+                    bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].orientation = Quaternion.identity;
+                    bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].trackingState = KinectInterop.TrackingState.Tracked;
+
+                    Debug.Log(string.Format("after setting: {0}, {1}", markerKinectPos, kinectToWorld.MultiplyPoint3x4(markerKinectPos)));
+
+                    //recalculate directions
+                    for (int j = (int)KinectInterop.JointType.WristRight; j < sensorData.jointCount; ++j)
+                    {
+                        KinectInterop.CalculateJointDirection(index, (int)KinectInterop.JointType.WristRight, ref bodyFrame, sensorData);
+                    }
+                    
                 }
 
 				ProcessBodyFrameData();

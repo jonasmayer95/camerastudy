@@ -767,39 +767,45 @@ public class KinectInterop
 		{
 			bNewFrame = sensorData.sensorInterface.PollBodyFrame(sensorData, ref bodyFrame, ref kinectToWorld);
 
-			if(bNewFrame)
-			{
-				for(int i = 0; i < sensorData.bodyCount; i++)
-				{
-					if(bodyFrame.bodyData[i].bIsTracked != 0)
-					{
-						// calculate joint directions
-						for(int j = 0; j < sensorData.jointCount; j++)
-						{
-							if(j == 0)
-							{
-								bodyFrame.bodyData[i].joint[j].direction = Vector3.zero;
-							}
-							else
-							{
-								int jParent = (int)sensorData.sensorInterface.GetParentJoint(bodyFrame.bodyData[i].joint[j].jointType);
-								
-								if(bodyFrame.bodyData[i].joint[j].trackingState != TrackingState.NotTracked && 
-								   bodyFrame.bodyData[i].joint[jParent].trackingState != TrackingState.NotTracked)
-								{
-									bodyFrame.bodyData[i].joint[j].direction = 
-										bodyFrame.bodyData[i].joint[j].position - bodyFrame.bodyData[i].joint[jParent].position;
-								}
-							}
-						}
-					}
+            if (bNewFrame)
+            {
+                for (int i = 0; i < sensorData.bodyCount; i++)
+                {
+                    if (bodyFrame.bodyData[i].bIsTracked != 0)
+                    {
+                        // calculate joint directions
+                        for (int j = 0; j < sensorData.jointCount; j++)
+                        {
+                            if (j == 0)
+                            {
+                                bodyFrame.bodyData[i].joint[j].direction = Vector3.zero;
+                            }
+                            else
+                            {
+                                CalculateJointDirection(i, j, ref bodyFrame, sensorData);
+                            }
+                        }
+                    }
 
-				}
-			}
+                }
+            }
 		}
 		
 		return bNewFrame;
 	}
+
+    // Calculates the direction of the joint at jointIndex
+    public static void CalculateJointDirection(int bodyIndex, int jointIndex, ref BodyFrameData bodyFrame, SensorData sensorData)
+    {
+        int jParent = (int)sensorData.sensorInterface.GetParentJoint(bodyFrame.bodyData[bodyIndex].joint[jointIndex].jointType);
+
+        if (bodyFrame.bodyData[bodyIndex].joint[jointIndex].trackingState != TrackingState.NotTracked &&
+           bodyFrame.bodyData[bodyIndex].joint[jParent].trackingState != TrackingState.NotTracked)
+        {
+            bodyFrame.bodyData[bodyIndex].joint[jointIndex].direction =
+                bodyFrame.bodyData[bodyIndex].joint[jointIndex].position - bodyFrame.bodyData[bodyIndex].joint[jParent].position;
+        }
+    }
 
 	// Polls for new color frame data
 	public static bool PollColorFrame(SensorData sensorData)

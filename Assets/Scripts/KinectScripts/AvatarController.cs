@@ -144,8 +144,8 @@ public class AvatarController : MonoBehaviour
 		MoveAvatar(UserID);
 
         //TODO: remove this if everything is fixed
-        var wrist = kinectManager.GetUserBodyData(UserID).joint[(int)KinectInterop.JointType.WristRight];
-        Debug.Log(string.Format("wrist kinectPos: {0}, world pos: {1}", wrist.kinectPos, wrist.position));
+        //var wrist = kinectManager.GetUserBodyData(UserID).joint[(int)KinectInterop.JointType.WristRight];
+        //Debug.Log(string.Format("wrist kinectPos: {0}, world pos: {1}", wrist.kinectPos, wrist.position));
 
 		for (var boneIndex = 0; boneIndex < bones.Length; boneIndex++)
 		{

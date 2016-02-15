@@ -2967,6 +2967,7 @@ MonoBehaviour:
   calibrationText: {fileID: 0}
   gesturesDebugText: {fileID: 0}
   TestObject: {fileID: 415115739}
+  handMarker: {fileID: 1826725444}
 --- !u!1 &1059045175
 GameObject:
   m_ObjectHideFlags: 0
@@ -4044,7 +4045,7 @@ MonoBehaviour:
   verticalMovement: 0
   scaling: 0
   moveRate: 1
-  smoothFactor: 0
+  smoothFactor: 5
   offsetNode: {fileID: 0}
   posRelativeToCamera: {fileID: 0}
 --- !u!4 &1695347657 stripped
@@ -4222,7 +4223,7 @@ Prefab:
     - target: {fileID: 9500000, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 9100000, guid: c924f4df51ebe9d48819ba7c384c7a91, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 9500000, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
       propertyPath: m_WarningMessage
       value: 

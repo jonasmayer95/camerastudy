@@ -587,10 +587,6 @@ public class Kinect2Interface : DepthSensorInterface
 							bodyFrame.bodyData[i].joint[j] = jointData;
 						}
 
-                        //HACK: fill wrist joint with ART data here:
-                        //bodyFrame.bodyData[i].joint[(int)KinectInterop.JointType.WristRight].kinectPos = artPos
-                        //bodyFrame.bodyData[i].joint[(int)KinectInterop.JointType.WristRight].position = kinectToWorld.MultiplyPoint3x4(artPos)
-
 						// tranfer hand states
 						bodyFrame.bodyData[i].leftHandState = (KinectInterop.HandState)body.HandLeftState;
 						bodyFrame.bodyData[i].leftHandConfidence = (KinectInterop.TrackingConfidence)body.HandLeftConfidence;
