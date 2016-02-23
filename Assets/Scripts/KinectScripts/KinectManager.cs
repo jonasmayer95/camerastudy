@@ -1611,8 +1611,8 @@ public class KinectManager : MonoBehaviour
                     bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position = kinectToWorld.MultiplyPoint3x4(markerKinectPos);
                     bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].orientation = Quaternion.identity;
 
-                    //this prevents wrong orientation calc/wrist movement from kinect when art data is used
                     //bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].trackingState = KinectInterop.TrackingState.NotTracked;
+
 
                     //mask right arm components to prevent kinectmanager from calculating wrong directions, use ik instead
                     //bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.ShoulderRight].trackingState = KinectInterop.TrackingState.NotTracked;

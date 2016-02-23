@@ -6,18 +6,42 @@ using System.Collections;
 public class IKControl : MonoBehaviour
 {
     public Transform targetPoint;
+    public GameObject kinectAvatar;
     public bool ikActive = false;
 
     private Animator anim;
+    private AvatarController kinectController;
+    private AvatarController controller;
 
 
     void Start()
     {
         anim = GetComponent<Animator>();
+        kinectController = kinectAvatar.GetComponent<AvatarController>();
+        controller = this.GetComponent<AvatarController>();
     }
 
+    //if I change this to update, IK works but the avatar doesn't move.
+    void LateUpdate()
+    {
+        //iterate over all bones, set positions as in the kinect-driven avatar
+        for (int i = 0; i < kinectController.Bones.Length; ++i)
+        {
+            //TODO: write this in a less ugly way
+            if (controller.Bones[i] != null)
+            {
+                if (controller.BoneIndex2MirrorJointMap.ContainsKey(i) && controller.BoneIndex2MirrorJointMap[i] != KinectInterop.JointType.ElbowRight
+                && controller.BoneIndex2MirrorJointMap[i] != KinectInterop.JointType.WristRight && controller.BoneIndex2MirrorJointMap[i] != KinectInterop.JointType.HandRight
+                    /*&& controller.BoneIndex2MirrorJointMap[i] != KinectInterop.JointType.ShoulderRight*/)
+                {
+                    controller.Bones[i].position = kinectController.Bones[i].position;
+                    controller.Bones[i].rotation = kinectController.Bones[i].rotation;
+                }
+            }
+        }
+    }
 
-    public void OnAnimatorIK()
+    void OnAnimatorIK()
     {
         if (ikActive)
         {

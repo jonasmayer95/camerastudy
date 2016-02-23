@@ -69,7 +69,6 @@ public class AvatarController : MonoBehaviour
 	// private instance of the KinectManager
 	protected KinectManager kinectManager;
     
-    
     private BoneMap bonemap;
 
 	// returns the number of bone transforms (array length)
@@ -228,7 +227,9 @@ public class AvatarController : MonoBehaviour
 		Transform boneTransform = bones[boneIndex];
 		if(boneTransform == null || kinectManager == null)
 			return;
-		
+
+        //Debug.Log(string.Format("jointType: {0}, transform: {1}", joint, boneTransform.name));
+
 		int iJoint = (int)joint;
 		if(iJoint < 0 || !kinectManager.IsJointTracked(userId, iJoint))
 			return;
