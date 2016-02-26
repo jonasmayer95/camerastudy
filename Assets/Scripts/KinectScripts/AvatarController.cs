@@ -511,7 +511,7 @@ public class AvatarController : MonoBehaviour
 		
 		{11, HumanBodyBones.RightUpperArm},
 		{12, HumanBodyBones.RightLowerArm},
-		{13, HumanBodyBones.RightHand},
+//		{13, HumanBodyBones.RightHand},
 		{14, HumanBodyBones.RightIndexProximal},
 //		{15, HumanBodyBones.RightIndexIntermediate},
 //		{16, HumanBodyBones.RightThumbProximal},
@@ -543,16 +543,16 @@ public class AvatarController : MonoBehaviour
 		{7, KinectInterop.JointType.WristLeft},
 		{8, KinectInterop.JointType.HandLeft},
 		
-		{9, KinectInterop.JointType.HandTipLeft},
-		{10, KinectInterop.JointType.ThumbLeft},
+//		{9, KinectInterop.JointType.HandTipLeft},
+//		{10, KinectInterop.JointType.ThumbLeft},
 		
 		{11, KinectInterop.JointType.ShoulderRight},
 		{12, KinectInterop.JointType.ElbowRight},
 		{13, KinectInterop.JointType.WristRight},
-		{14, KinectInterop.JointType.HandRight},
+//  	{14, KinectInterop.JointType.HandRight},
 		
-		{15, KinectInterop.JointType.HandTipRight},
-		{16, KinectInterop.JointType.ThumbRight},
+//		{15, KinectInterop.JointType.HandTipRight},
+//		{16, KinectInterop.JointType.ThumbRight},
 		
 //		{17, KinectInterop.JointType.HipLeft},
 //		{18, KinectInterop.JointType.KneeLeft},
@@ -586,18 +586,18 @@ public class AvatarController : MonoBehaviour
 		{5, KinectInterop.JointType.ShoulderRight},
 		{6, KinectInterop.JointType.ElbowRight},
 		{7, KinectInterop.JointType.WristRight},
-		{8, KinectInterop.JointType.HandRight},
+//		{8, KinectInterop.JointType.HandRight},
 		
-		{9, KinectInterop.JointType.HandTipRight},
-		{10, KinectInterop.JointType.ThumbRight},
+//		{9, KinectInterop.JointType.HandTipRight},
+//		{10, KinectInterop.JointType.ThumbRight},
 		
 		{11, KinectInterop.JointType.ShoulderLeft},
 		{12, KinectInterop.JointType.ElbowLeft},
 		{13, KinectInterop.JointType.WristLeft},
 		{14, KinectInterop.JointType.HandLeft},
 		
-		{15, KinectInterop.JointType.HandTipLeft},
-		{16, KinectInterop.JointType.ThumbLeft},
+//		{15, KinectInterop.JointType.HandTipLeft},
+//		{16, KinectInterop.JointType.ThumbLeft},
 
 //		{17, KinectInterop.JointType.HipRight},
 //		{18, KinectInterop.JointType.KneeRight},
