@@ -504,7 +504,7 @@ public class AvatarController : MonoBehaviour
 		
 		{5, HumanBodyBones.LeftUpperArm},
 		{6, HumanBodyBones.LeftLowerArm},
-		{7, HumanBodyBones.LeftHand},
+//		{7, HumanBodyBones.LeftHand},
 		{8, HumanBodyBones.LeftIndexProximal},
 //		{9, HumanBodyBones.LeftIndexIntermediate},
 //		{10, HumanBodyBones.LeftThumbProximal},
@@ -541,7 +541,7 @@ public class AvatarController : MonoBehaviour
 		{5, KinectInterop.JointType.ShoulderLeft},
 		{6, KinectInterop.JointType.ElbowLeft},
 		{7, KinectInterop.JointType.WristLeft},
-		{8, KinectInterop.JointType.HandLeft},
+//		{8, KinectInterop.JointType.HandLeft},
 		
 //		{9, KinectInterop.JointType.HandTipLeft},
 //		{10, KinectInterop.JointType.ThumbLeft},
@@ -554,12 +554,12 @@ public class AvatarController : MonoBehaviour
 //		{15, KinectInterop.JointType.HandTipRight},
 //		{16, KinectInterop.JointType.ThumbRight},
 		
-//		{17, KinectInterop.JointType.HipLeft},
+		{17, KinectInterop.JointType.HipLeft},
 //		{18, KinectInterop.JointType.KneeLeft},
 //		{19, KinectInterop.JointType.AnkleLeft},
 //		{20, KinectInterop.JointType.FootLeft},
 		
-//		{21, KinectInterop.JointType.HipRight},
+		{21, KinectInterop.JointType.HipRight},
 //		{22, KinectInterop.JointType.KneeRight},
 //		{23, KinectInterop.JointType.AnkleRight},
 //		{24, KinectInterop.JointType.FootRight},
@@ -594,17 +594,17 @@ public class AvatarController : MonoBehaviour
 		{11, KinectInterop.JointType.ShoulderLeft},
 		{12, KinectInterop.JointType.ElbowLeft},
 		{13, KinectInterop.JointType.WristLeft},
-		{14, KinectInterop.JointType.HandLeft},
+//		{14, KinectInterop.JointType.HandLeft},
 		
 //		{15, KinectInterop.JointType.HandTipLeft},
 //		{16, KinectInterop.JointType.ThumbLeft},
 
-//		{17, KinectInterop.JointType.HipRight},
+		{17, KinectInterop.JointType.HipRight},
 //		{18, KinectInterop.JointType.KneeRight},
 //		{19, KinectInterop.JointType.AnkleRight},
 //		{20, KinectInterop.JointType.FootRight},
 		
-//		{21, KinectInterop.JointType.HipLeft},
+		{21, KinectInterop.JointType.HipLeft},
 //		{22, KinectInterop.JointType.KneeLeft},
 //		{23, KinectInterop.JointType.AnkleLeft},
 //		{24, KinectInterop.JointType.FootLeft},
