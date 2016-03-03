@@ -1641,14 +1641,14 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!23 &415115740
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 415115739}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_Materials:
@@ -1964,7 +1964,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &546697300
 Transform:
   m_ObjectHideFlags: 0
@@ -3326,6 +3326,10 @@ CanvasRenderer:
 Transform:
   m_PrefabParentObject: {fileID: 400048, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
   m_PrefabInternal: {fileID: 1268787906}
+--- !u!4 &1001984781 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 400018, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
+  m_PrefabInternal: {fileID: 32269657}
 --- !u!1 &1053274179
 GameObject:
   m_ObjectHideFlags: 0
@@ -3371,7 +3375,7 @@ MonoBehaviour:
   autoHeightAngle: 0
   computeUserMap: 0
   computeColorMap: 0
-  computeInfraredMap: 1
+  computeInfraredMap: 0
   displayUserMap: 0
   displayColorMap: 0
   displaySkeletonLines: 0
@@ -3841,8 +3845,8 @@ MonoBehaviour:
   IsEnabled: 1
   debug: 0
   transition: 1
-  idleOptimization: 1
-  handRotationPolicy: 1
+  idleOptimization: 0
+  handRotationPolicy: 2
 --- !u!4 &1121141690
 Transform:
   m_ObjectHideFlags: 0
@@ -4146,7 +4150,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 13700000, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
@@ -4730,8 +4734,8 @@ MonoBehaviour:
   IsEnabled: 1
   debug: 0
   transition: 1
-  idleOptimization: 1
-  handRotationPolicy: 1
+  idleOptimization: 0
+  handRotationPolicy: 2
 --- !u!4 &1640331484
 Transform:
   m_ObjectHideFlags: 0
@@ -4827,7 +4831,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8418165ff0f73f64fa7f2685b635ba0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ikTarget: {fileID: 1147110876}
+  ikTarget: {fileID: 1823613082}
 --- !u!1 &1751506448
 GameObject:
   m_ObjectHideFlags: 0
@@ -4867,7 +4871,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8418165ff0f73f64fa7f2685b635ba0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ikTarget: {fileID: 1373059949}
+  ikTarget: {fileID: 1001984781}
 --- !u!1 &1789876343
 GameObject:
   m_ObjectHideFlags: 0
@@ -5206,6 +5210,10 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.Toggle+ToggleEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
   m_IsOn: 1
+--- !u!4 &1823613082 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 400020, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
+  m_PrefabInternal: {fileID: 32269657}
 --- !u!1 &1826725444
 GameObject:
   m_ObjectHideFlags: 0

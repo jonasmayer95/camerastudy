@@ -511,19 +511,19 @@ public class AvatarController : MonoBehaviour
 		
 		{11, HumanBodyBones.RightUpperArm},
 		{12, HumanBodyBones.RightLowerArm},
-//		{13, HumanBodyBones.RightHand},
+		{13, HumanBodyBones.RightHand},
 		{14, HumanBodyBones.RightIndexProximal},
 //		{15, HumanBodyBones.RightIndexIntermediate},
 //		{16, HumanBodyBones.RightThumbProximal},
 		
-//		{17, HumanBodyBones.LeftUpperLeg},
-//		{18, HumanBodyBones.LeftLowerLeg},
-//		{19, HumanBodyBones.LeftFoot},
+		{17, HumanBodyBones.LeftUpperLeg},
+		{18, HumanBodyBones.LeftLowerLeg},
+		{19, HumanBodyBones.LeftFoot},
 //		{20, HumanBodyBones.LeftToes},
 		
-//		{21, HumanBodyBones.RightUpperLeg},
-//		{22, HumanBodyBones.RightLowerLeg},
-//		{23, HumanBodyBones.RightFoot},
+		{21, HumanBodyBones.RightUpperLeg},
+		{22, HumanBodyBones.RightLowerLeg},
+		{23, HumanBodyBones.RightFoot},
 //		{24, HumanBodyBones.RightToes},
 		
 		{25, HumanBodyBones.LeftShoulder},
@@ -541,7 +541,7 @@ public class AvatarController : MonoBehaviour
 		{5, KinectInterop.JointType.ShoulderLeft},
 		{6, KinectInterop.JointType.ElbowLeft},
 		{7, KinectInterop.JointType.WristLeft},
-//		{8, KinectInterop.JointType.HandLeft},
+		{8, KinectInterop.JointType.HandLeft},
 		
 //		{9, KinectInterop.JointType.HandTipLeft},
 //		{10, KinectInterop.JointType.ThumbLeft},
@@ -555,14 +555,14 @@ public class AvatarController : MonoBehaviour
 //		{16, KinectInterop.JointType.ThumbRight},
 		
 		{17, KinectInterop.JointType.HipLeft},
-//		{18, KinectInterop.JointType.KneeLeft},
-//		{19, KinectInterop.JointType.AnkleLeft},
-//		{20, KinectInterop.JointType.FootLeft},
+		{18, KinectInterop.JointType.KneeLeft},
+		{19, KinectInterop.JointType.AnkleLeft},
+		{20, KinectInterop.JointType.FootLeft},
 		
 		{21, KinectInterop.JointType.HipRight},
-//		{22, KinectInterop.JointType.KneeRight},
-//		{23, KinectInterop.JointType.AnkleRight},
-//		{24, KinectInterop.JointType.FootRight},
+		{22, KinectInterop.JointType.KneeRight},
+		{23, KinectInterop.JointType.AnkleRight},
+		{24, KinectInterop.JointType.FootRight},
 	};
 
     public Dictionary<int, KinectInterop.JointType> BoneIndex2JointMap { get { return boneIndex2JointMap; } }
@@ -586,7 +586,7 @@ public class AvatarController : MonoBehaviour
 		{5, KinectInterop.JointType.ShoulderRight},
 		{6, KinectInterop.JointType.ElbowRight},
 		{7, KinectInterop.JointType.WristRight},
-//		{8, KinectInterop.JointType.HandRight},
+		{8, KinectInterop.JointType.HandRight},
 		
 //		{9, KinectInterop.JointType.HandTipRight},
 //		{10, KinectInterop.JointType.ThumbRight},
@@ -594,20 +594,20 @@ public class AvatarController : MonoBehaviour
 		{11, KinectInterop.JointType.ShoulderLeft},
 		{12, KinectInterop.JointType.ElbowLeft},
 		{13, KinectInterop.JointType.WristLeft},
-//		{14, KinectInterop.JointType.HandLeft},
+		{14, KinectInterop.JointType.HandLeft},
 		
 //		{15, KinectInterop.JointType.HandTipLeft},
 //		{16, KinectInterop.JointType.ThumbLeft},
 
 		{17, KinectInterop.JointType.HipRight},
-//		{18, KinectInterop.JointType.KneeRight},
-//		{19, KinectInterop.JointType.AnkleRight},
-//		{20, KinectInterop.JointType.FootRight},
+		{18, KinectInterop.JointType.KneeRight},
+		{19, KinectInterop.JointType.AnkleRight},
+		{20, KinectInterop.JointType.FootRight},
 		
 		{21, KinectInterop.JointType.HipLeft},
-//		{22, KinectInterop.JointType.KneeLeft},
-//		{23, KinectInterop.JointType.AnkleLeft},
-//		{24, KinectInterop.JointType.FootLeft},
+		{22, KinectInterop.JointType.KneeLeft},
+		{23, KinectInterop.JointType.AnkleLeft},
+		{24, KinectInterop.JointType.FootLeft},
 	};
 
     public Dictionary<int, KinectInterop.JointType> BoneIndex2MirrorJointMap { get { return boneIndex2MirrorJointMap; } }
