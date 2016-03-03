@@ -7,8 +7,8 @@ public class IKTarget : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-        transform.position = ikTarget.position;
-        transform.rotation = ikTarget.rotation;
+        //transform.position = ikTarget.position;
+        //transform.rotation = ikTarget.rotation;
 	}
 	
 	// Update is called once per frame

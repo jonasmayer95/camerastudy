@@ -1605,8 +1605,8 @@ public class KinectManager : MonoBehaviour
 
                     //overwrite wrist data with art gameobject data
                     var markerKinectPos = handMarker.transform.position;
-                    Debug.Log(string.Format("KinectManager: handMarker kinectPos: {0}", markerKinectPos));
-                    Debug.Log(string.Format("KinectManager: kinectPos, worldPos before setting: {0}, {1}", TestObject.transform.position, bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position));
+                    //Debug.Log(string.Format("KinectManager: handMarker kinectPos: {0}", markerKinectPos));
+                    //Debug.Log(string.Format("KinectManager: kinectPos, worldPos before setting: {0}, {1}", TestObject.transform.position, bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position));
                     bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].kinectPos = markerKinectPos;
                     bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position = kinectToWorld.MultiplyPoint3x4(markerKinectPos);
                     bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].orientation = Quaternion.identity;

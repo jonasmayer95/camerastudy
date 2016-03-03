@@ -28,6 +28,7 @@ public class IKLimb: MonoBehaviour {
 	private Vector3 lastUpperArmPosition, lastTargetPosition, lastElbowTargetPosition;
 	
 	void Start(){
+        upperArm.transform.Rotate(Vector3.left, 180);
 		upperArmStartRotation = upperArm.rotation;
 		forearmStartRotation = forearm.rotation;
 		handStartRotation = hand.rotation;
