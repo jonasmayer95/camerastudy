@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 //using Windows.Kinect;
 
 using System;
@@ -100,6 +101,7 @@ public class KinectManager : MonoBehaviour
 	// GUI Text to show gesture debug message.
 	public GUIText gesturesDebugText;
 
+    public RawImage userMapImage;
 
     public GameObject TestObject;
 
@@ -1411,6 +1413,7 @@ public class KinectManager : MonoBehaviour
 		{
 			// Initialize depth & label map related stuff
 			usersLblTex = new Texture2D(sensorData.depthImageWidth, sensorData.depthImageHeight, TextureFormat.ARGB32, false);
+            userMapImage.texture = usersLblTex;
 
 			usersMapSize = sensorData.depthImageWidth * sensorData.depthImageHeight;
 			usersHistogramImage = new Color32[usersMapSize];
@@ -1423,6 +1426,7 @@ public class KinectManager : MonoBehaviour
 			// Initialize color map related stuff
 			//usersClrTex = new Texture2D(sensorData.colorImageWidth, sensorData.colorImageHeight, TextureFormat.RGBA32, false);
 			usersClrSize = sensorData.colorImageWidth * sensorData.colorImageHeight;
+
 		}
 
 		// try to automatically use the available avatar controllers in the scene
@@ -1493,27 +1497,29 @@ public class KinectManager : MonoBehaviour
 		{
 	        if(computeUserMap && displayUserMap)
 	        {
-				if(usersMapRect.width == 0 || usersMapRect.height == 0)
-				{
-					// get the main camera rectangle
-					Rect cameraRect = Camera.main != null ? Camera.main.pixelRect : new Rect(0, 0, Screen.width, Screen.height);
-					
-					// calculate map width and height in percent, if needed
-					if(DisplayMapsWidthPercent == 0f)
-					{
-						DisplayMapsWidthPercent = (sensorData.depthImageWidth / 2) * 100 / cameraRect.width;
-					}
-					
-					float displayMapsWidthPercent = DisplayMapsWidthPercent / 100f;
-					float displayMapsHeightPercent = displayMapsWidthPercent * sensorData.depthImageHeight / sensorData.depthImageWidth;
-					
-					float displayWidth = cameraRect.width * displayMapsWidthPercent;
-					float displayHeight = cameraRect.width * displayMapsHeightPercent;
-					
-					usersMapRect = new Rect(cameraRect.width - displayWidth, cameraRect.height, displayWidth, -displayHeight);
-				}
+                //if (usersMapRect.width == 0 || usersMapRect.height == 0)
+                //{
+                //    // get the main camera rectangle
+                //    Rect cameraRect = Camera.main != null ? Camera.main.pixelRect : new Rect(0, 0, Screen.width, Screen.height);
 
-	            GUI.DrawTexture(usersMapRect, usersLblTex);
+                //    // calculate map width and height in percent, if needed
+                //    if (DisplayMapsWidthPercent == 0f)
+                //    {
+                //        DisplayMapsWidthPercent = (sensorData.depthImageWidth / 2) * 100 / cameraRect.width;
+                //    }
+
+                //    float displayMapsWidthPercent = DisplayMapsWidthPercent / 100f;
+                //    float displayMapsHeightPercent = displayMapsWidthPercent * sensorData.depthImageHeight / sensorData.depthImageWidth;
+
+                //    float displayWidth = cameraRect.width * displayMapsWidthPercent;
+                //    float displayHeight = cameraRect.width * displayMapsHeightPercent;
+
+                //    usersMapRect = new Rect(cameraRect.width - displayWidth, cameraRect.height, displayWidth, -displayHeight);
+                //}
+
+                //GUI.DrawTexture(usersMapRect, usersLblTex);
+
+                
 	        }
 			else if(computeColorMap && displayColorMap)
 			{
@@ -1604,30 +1610,32 @@ public class KinectManager : MonoBehaviour
                     TestObject.transform.position = bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].kinectPos;
 
                     //overwrite wrist data with art gameobject data
-                    var markerKinectPos = handMarker.transform.position;
-                    //Debug.Log(string.Format("KinectManager: handMarker kinectPos: {0}", markerKinectPos));
-                    //Debug.Log(string.Format("KinectManager: kinectPos, worldPos before setting: {0}, {1}", TestObject.transform.position, bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position));
-                    bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].kinectPos = markerKinectPos;
-                    bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position = kinectToWorld.MultiplyPoint3x4(markerKinectPos);
-                    bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].orientation = Quaternion.identity;
-
-                    //bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].trackingState = KinectInterop.TrackingState.NotTracked;
-
-
-                    //mask right arm components to prevent kinectmanager from calculating wrong directions, use ik instead
-                    //bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.ShoulderRight].trackingState = KinectInterop.TrackingState.NotTracked;
-                    //bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.ElbowRight].trackingState = KinectInterop.TrackingState.NotTracked;
-                    bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.HandRight].trackingState = KinectInterop.TrackingState.NotTracked;
-                    bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.HandTipRight].trackingState = KinectInterop.TrackingState.NotTracked;
-
-                    Debug.Log(string.Format("KinectManager: after setting: {0}, {1}", markerKinectPos, kinectToWorld.MultiplyPoint3x4(markerKinectPos)));
-
-                    //recalculate directions
-                    for (int j = 1; j < sensorData.jointCount; ++j)
+                    if (handMarker != null)
                     {
-                        KinectInterop.CalculateJointDirection(index, (int)KinectInterop.JointType.WristRight, ref bodyFrame, sensorData);
+                        var markerKinectPos = handMarker.transform.position;
+                        //Debug.Log(string.Format("KinectManager: handMarker kinectPos: {0}", markerKinectPos));
+                        //Debug.Log(string.Format("KinectManager: kinectPos, worldPos before setting: {0}, {1}", TestObject.transform.position, bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position));
+                        bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].kinectPos = markerKinectPos;
+                        bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position = kinectToWorld.MultiplyPoint3x4(markerKinectPos);
+                        bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].orientation = Quaternion.identity;
+
+                        //bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].trackingState = KinectInterop.TrackingState.NotTracked;
+
+
+                        //mask right arm components to prevent kinectmanager from calculating wrong directions, use ik instead
+                        //bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.ShoulderRight].trackingState = KinectInterop.TrackingState.NotTracked;
+                        //bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.ElbowRight].trackingState = KinectInterop.TrackingState.NotTracked;
+                        bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.HandRight].trackingState = KinectInterop.TrackingState.NotTracked;
+                        bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.HandTipRight].trackingState = KinectInterop.TrackingState.NotTracked;
+
+                        Debug.Log(string.Format("KinectManager: after setting: {0}, {1}", markerKinectPos, kinectToWorld.MultiplyPoint3x4(markerKinectPos)));
+
+                        //recalculate directions
+                        for (int j = 1; j < sensorData.jointCount; ++j)
+                        {
+                            KinectInterop.CalculateJointDirection(index, (int)KinectInterop.JointType.WristRight, ref bodyFrame, sensorData);
+                        }
                     }
-                    
                 }
 
 				ProcessBodyFrameData();
