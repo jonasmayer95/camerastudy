@@ -16,6 +16,7 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
     public GameObject avatar;
     private AvatarController controller;
     private static UserStudyData userData;
+    private float recordStartTime;
 
 
     void Start()
@@ -38,7 +39,7 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
                     date.Hour.ToString() + date.Day.ToString() + date.Month.ToString() + date.Year.ToString();
                 rawWriter = new StreamWriter(filePath + ".csv");
                 filteredWriter = new StreamWriter(filePath + "_filtered.csv");
-
+                recordStartTime = Time.time;
                 //write raw header to file
                 string rawHeader = string.Concat("name;set;age;camera;sex;trial_code;start_frame;end_frame;completion_time;current_frame;current_time;",
                     GetBoneDescriptions(controller));
@@ -56,13 +57,13 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
     }
 
 
-    void Update()
+    void LateUpdate()
     {
         var bones = controller.Bones;
 
         //write stuff that has been set through events, then get avatar movement data
         rawWriter.Write("{0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10};", userData.name, userData.set, userData.age, userData.camType, userData.sex,
-            userData.trialCode, userData.startFrame, userData.endFrame, userData.completionTime.ToString(), frameCount, Time.time);
+            userData.trialCode, userData.startFrame, userData.endFrame, userData.completionTime.ToString(), frameCount, Time.time - recordStartTime);
 
 
         for (int i = 0; i < bones.Length; ++i)
@@ -94,6 +95,12 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
 
     void OnApplicationQuit()
     {
+        EndRecording();
+    }
+
+    //call from UI to end recording
+    public void EndRecording()
+    {
         if (rawWriter != null)
         {
             rawWriter.Flush();
@@ -123,8 +130,8 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
     {
         if (writer != null)
         {
-            writer.Write("\"{0}, {1}, {2}, {3}, {4}, {5}, {6}\";", bone.position.x, bone.position.y, bone.position.z,
-                        bone.rotation.x, bone.rotation.y, bone.rotation.z, bone.rotation.w);
+            writer.Write("\"{0}, {1}, {2}, {3}, {4}, {5}, {6}\";", bone.localPosition.x, bone.localPosition.y, bone.localPosition.z,
+                        bone.localRotation.x, bone.localRotation.y, bone.localRotation.z, bone.localRotation.w);
         }
     }
 

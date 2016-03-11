@@ -150,6 +150,11 @@ public class AvatarController : MonoBehaviour
 			if(boneIndex2JointMap.ContainsKey(boneIndex))
 			{
 				KinectInterop.JointType joint = !mirroredMovement ? boneIndex2JointMap[boneIndex] : boneIndex2MirrorJointMap[boneIndex];
+
+                //if (mirroredMovement && joint == KinectInterop.JointType.WristRight)
+                //{
+                //
+                //}
 				TransformBone(UserID, joint, boneIndex, !mirroredMovement);
 			}
 			else if(specIndex2JointMap.ContainsKey(boneIndex))
