@@ -5,16 +5,22 @@ using System;
 using System.Text;
 using System.Collections.Generic;
 
-struct BoneData 
+struct BoneData
 {
+    public BoneData(Vector3 pos, Quaternion rot)
+    {
+        this.pos = pos;
+        this.rot = rot;
+    }
     public Vector3 pos;
     public Quaternion rot;
 }
 
-public class AnimationReader : MonoBehaviour {
+public class AnimationReader : MonoBehaviour
+{
 
     // The Transforms of every tracked joint at a certain time
-    private Dictionary<float, List<BoneData>> AnimationData;
+    private List<BoneData> AnimationData;
     private List<float> timeSteps;
 
     // The Avatar the animation is applied to
@@ -22,54 +28,82 @@ public class AnimationReader : MonoBehaviour {
     private float startTime;
     private bool animationPlaying;
     public bool animationLoop;
+    private char[] seperators = { ';' };
 
-	// Use this for initialization
-	void Start () {
-        AnimationData = new Dictionary<float,List<BoneData>>();
-	}
-	
-	// Update is called once per frame
-	void Update () {
-        UpdateAnimation();
-	}
-
-    void ParseAnimation(string filePath, string fileName)
+    // Use this for initialization
+    void Start()
     {
-        var reader = new StreamReader(File.OpenRead(filePath + fileName));
+        AnimationData = new List<BoneData>();
+    }
+
+    // Update is called once per frame
+    void LateUpdate()
+    {
+        UpdateAnimation();
+    }
+
+    public bool ParseAnimation(string filePath, string fileName, AvatarController avatarController, bool loop)
+    {
+        if (fileName == "")
+        {
+            animationPlaying = false;
+            return false;
+        }
+
+        var reader = new StreamReader(File.OpenRead(filePath + fileName + ".csv"));
+
+        if (reader == null)
+        {
+            animationPlaying = false;
+            return false;
+        }
+
+        animationLoop = loop;
+        avatar = avatarController;
         timeSteps = new List<float>();
-        List<BoneData> bones = new List<BoneData>();
+        
 
-
+        reader.ReadLine();
+        // Parse every line until the end
+        if (AnimationData == null)
+            AnimationData = new List<BoneData>();
         while (!reader.EndOfStream)
         {
             var line = reader.ReadLine();
-            var values = line.Split(';');
-            
-            float time = float.Parse(values[10]); 
+            var values = line.Split(seperators, StringSplitOptions.RemoveEmptyEntries);
+
+            float time = float.Parse(values[0]);
             timeSteps.Add(time);
+            List<BoneData> bones = new List<BoneData>();
 
-
-            for (int i = 0; i < avatar.Bones.Length; i++)
+            for (int i = 1; i < values.Length; i++)
             {
-                int j = 0;
-                if (avatar.BoneIndex2JointMap.ContainsKey(i))
-                {
-                    BoneData data;
-                    //TODO check if indizes are correct
-                    data.pos = new Vector3(float.Parse(values[11 + 18 * j]), float.Parse(values[12 + 18 * j]), float.Parse(values[13 + 18 * j]));
-                    data.rot = new Quaternion(float.Parse(values[14 + 18 * j]), float.Parse(values[15 + 18 * j]), float.Parse(values[16 + 18 * j]), float.Parse(values[17 + 18 * j]));
-                    bones.Add(data);
-                    j++;
-                }
+
+                var jointData = values[i].Split(',');
+
+                //TODO check if indizes are correct
+                float px = float.Parse(jointData[0].Substring(1));
+                float py = float.Parse(jointData[1]);
+                float pz = float.Parse(jointData[2]);
+                float rx = float.Parse(jointData[3]);
+                float ry = float.Parse(jointData[4]);
+                float rz = float.Parse(jointData[5]);
+                float rw = float.Parse(jointData[6].Substring(0, jointData[6].Length - 1));
+                BoneData data = new BoneData(new Vector3(px, py, pz), new Quaternion(rx, ry, rz, rw));
+                bones.Add(data);
+
             }
-            AnimationData.Add(time, bones);
+            //AnimationData.Add(bones);
         }
+        return true;
     }
 
     void UpdateAnimation()
     {
+        //Only update if there is a parsed animation
         if (animationPlaying && timeSteps != null && timeSteps.Count > 0)
         {
+            // We need these for interpolation
             float timeFloor = 0;
             float timeCeiling = 0;
 
@@ -89,8 +123,8 @@ public class AnimationReader : MonoBehaviour {
                 animationPlaying = false;
                 if (animationLoop)
                 {
-                   startTime = Time.time;
-                   animationPlaying = true;
+                    startTime = Time.time;
+                    animationPlaying = true;
                 }
                 return;
             }
@@ -101,20 +135,17 @@ public class AnimationReader : MonoBehaviour {
                 int j = 0;
                 if (avatar.BoneIndex2JointMap.ContainsKey(i))
                 {
-                    avatar.Bones[i].localPosition = Vector3.Lerp(AnimationData[timeFloor][j].pos, AnimationData[timeCeiling][j].pos, Time.time - startTime);
-                    avatar.Bones[i].localRotation = Quaternion.Lerp(AnimationData[timeFloor][j].rot, AnimationData[timeCeiling][j].rot, Time.time - startTime);
+                    //avatar.Bones[i].localPosition = Vector3.Lerp(AnimationData[timeFloor][j].pos, AnimationData[timeCeiling][j].pos, Time.time - startTime);
+                    //avatar.Bones[i].localRotation = Quaternion.Lerp(AnimationData[timeFloor][j].rot, AnimationData[timeCeiling][j].rot, Time.time - startTime);
                     j++;
                 }
             }
         }
     }
 
-    // Call this function from the UI
-    public void PlayAnimation(string filePath, string fileName)
+    public void StopAnimation()
     {
-        ParseAnimation(filePath, fileName);
-        startTime = Time.time;
-        animationPlaying = true;
+        animationPlaying = false;
     }
 
 }

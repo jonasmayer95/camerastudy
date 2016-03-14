@@ -49,7 +49,7 @@ public class UserStudyUI : MonoBehaviour
             uint age = uint.Parse(ageInputField.GetComponent<InputField>().text);
             uint set = uint.Parse(setInputField.GetComponent<InputField>().text);
             float precision = float.Parse(precisionInputField.GetComponent<InputField>().text);
-            Sex sex = (Sex)GetToggleIndex(sexToggleGroup);
+            //Sex sex = (Sex)GetToggleIndex(sexToggleGroup);
             CameraPerspectives camPerspective = (CameraPerspectives)GetToggleIndex(camPerspectivesToggleGroup);
             CameraMotionStates camMotion = (CameraMotionStates)GetToggleIndex(camMotionToggleGroup);
             Handedness hand = (Handedness)GetToggleIndex(handednessToggleGroup);
@@ -61,8 +61,8 @@ public class UserStudyUI : MonoBehaviour
             // We've got valid data, send it to MovementRecoreder
             if (loggingData)
             {
-                MovementRecorder.InitializeAndActivateUserStudy(name, trial, set, age, camPerspective, sex);
-                userStudyObject.SetActive(true);
+                //MovementRecorder.InitializeAndActivateUserStudy(name, trial, set, age, camPerspective, sex);
+                //userStudyObject.SetActive(true);
             }
             
 

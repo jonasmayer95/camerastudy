@@ -4,92 +4,122 @@ using System.IO;
 using System;
 using UnityEngine.EventSystems;
 using System.Text;
+using System.Collections.Generic;
 
 public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
 {
     private static uint frameCount;
-    private StreamWriter rawWriter;
-    private StreamWriter filteredWriter;
+    private List<StreamWriter> rawWriters;
+    //private StreamWriter filteredWriter;
     public string filePath;
     public string fileName;
 
-    public GameObject avatar;
-    private AvatarController controller;
-    private static UserStudyData userData;
+    public GameObject kinectAvatar;
+    public GameObject art_IkAvatar;
+
+    // We need two avatars to record simultaniously
+    private List<GameObject> avatars;
+
+    private List<AvatarController> controllers;
+    //private static UserStudyData userData;
     private float recordStartTime;
+
+    private static bool recordKinect;
+    private static bool recordART_IK;
 
 
     void Start()
     {
-
-        if (avatar != null)
+        avatars = new List<GameObject>();
+        if (recordART_IK)
         {
-            controller = avatar.GetComponent<AvatarController>();
+            avatars.Add(art_IkAvatar);
+        }
+        if (recordKinect)
+        {
+            avatars.Add(kinectAvatar);
+            
+        }
+       
+        controllers = new List<AvatarController>();
+        rawWriters = new List<StreamWriter>();
 
-            if (controller == null)
+        for (int i = 0; i < avatars.Count; i++)
+        {
+            if (avatars[i] != null)
             {
-                Debug.LogError("MovementRecorder: avatar gameObject doesn't contain an AvatarController component");
-            }
-            else
-            {
-                //everything's fine, set up our filestream
-                //TODO: validate path
-                var date = DateTime.Now;
-                filePath = filePath + fileName + date.Second.ToString() + date.Minute.ToString() +
-                    date.Hour.ToString() + date.Day.ToString() + date.Month.ToString() + date.Year.ToString();
-                rawWriter = new StreamWriter(filePath + ".csv");
-                filteredWriter = new StreamWriter(filePath + "_filtered.csv");
-                recordStartTime = Time.time;
-                //write raw header to file
-                string rawHeader = string.Concat("name;set;age;camera;sex;trial_code;start_frame;end_frame;completion_time;current_frame;current_time;",
-                    GetBoneDescriptions(controller));
-                string detailedHeader = "name;set;age;camera;sex;trial_code;completion_time;hand_position";
+                controllers.Add(avatars[i].GetComponent<AvatarController>());
 
-                rawWriter.WriteLine(rawHeader);
-                filteredWriter.WriteLine(detailedHeader);
+                if (controllers[i] == null)
+                {
+                    Debug.LogError("MovementRecorder: avatar gameObject doesn't contain an AvatarController component");
+                }
+                else
+                {
+                    //everything's fine, set up our filestream
+                    //TODO: validate path
+                    var date = DateTime.Now;
+                    string path = filePath + avatars[i].name + date.Second.ToString() + date.Minute.ToString() +
+                        date.Hour.ToString() + date.Day.ToString() + date.Month.ToString() + date.Year.ToString();
+                    rawWriters.Add(new StreamWriter(path + ".csv"));
+                    
+                    //Store Last Recording as fallback value
+                    PlayerPrefs.SetString("last" + avatars[i].name, path);
+                    PlayerPrefs.Save();
+                    //filteredWriter = new StreamWriter(path + "_filtered.csv");
+                    recordStartTime = Time.time;
+                    //write raw header to file
+                    string rawHeader = string.Concat("current_time;", GetBoneDescriptions(controllers[i]));
+                    //string detailedHeader = "";
+
+                    rawWriters[i].WriteLine(rawHeader);
+                    //filteredWriter.WriteLine(detailedHeader);
+                }
             }
         }
-        else
+        if(avatars == null)
         {
             Debug.LogError("MovementRecorder: avatar gameObject is null");
             this.gameObject.SetActive(false);
         }
     }
 
-
     void LateUpdate()
     {
-        var bones = controller.Bones;
-
-        //write stuff that has been set through events, then get avatar movement data
-        rawWriter.Write("{0};{1};{2};{3};{4};{5};{6};{7};{8};{9};{10};", userData.name, userData.set, userData.age, userData.camType, userData.sex,
-            userData.trialCode, userData.startFrame, userData.endFrame, userData.completionTime.ToString(), frameCount, Time.time - recordStartTime);
-
-
-        for (int i = 0; i < bones.Length; ++i)
+        for (int j = 0; j < controllers.Count; j++)
         {
-            if (!bones[i])
-                continue;
+            var bones = controllers[j].Bones;
 
-            if (controller.BoneIndex2JointMap.ContainsKey(i))
+            //write stuff that has been set through events, then get avatar movement data
+            rawWriters[j].Write("{0};", /*userData.name, userData.set, userData.age, userData.camType, userData.sex,
+            userData.trialCode, userData.startFrame, userData.endFrame, userData.completionTime.ToString(), frameCount,*/ Time.time - recordStartTime);
+
+
+            for (int i = 0; i < bones.Length; ++i)
             {
-                //record bone position, rotation and timestamp
-                WriteBoneData(bones[i], rawWriter);
+                if (!bones[i])
+                    continue;
 
-            }
-            else if (controller.SpecIndex2JointMap.ContainsKey(i))
-            {
-                var alJoints = (!controller.mirroredMovement) ? controller.SpecIndex2JointMap[i] : controller.SpecIndex2MirrorJointMap[i];
-
-                if (alJoints.Count >= 2)
+                if (controllers[j].BoneIndex2JointMap.ContainsKey(i))
                 {
-                    //record special bone position, rotation and timestamp
-                    WriteBoneData(bones[i], rawWriter);
+                    //record bone position, rotation and timestamp
+                    WriteBoneData(bones[i], rawWriters[j]);
+
+                }
+                else if (controllers[j].SpecIndex2JointMap.ContainsKey(i))
+                {
+                    var alJoints = (!controllers[j].mirroredMovement) ? controllers[j].SpecIndex2JointMap[i] : controllers[j].SpecIndex2MirrorJointMap[i];
+
+                    if (alJoints.Count >= 2)
+                    {
+                        //record special bone position, rotation and timestamp
+                        WriteBoneData(bones[i], rawWriters[j]);
+                    }
                 }
             }
+            rawWriters[j].Write("\n");
+            ++frameCount;
         }
-        rawWriter.Write("\n");
-        ++frameCount;
     }
 
 
@@ -101,21 +131,29 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
     //call from UI to end recording
     public void EndRecording()
     {
-        if (rawWriter != null)
+        for (int i = 0; i < rawWriters.Count; i++)
         {
-            rawWriter.Flush();
-            rawWriter.Dispose();
+            if (rawWriters[i] != null)
+            {
+                rawWriters[i].Flush();
+                rawWriters[i].Dispose();
+            }
         }
-
-        if (filteredWriter != null)
+        gameObject.SetActive(false);
+        /*if (filteredWriter != null)
         {
             filteredWriter.Flush();
             filteredWriter.Dispose();
-        }
+        }*/
     }
 
+    public static void InitializeRecording(bool kinect, bool art_ik)
+    {
+        recordART_IK = art_ik;
+        recordKinect = kinect;
+    }
 
-    public static void InitializeAndActivateUserStudy(string name, uint trial, uint set, uint age, CameraPerspectives camType, Sex sex)
+    /*public static void InitializeAndActivateUserStudy(string name, uint trial, uint set, uint age, CameraPerspectives camType, Sex sex)
     {
         userData = new UserStudyData(name, trial, set, age, camType, sex);
 
@@ -123,14 +161,14 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
         //recorder initializes 2 streamwriters and writes stuff every frame. certain properties are set from
         //the outside using events. some of them should be nullable so we don't write garbage before the experiment
         //has started.
-    }
+    }*/
 
 
     private void WriteBoneData(Transform bone, StreamWriter writer)
     {
         if (writer != null)
         {
-            writer.Write("\"{0}, {1}, {2}, {3}, {4}, {5}, {6}\";", bone.localPosition.x, bone.localPosition.y, bone.localPosition.z,
+            writer.Write("\"{0},{1},{2},{3},{4},{5},{6}\";", bone.localPosition.x, bone.localPosition.y, bone.localPosition.z,
                         bone.localRotation.x, bone.localRotation.y, bone.localRotation.z, bone.localRotation.w);
         }
     }
@@ -171,16 +209,16 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
         return sb.ToString();
     }
 
-    public void StartTrial(float startTime)
+    /*public void StartTrial(float startTime)
     {
         userData.startFrame = frameCount;
         userData.startTime = startTime;
 
         userData.endFrame = null;
         userData.endTime = null;
-    }
+    }*/
 
-    public void EndTrial(float endTime, Vector3 handPosition)
+    /*public void EndTrial(float endTime, Vector3 handPosition)
     {
         userData.endFrame = frameCount;
         userData.endTime = endTime;
@@ -197,9 +235,9 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
         //flush after trial completion
         rawWriter.Flush();
         filteredWriter.Flush();
-    }
+    }*/
 
-    public void SetTrial(uint trialCode)
+    /*public void SetTrial(uint trialCode)
     {
         userData.trialCode = trialCode;
 
@@ -211,9 +249,9 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
         userData.camType = cam;
 
         Reset(ref userData);
-    }
+    }*/
 
-    private void Reset(ref UserStudyData data)
+    /*private void Reset(ref UserStudyData data)
     {
         data.startTime = null;
         data.startFrame = null;
@@ -221,7 +259,7 @@ public class MovementRecorder : MonoBehaviour, IUserStudyMessageTarget
         data.endFrame = null;
         data.completionTime = null;
         data.handPosition = null;
-    }
+    }*/
 }
 
 public interface IUserStudyMessageTarget : IEventSystemHandler
@@ -231,31 +269,31 @@ public interface IUserStudyMessageTarget : IEventSystemHandler
     /// time and frame variables.
     /// </summary>
     /// <param name="startTime">Absolute time this was called (from program start).</param>
-    void StartTrial(float startTime);
+    ///void StartTrial(float startTime);
 
     /// <summary>
     /// Called when the user reaches the end marker. Should calculate and write
     /// time difference in milliseconds.
     /// </summary>
     /// <param name="endTime">Absolute time this was called (from program start).</param>
-    void EndTrial(float endTime, Vector3 handPosition);
+    ///void EndTrial(float endTime, Vector3 handPosition);
 
     /// <summary>
     /// Called when the trial (ball positions) should be changed. Should reset
     /// times and frames.
     /// </summary>
     /// <param name="trialCode"></param>
-    void SetTrial(uint trialCode/*, Vector3 start, Vector3 end*/);
+    ///void SetTrial(uint trialCode/*, Vector3 start, Vector3 end*/);
 
     /// <summary>
     /// Called when the camera pattern changes. Should (probably) reset
     /// local trial number.
     /// </summary>
     /// <param name="cam">The desired camera pattern.</param>
-    void SetCamera(CameraPerspectives cam);
+    ///void SetCamera(CameraPerspectives cam);
 }
 
-struct UserStudyData
+/*struct UserStudyData
 {
     public UserStudyData(string name, uint trial, uint set, uint age, CameraPerspectives camType, Sex sex)
     {
@@ -300,4 +338,4 @@ public enum Sex
 {
     Male,
     Female
-}
+}*/

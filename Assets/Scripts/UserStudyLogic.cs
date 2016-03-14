@@ -277,11 +277,11 @@ public class UserStudyLogic : MonoBehaviour
             audioSource.clip = startSound;
             audioSource.Play();
 
-            ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
+            //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
 
-            ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
+            //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
 
-            ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
+            //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
         }
         else
             camMotionComplete = false;
@@ -294,7 +294,7 @@ public class UserStudyLogic : MonoBehaviour
         audioSource.Stop();
         audioSource.clip = endSound;
         audioSource.Play();
-        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.EndTrial(Time.time, endEffector.transform.position));
+        //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.EndTrial(Time.time, endEffector.transform.position));
         StartCoroutine(ExerciseDelay());
         //camMotionComplete = false;
     }
@@ -513,11 +513,11 @@ public class UserStudyLogic : MonoBehaviour
                         audioSource.clip = startSound;
                         audioSource.Play();
 
-                        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
+                        //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
 
-                        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
+                        //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
 
-                        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
+                        //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
 
                     }
                 }
@@ -540,11 +540,11 @@ public class UserStudyLogic : MonoBehaviour
                         audioSource.clip = startSound;
                         audioSource.Play();
 
-                        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
+                        //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
 
-                        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
+                        //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
 
-                        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
+                        //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
 
                     }
                 }
@@ -567,11 +567,11 @@ public class UserStudyLogic : MonoBehaviour
                         audioSource.clip = startSound;
                         audioSource.Play();
 
-                        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
+                        //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
 
-                        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
+                        //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
 
-                        ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
+                        //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
 
                     }
                 }
@@ -626,11 +626,11 @@ public class UserStudyLogic : MonoBehaviour
                                     audioSource.clip = startSound;
                                     audioSource.Play();
 
-                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
+                                    //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
 
-                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
+                                    //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
 
-                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
+                                    //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
 
                                 }
                             }
@@ -654,11 +654,11 @@ public class UserStudyLogic : MonoBehaviour
                                     audioSource.clip = startSound;
                                     audioSource.Play();
 
-                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
+                                    //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
 
-                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
+                                    //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
 
-                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
+                                    //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
 
                                 }
                             }
@@ -685,11 +685,11 @@ public class UserStudyLogic : MonoBehaviour
                                     audioSource.clip = startSound;
                                     audioSource.Play();
 
-                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
+                                    //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
 
-                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
+                                    //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
 
-                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
+                                    //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
 
                                 }
                             }
@@ -713,11 +713,11 @@ public class UserStudyLogic : MonoBehaviour
                                     audioSource.clip = startSound;
                                     audioSource.Play();
 
-                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
+                                    //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetCamera(cameraPerspective));
 
-                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
+                                    //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.SetTrial(targetPos[trialCounter].TrialCode));
 
-                                    ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
+                                    //ExecuteEvents.Execute<IUserStudyMessageTarget>(userStudyObject, null, (x, y) => x.StartTrial(Time.time));
 
                                 }
                             }
