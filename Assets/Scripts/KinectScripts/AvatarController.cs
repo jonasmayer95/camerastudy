@@ -32,6 +32,9 @@ public class AvatarController : MonoBehaviour
 	// Offset node this transform is relative to, if any (optional)
 	public GameObject offsetNode;
 
+    // Determines if this avatar uses ART data
+    public bool useArt;
+
 	// Makes initial avatar position, relative to the specified camera
 	// to be equal to the user's position, relative to the sensor (optional)
 	public Camera posRelativeToCamera;
@@ -55,8 +58,6 @@ public class AvatarController : MonoBehaviour
 	protected Quaternion offsetNodeRot;
 	protected Vector3 bodyRootPosition;
 
-    // Last frame's rotations for overriding mecanim with smoothing
-    private Quaternion[] previousRotation;
 	
 	// Calibration Offset Variables for Character Position.
 	protected bool offsetCalibrated = false;
@@ -240,7 +241,7 @@ public class AvatarController : MonoBehaviour
 			return;
 		
 		// Get Kinect joint orientation
-		Quaternion jointRotation = kinectManager.GetJointOrientation(userId, iJoint, flip);
+		Quaternion jointRotation = kinectManager.GetJointOrientation(userId, iJoint, flip, useArt);
 		if(jointRotation == Quaternion.identity)
 			return;
 
@@ -266,7 +267,7 @@ public class AvatarController : MonoBehaviour
 			return;
 		}
 		
-		Vector3 jointDir = kinectManager.GetJointDirection(userId, (int)joint, false, true);
+		Vector3 jointDir = kinectManager.GetJointDirection(userId, (int)joint, false, true, useArt);
 		Quaternion jointRotation = jointDir != Vector3.zero ? Quaternion.FromToRotation(baseDir, jointDir) : Quaternion.identity;
 		
 		if(!flip)
@@ -298,7 +299,7 @@ public class AvatarController : MonoBehaviour
 			return;
 		
         // Get the position of the body and store it.
-		Vector3 trans = kinectManager.GetUserPosition(UserID);
+		Vector3 trans = kinectManager.GetUserPosition(UserID, useArt);
 		
 		// If this is the first time we're moving the avatar, set the offset. Otherwise ignore it.
 		if (!offsetCalibrated)
