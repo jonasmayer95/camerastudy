@@ -37,6 +37,9 @@ public class KinectManager : MonoBehaviour
     // Public Bool to determine whether to display the skeleton lines on user map
     public bool displaySkeletonLines = false;
 
+    // Determines whether to show ART instead of kinect skeleton when displaySkeletonLines is set.
+    public bool artSkeleton;
+
     // Public Float to specify the image width used by depth and color maps, as % of the camera width. the height is calculated depending on the width.
     // if percent is zero, it is calculated internally to match the selected width and height of the depth image
     public float DisplayMapsWidthPercent = 20f;
@@ -1836,7 +1839,14 @@ public class KinectManager : MonoBehaviour
 
                     if (index >= 0 && index < sensorData.bodyCount)
                     {
-                        DrawSkeleton(usersLblTex, ref bodyFrame.bodyData[index]);
+                        if (artSkeleton)
+                        {
+                            DrawSkeleton(usersLblTex, ref bodyFrameArt.bodyData[index]);
+                        }
+                        else
+                        {
+                            DrawSkeleton(usersLblTex, ref bodyFrame.bodyData[index]);
+                        }
                     }
                 }
             }

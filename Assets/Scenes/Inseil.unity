@@ -656,6 +656,7 @@ MonoBehaviour:
   moveRate: 1
   smoothFactor: 5
   offsetNode: {fileID: 0}
+  useArt: 1
   posRelativeToCamera: {fileID: 0}
 --- !u!1 &108140447
 GameObject:
@@ -4344,6 +4345,7 @@ MonoBehaviour:
   displayUserMap: 1
   displayColorMap: 1
   displaySkeletonLines: 1
+  artSkeleton: 1
   DisplayMapsWidthPercent: 20
   useMultiSourceReader: 0
   minUserDistance: 0.5
@@ -5719,6 +5721,7 @@ MonoBehaviour:
   moveRate: 1
   smoothFactor: 5
   offsetNode: {fileID: 0}
+  useArt: 0
   posRelativeToCamera: {fileID: 0}
 --- !u!4 &1268787909 stripped
 Transform:
@@ -6839,6 +6842,7 @@ MonoBehaviour:
   moveRate: 1
   smoothFactor: 5
   offsetNode: {fileID: 0}
+  useArt: 0
   posRelativeToCamera: {fileID: 0}
 --- !u!1 &1713408140
 GameObject:
