@@ -5,6 +5,10 @@ using UnityEngine.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml.Serialization;
 
 public class KinectManager : MonoBehaviour
 {
@@ -111,6 +115,9 @@ public class KinectManager : MonoBehaviour
     // Object that corresponds to the square marker on our target
     public GameObject handMarker;
 
+    // Whether to use the sensor or playback data from a file
+    public bool playback = false;
+
     // Bool to keep track of whether Kinect has been initialized
     private bool kinectInitialized = false;
 
@@ -177,6 +184,12 @@ public class KinectManager : MonoBehaviour
     //private BoneOrientationsFilter boneOrientationFilter = null;
 
     private bool characterScaled = false;
+
+    private StreamWriter kinectWriter;
+
+    // Set if either the sensor or the playback interface acquired a new frame
+    private bool bAcquiredBodyFrame;
+    
 
     // returns the single KinectManager instance
     public static KinectManager Instance
@@ -562,7 +575,7 @@ public class KinectManager : MonoBehaviour
                     {
                         jointData = bodyFrame.bodyData[index].joint[joint];
                     }
-                    
+
                     Vector3 jointDir = jointData.direction;
 
                     if (flipX)
@@ -1363,7 +1376,12 @@ public class KinectManager : MonoBehaviour
             Quaternion quatTiltAngle = Quaternion.Euler(-sensorAngle, 0.0f, 0.0f);
             kinectToWorld.SetTRS(new Vector3(0.0f, sensorHeight, 0.0f), quatTiltAngle, Vector3.one);
 
+            var today = DateTime.Now;
+            string fileName = string.Concat("kinectstream_", today.Day.ToString("00"), today.Month.ToString("00"), today.Year.ToString(), 
+                "_", today.Hour.ToString("00"), today.Minute.ToString("00"), today.Second.ToString("00"), ".csv");
 
+            kinectWriter = new StreamWriter(fileName);
+            kinectWriter.AutoFlush = false;
         }
         catch (DllNotFoundException ex)
         {
@@ -1621,7 +1639,16 @@ public class KinectManager : MonoBehaviour
                 }
             }
 
-            if (KinectInterop.PollBodyFrame(sensorData, ref bodyFrame, ref kinectToWorld))
+            if (!playback)
+            {
+                bAcquiredBodyFrame = KinectInterop.PollBodyFrame(sensorData, ref bodyFrame, ref kinectToWorld);
+            }
+            else
+            {
+                //TODO: get BodyFrameData from file, and set bAcquiredBodyFrame according to frame pacing (30FPS)
+            }
+
+            if (bAcquiredBodyFrame)
             {
                 //lastFrameTime = bodyFrame.liRelativeTime;
 
@@ -1631,6 +1658,21 @@ public class KinectManager : MonoBehaviour
                     jointPositionFilter.UpdateFilter(ref bodyFrame);
                 }
 
+                //right now we're limiting ourselves to kinect frame rate (30 FPS)
+                //should we record ART data separately or should I leave it like this?
+
+                // READ THIS BEFORE ATTEMPTING TO WRITE A SINGLE LINE OF BODY RECORDING CODE!
+                //
+                //
+                // XmlSerializer is too slow, forget it. Binary serialization doesn't work with Unity types,
+                // at least not out of the box and implementing serialization surrogates seems like a major pain
+                // in the ass. That's why we're gonna use csv again.
+                //
+                // Writing single BodyData instances is done,
+                // see below at WriteBodyData(). Now we only need to write all other bodies + properties of the BodyFrame
+                // itself, but that shouldn't be much of a problem. After that we still need reading code and frame
+                // pacing for playback. Just split by ';' to get cells and by ',' to get individual members of i.e. vectors
+                // inside a cell. Use LibreOffice/Notepad++ to see what the file structure looks like, it'll help you a lot.
 
                 bodyFrame.Copy(ref bodyFrameArt);
 
@@ -1643,10 +1685,21 @@ public class KinectManager : MonoBehaviour
                     //TODO: remove this when debugging is done
                     TestObject.transform.position = bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].kinectPos;
 
+
+                    //TODO: adapt this to write multiple bodies, i.e. loop it + include BodyFrameData
+                    var userBodyData = bodyFrame.bodyData[index];
+
+                    WriteBodyData(userBodyData, kinectWriter);
+
+
                     //overwrite wrist data with art gameobject data
                     if (handMarker != null)
                     {
                         var markerKinectPos = handMarker.transform.position;
+
+
+                        //xmlSerializer.Serialize(artWriter, handMarker.transform.position);
+
                         //Debug.Log(string.Format("KinectManager: handMarker kinectPos: {0}", markerKinectPos));
                         //Debug.Log(string.Format("KinectManager: kinectPos, worldPos before setting: {0}, {1}", TestObject.transform.position, bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position));
                         bodyFrameArt.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].kinectPos = markerKinectPos;
@@ -1665,7 +1718,7 @@ public class KinectManager : MonoBehaviour
 
                         Debug.Log(string.Format("KinectManager: after setting: {0}, {1}", markerKinectPos, kinectToWorld.MultiplyPoint3x4(markerKinectPos)));
 
-                        //recalculate directions
+                        //recalculate directions because wrist data has been overwritten
                         for (int j = 1; j < sensorData.jointCount; ++j)
                         {
                             KinectInterop.CalculateJointDirection(index, (int)KinectInterop.JointType.WristRight, ref bodyFrameArt, sensorData);
@@ -1764,6 +1817,39 @@ public class KinectManager : MonoBehaviour
                 }
             }
 
+        }
+    }
+
+    private void WriteBodyData(KinectInterop.BodyData userBodyData, StreamWriter writer)
+    {
+        //the semicolon is used as a cell separator (at least by libreoffice), just because we talked about it last time
+
+        //write all fields except joints
+        writer.Write("{0};{1};{2};{3};{4};\"{5}\";\"{6}\";{7};{8};\"{9}\";{10};{11};\"{12}\";\"{13}\";\"{14}\";\"{15}\";{16};{17};\"{18}\";\"{19}\";{20};",
+            userBodyData.bIsRestricted, userBodyData.bIsTracked, userBodyData.bodyFullAngle, userBodyData.bodyTurnAngle, userBodyData.dwClippedEdges,
+            userBodyData.headOrientation.ToString("G"), userBodyData.hipsDirection.ToString("G"), userBodyData.isTurnedAround, userBodyData.leftHandConfidence,
+            userBodyData.leftHandOrientation.ToString("G"), userBodyData.leftHandState, userBodyData.liTrackingID, userBodyData.mirroredRotation.ToString("G"),
+            userBodyData.normalRotation.ToString("G"), userBodyData.orientation.ToString("G"), userBodyData.position.ToString("G"), userBodyData.rightHandConfidence,
+            userBodyData.rightHandOrientation.ToString("G"), userBodyData.rightHandState, userBodyData.shouldersDirection.ToString("G"), userBodyData.turnAroundFactor);
+
+        //write all joints
+        for (int i = 0; i < userBodyData.joint.Length; ++i)
+        {
+            var joint = userBodyData.joint[i];
+
+            writer.Write("\"{0},{1},{2},{3},{4},{5},{6}\";", joint.jointType, joint.kinectPos.ToString("G"), joint.mirroredRotation.ToString("G"),
+                joint.normalRotation.ToString("G"), joint.orientation.ToString("G"), joint.position.ToString("G"), joint.trackingState);
+        }
+
+        writer.Write("\n");
+    }
+
+    void OnApplicationQuit()
+    {
+        if (kinectWriter != null)
+        {
+            kinectWriter.Flush();
+            kinectWriter.Dispose();
         }
     }
 

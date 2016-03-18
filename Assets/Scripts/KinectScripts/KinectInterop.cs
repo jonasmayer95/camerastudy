@@ -444,6 +444,7 @@ public class KinectInterop
 
     public struct BodyFrameData
     {
+        //time in ticks, 1 tick = 100ns
         public Int64 liRelativeTime;
         [MarshalAsAttribute(UnmanagedType.ByValArray, SizeConst = 6, ArraySubType = UnmanagedType.Struct)]
         public BodyData[] bodyData;
