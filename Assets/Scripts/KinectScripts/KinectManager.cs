@@ -186,10 +186,17 @@ public class KinectManager : MonoBehaviour
     private bool characterScaled = false;
 
     private StreamWriter kinectWriter;
+    private float recordStartTime;
+    private bool recording = false;
+    private KinectInterop.BodyData loadedFrame;
+    private StreamReader reader;
+    private float playBackStartTime;
+    public MovieTexture movie;
+    public Material movieMaterial;
 
     // Set if either the sensor or the playback interface acquired a new frame
     private bool bAcquiredBodyFrame;
-    
+
 
     // returns the single KinectManager instance
     public static KinectManager Instance
@@ -1376,12 +1383,12 @@ public class KinectManager : MonoBehaviour
             Quaternion quatTiltAngle = Quaternion.Euler(-sensorAngle, 0.0f, 0.0f);
             kinectToWorld.SetTRS(new Vector3(0.0f, sensorHeight, 0.0f), quatTiltAngle, Vector3.one);
 
-            var today = DateTime.Now;
+            /*var today = DateTime.Now;
             string fileName = string.Concat("kinectstream_", today.Day.ToString("00"), today.Month.ToString("00"), today.Year.ToString(), 
                 "_", today.Hour.ToString("00"), today.Minute.ToString("00"), today.Second.ToString("00"), ".csv");
-
+            
             kinectWriter = new StreamWriter(fileName);
-            kinectWriter.AutoFlush = false;
+            kinectWriter.AutoFlush = false;*/
         }
         catch (DllNotFoundException ex)
         {
@@ -1522,6 +1529,10 @@ public class KinectManager : MonoBehaviour
         }
 
         Debug.Log("Waiting for users.");
+        //userMapImage.material = movieMaterial;
+        //userMapImage.material.mainTexture = movie as MovieTexture;
+        userMapImage.texture = movie as MovieTexture;
+        movie.Play();
     }
 
     //void OnApplicationQuit()
@@ -1687,10 +1698,11 @@ public class KinectManager : MonoBehaviour
 
 
                     //TODO: adapt this to write multiple bodies, i.e. loop it + include BodyFrameData
-                    var userBodyData = bodyFrame.bodyData[index];
-
-                    WriteBodyData(userBodyData, kinectWriter);
-
+                    if (recording)
+                    {
+                        var userBodyData = bodyFrame.bodyData[index];
+                        WriteBodyData(userBodyData, kinectWriter);
+                    }
 
                     //overwrite wrist data with art gameobject data
                     if (handMarker != null)
@@ -1825,12 +1837,12 @@ public class KinectManager : MonoBehaviour
         //the semicolon is used as a cell separator (at least by libreoffice), just because we talked about it last time
 
         //write all fields except joints
-        writer.Write("{0};{1};{2};{3};{4};\"{5}\";\"{6}\";{7};{8};\"{9}\";{10};{11};\"{12}\";\"{13}\";\"{14}\";\"{15}\";{16};{17};\"{18}\";\"{19}\";{20};",
+        writer.Write("{0};{1};{2};{3};{4};\"{5}\";\"{6}\";{7};{8};\"{9}\";{10};{11};\"{12}\";\"{13}\";\"{14}\";\"{15}\";{16};{17};\"{18}\";\"{19}\";{20};{21};",
             userBodyData.bIsRestricted, userBodyData.bIsTracked, userBodyData.bodyFullAngle, userBodyData.bodyTurnAngle, userBodyData.dwClippedEdges,
             userBodyData.headOrientation.ToString("G"), userBodyData.hipsDirection.ToString("G"), userBodyData.isTurnedAround, userBodyData.leftHandConfidence,
             userBodyData.leftHandOrientation.ToString("G"), userBodyData.leftHandState, userBodyData.liTrackingID, userBodyData.mirroredRotation.ToString("G"),
             userBodyData.normalRotation.ToString("G"), userBodyData.orientation.ToString("G"), userBodyData.position.ToString("G"), userBodyData.rightHandConfidence,
-            userBodyData.rightHandOrientation.ToString("G"), userBodyData.rightHandState, userBodyData.shouldersDirection.ToString("G"), userBodyData.turnAroundFactor);
+            userBodyData.rightHandOrientation.ToString("G"), userBodyData.rightHandState, userBodyData.shouldersDirection.ToString("G"), userBodyData.turnAroundFactor, (Time.time - recordStartTime).ToString("G"));
 
         //write all joints
         for (int i = 0; i < userBodyData.joint.Length; ++i)
@@ -1842,6 +1854,76 @@ public class KinectManager : MonoBehaviour
         }
 
         writer.Write("\n");
+    }
+
+    public void StartRecording()
+    {
+        var today = DateTime.Now;
+        string fileName = string.Concat("kinectstream_", today.Day.ToString("00"), today.Month.ToString("00"), today.Year.ToString(),
+            "_", today.Hour.ToString("00"), today.Minute.ToString("00"), today.Second.ToString("00"), ".csv");
+
+        kinectWriter = new StreamWriter(fileName);
+        kinectWriter.AutoFlush = false;
+        recordStartTime = Time.time;
+        recording = true;
+    }
+
+    public void EndRecording()
+    {
+        if (recording)
+        {
+            recording = false;
+            kinectWriter.Flush();
+            kinectWriter.Dispose();
+        }
+    }
+
+    public void StartPlayBack(string path)
+    {
+        reader = new StreamReader(File.OpenRead(path + ".csv"));
+        playBackStartTime = Time.time;
+        playback = true;
+        loadedFrame = new KinectInterop.BodyData();
+        ParseFrames(ref loadedFrame);
+        string movieTexturePath = path + ".mov";
+        //MovieTexture movie = (MovieTexture)Resources.Load(movieTexturePath, typeof(MovieTexture));
+        userMapImage.texture = movie;
+        movie.Play();
+    }
+
+    public void EndPlayBack()
+    {
+        playback = false;
+    }
+
+
+    // Parses two lines for linear interpolation between two timesteps
+    private void ParseFrames(ref KinectInterop.BodyData loadedFrame)
+    {
+        float time = Time.time - playBackStartTime;
+        float lastFrameTime = 0;
+        string lastLine;
+        string[] lastValues;
+        string nextLine;
+        string[] nextValues;
+        float nextFrameTime;
+        float factor;
+
+        // parse as long as the next line has a higher time
+        while (lastFrameTime >= time)
+        {
+            lastLine = reader.ReadLine();
+            lastValues = lastLine.Split(';');
+            lastFrameTime = float.Parse(lastValues[21]);
+        }
+
+        nextLine = reader.ReadLine();
+        nextValues = nextLine.Split(';');
+        nextFrameTime = float.Parse(nextValues[21]);
+
+        factor = (time - lastFrameTime) / (nextFrameTime - lastFrameTime);
+
+
     }
 
     void OnApplicationQuit()
