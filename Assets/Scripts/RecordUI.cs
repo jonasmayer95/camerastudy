@@ -12,6 +12,7 @@ public class RecordUI : MonoBehaviour
     public Button endRecordButton;
     public GameObject movementRecorder;
     public GameObject playAnimationUI;
+    public AVProMovieCaptureBase movie;
 
     public void StartRecording()
     {
@@ -23,6 +24,7 @@ public class RecordUI : MonoBehaviour
         else
         {
             KinectManager.Instance.StartRecording();
+            movie.StartCapture();
         }
 
         //Enable/Disable UI elements
@@ -44,6 +46,7 @@ public class RecordUI : MonoBehaviour
         else
         {
             KinectManager.Instance.EndRecording();
+            movie.StopCapture();
         }
 
         recordKinect.gameObject.SetActive(true);

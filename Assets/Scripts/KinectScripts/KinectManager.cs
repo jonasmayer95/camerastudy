@@ -191,8 +191,8 @@ public class KinectManager : MonoBehaviour
     private KinectInterop.BodyData loadedFrame;
     private StreamReader reader;
     private float playBackStartTime;
-    public MovieTexture movie;
-    public Material movieMaterial;
+    private MovieTexture movieToPlay;
+    private Texture2D kinectTexture;
 
     // Set if either the sensor or the playback interface acquired a new frame
     private bool bAcquiredBodyFrame;
@@ -1470,6 +1470,7 @@ public class KinectManager : MonoBehaviour
             // Initialize depth & label map related stuff
             usersLblTex = new Texture2D(sensorData.depthImageWidth, sensorData.depthImageHeight, TextureFormat.ARGB32, false);
             userMapImage.texture = usersLblTex;
+            kinectTexture = usersLblTex;
 
             usersMapSize = sensorData.depthImageWidth * sensorData.depthImageHeight;
             usersHistogramImage = new Color32[usersMapSize];
@@ -1529,10 +1530,6 @@ public class KinectManager : MonoBehaviour
         }
 
         Debug.Log("Waiting for users.");
-        //userMapImage.material = movieMaterial;
-        //userMapImage.material.mainTexture = movie as MovieTexture;
-        userMapImage.texture = movie as MovieTexture;
-        movie.Play();
     }
 
     //void OnApplicationQuit()
@@ -1878,22 +1875,43 @@ public class KinectManager : MonoBehaviour
         }
     }
 
-    public void StartPlayBack(string path)
+    public void StartPlayBack(string name)
     {
-        reader = new StreamReader(File.OpenRead(path + ".csv"));
+        //name = "MovieCapture-2016-03-23-50812s-512x424";
+        //reader = new StreamReader((Application.dataPath).Remove(Application.dataPath.Length - 6) + name + ".csv");
         playBackStartTime = Time.time;
         playback = true;
         loadedFrame = new KinectInterop.BodyData();
-        ParseFrames(ref loadedFrame);
-        string movieTexturePath = path + ".mov";
-        //MovieTexture movie = (MovieTexture)Resources.Load(movieTexturePath, typeof(MovieTexture));
-        userMapImage.texture = movie;
-        movie.Play();
+        
+        //ParseFrames(ref loadedFrame);
+        StartCoroutine(loadAndPlayMovie(name));
+    }
+
+    IEnumerator loadAndPlayMovie(string name)
+    {
+        string path = "file:///" + (Application.dataPath).Remove(Application.dataPath.Length - 6);
+        Debug.Log(path + name + ".ogv");
+        WWW diskMovieDir = new WWW(path + name + ".ogv");
+
+        //Wait for file finish loading
+        while (!diskMovieDir.movie.isReadyToPlay)
+        {
+            yield return 0;
+        }
+
+        //Save the loaded movie from WWW to movetexture
+        movieToPlay = diskMovieDir.movie as MovieTexture;
+
+        //Hook the movie texture to the current renderer
+        userMapImage.texture = movieToPlay;
+        movieToPlay.Play();     
     }
 
     public void EndPlayBack()
     {
         playback = false;
+        movieToPlay.Stop();
+        userMapImage.texture = kinectTexture;
     }
 
 

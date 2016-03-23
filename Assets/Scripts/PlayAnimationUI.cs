@@ -14,22 +14,29 @@ public class PlayAnimationUI : MonoBehaviour {
     public AvatarController kinectAvatar;
     public AvatarController artIKAvatar;
     public Toggle animationLoop;
-
+    public bool playInputData;
     private List<AnimationReader> animations;
 
     public void PlayRecordingButton()
     {
-        animations = new List<AnimationReader>();
-        animations.Add((Instantiate(animationReaderPrefab) as GameObject).GetComponent<AnimationReader>());
-        if (!animations[0].ParseAnimation("", art_ikFileName.text, artIKAvatar, animationLoop.isOn))
+        if (!playInputData)
         {
-            ParseLastRecording("art_ik");
-            Debug.Log("File not found parsing last recording instead");
+            animations = new List<AnimationReader>();
+            animations.Add((Instantiate(animationReaderPrefab) as GameObject).GetComponent<AnimationReader>());
+            if (!animations[0].ParseAnimation("", art_ikFileName.text, artIKAvatar, animationLoop.isOn))
+            {
+                ParseLastRecording("art_ik");
+                Debug.Log("File not found parsing last recording instead");
+            }
+            if (!animations[0].ParseAnimation("", kinectFileName.text, kinectAvatar, animationLoop.isOn))
+            {
+                ParseLastRecording("kinect");
+                Debug.Log("File not found parsing last recording instead");
+            }
         }
-        if (!animations[0].ParseAnimation("", kinectFileName.text, kinectAvatar, animationLoop.isOn))
+        else
         {
-            ParseLastRecording("kinect");
-            Debug.Log("File not found parsing last recording instead");
+            KinectManager.Instance.StartPlayBack(kinectFileName.text);
         }
         recordingUI.SetActive(false);
         playRecordingButton.gameObject.SetActive(false);
@@ -41,17 +48,25 @@ public class PlayAnimationUI : MonoBehaviour {
 
     public void StopAnimation()
     {
-        for (int i = 0; i < animations.Count; i++)
+        if (!playInputData)
         {
-            if(animations[i] != null)
-            animations[i].StopAnimation();
+            for (int i = 0; i < animations.Count; i++)
+            {
+                if (animations[i] != null)
+                    animations[i].StopAnimation();
+            }
         }
-        recordingUI.SetActive(true);
-        playRecordingButton.gameObject.SetActive(true);
-        stopButton.gameObject.SetActive(false);
-        kinectFileName.gameObject.SetActive(true);
-        art_ikFileName.gameObject.SetActive(true);
-        animationLoop.gameObject.SetActive(true);
+         else
+        {
+            KinectManager.Instance.EndPlayBack();
+        }
+            recordingUI.SetActive(true);
+            playRecordingButton.gameObject.SetActive(true);
+            stopButton.gameObject.SetActive(false);
+            kinectFileName.gameObject.SetActive(true);
+            art_ikFileName.gameObject.SetActive(true);
+            animationLoop.gameObject.SetActive(true);
+       
     }
 
     private void ParseLastRecording(string type)

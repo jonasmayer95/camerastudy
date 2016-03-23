@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Text;
 using System.Collections;
+using UnityEditor;
 
 //-----------------------------------------------------------------------------
 // Copyright 2012-2015 RenderHeads Ltd.  All rights reserved.
