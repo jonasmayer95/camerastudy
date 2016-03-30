@@ -116,7 +116,9 @@ public class KinectManager : MonoBehaviour
     public GameObject handMarker;
 
     // Whether to use the sensor or playback data from a file
-    public bool playback = false;
+    public bool playback;
+
+    public string playbackFileName;
 
     // Bool to keep track of whether Kinect has been initialized
     private bool kinectInitialized = false;
@@ -196,6 +198,9 @@ public class KinectManager : MonoBehaviour
 
     // Set if either the sensor or the playback interface acquired a new frame
     private bool bAcquiredBodyFrame;
+
+    // A line from our playback file
+    private string line;
 
 
     // returns the single KinectManager instance
@@ -1389,6 +1394,8 @@ public class KinectManager : MonoBehaviour
             
             kinectWriter = new StreamWriter(fileName);
             kinectWriter.AutoFlush = false;*/
+
+            reader = new StreamReader(playbackFileName);
         }
         catch (DllNotFoundException ex)
         {
@@ -1654,6 +1661,14 @@ public class KinectManager : MonoBehaviour
             else
             {
                 //TODO: get BodyFrameData from file, and set bAcquiredBodyFrame according to frame pacing (30FPS)
+                GetFrame(ref bodyFrame.bodyData[0]);
+                //1. load some lines in advance if required, write to bodyData[0] if we're playing back
+
+                //2. play back the first frame if we're at the start
+
+                //3. check if 1/30th of a second passed
+
+                //4. play back next frame and go to 3. until the file is at the end
             }
 
             if (bAcquiredBodyFrame)
@@ -1706,8 +1721,6 @@ public class KinectManager : MonoBehaviour
                     {
                         var markerKinectPos = handMarker.transform.position;
 
-
-                        //xmlSerializer.Serialize(artWriter, handMarker.transform.position);
 
                         //Debug.Log(string.Format("KinectManager: handMarker kinectPos: {0}", markerKinectPos));
                         //Debug.Log(string.Format("KinectManager: kinectPos, worldPos before setting: {0}, {1}", TestObject.transform.position, bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position));
@@ -1839,7 +1852,8 @@ public class KinectManager : MonoBehaviour
             userBodyData.headOrientation.ToString("G"), userBodyData.hipsDirection.ToString("G"), userBodyData.isTurnedAround, userBodyData.leftHandConfidence,
             userBodyData.leftHandOrientation.ToString("G"), userBodyData.leftHandState, userBodyData.liTrackingID, userBodyData.mirroredRotation.ToString("G"),
             userBodyData.normalRotation.ToString("G"), userBodyData.orientation.ToString("G"), userBodyData.position.ToString("G"), userBodyData.rightHandConfidence,
-            userBodyData.rightHandOrientation.ToString("G"), userBodyData.rightHandState, userBodyData.shouldersDirection.ToString("G"), userBodyData.turnAroundFactor, (Time.time - recordStartTime).ToString("G"));
+            userBodyData.rightHandOrientation.ToString("G"), userBodyData.rightHandState, userBodyData.shouldersDirection.ToString("G"), userBodyData.turnAroundFactor, 
+            (Time.time - recordStartTime).ToString("G"));
 
         //write all joints
         for (int i = 0; i < userBodyData.joint.Length; ++i)
@@ -1914,6 +1928,13 @@ public class KinectManager : MonoBehaviour
         userMapImage.texture = kinectTexture;
     }
 
+
+    void GetFrame(ref KinectInterop.BodyData frame)
+    {
+        line = reader.ReadLine();
+
+
+    }
 
     // Parses two lines for linear interpolation between two timesteps
     private void ParseFrames(ref KinectInterop.BodyData loadedFrame)
