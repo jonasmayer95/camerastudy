@@ -191,7 +191,10 @@ public class KinectManager : MonoBehaviour
     private float recordStartTime;
     private bool recording = false;
     private KinectInterop.BodyData loadedFrame;
+    
     private StreamReader reader;
+    private Stream playbackFile;
+
     private float playBackStartTime;
     private MovieTexture movieToPlay;
     private Texture2D kinectTexture;
@@ -1398,9 +1401,10 @@ public class KinectManager : MonoBehaviour
             kinectWriter = new StreamWriter(fileName);
             kinectWriter.AutoFlush = false;*/
 
-            if (playbackFileName != "")
+            if (playback && playbackFileName != "")
             {
-                reader = new StreamReader(playbackFileName);
+                playbackFile = new FileStream(playbackFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+                reader = new StreamReader(playbackFile);
             }
         }
         catch (DllNotFoundException ex)
@@ -1668,6 +1672,7 @@ public class KinectManager : MonoBehaviour
             {
                 //TODO: get BodyFrameData from file, and set bAcquiredBodyFrame according to frame pacing (30FPS)
                 GetFrame(ref bodyFrame.bodyData[0]);
+                bAcquiredBodyFrame = true;
                 //1. load some lines in advance if required, write to bodyData[0] if we're playing back
 
                 //2. play back the first frame if we're at the start
@@ -1867,7 +1872,7 @@ public class KinectManager : MonoBehaviour
         {
             var joint = userBodyData.joint[i];
 
-            writer.Write("\"{0},{1},{2},{3},{4},{5},{6}, {7}\";", joint.direction.ToString("G"), joint.jointType, joint.kinectPos.ToString("G"), 
+            writer.Write("\"{0},{1},{2},{3},{4},{5},{6},{7}\";", joint.direction.ToString("G"), joint.jointType, joint.kinectPos.ToString("G"), 
                 joint.mirroredRotation.ToString("G"), joint.normalRotation.ToString("G"), joint.orientation.ToString("G"), joint.position.ToString("G"), 
                 joint.trackingState);
         }
@@ -1893,7 +1898,6 @@ public class KinectManager : MonoBehaviour
         {
             recording = false;
             kinectWriter.Flush();
-            kinectWriter.Dispose();
         }
     }
 
@@ -1957,6 +1961,11 @@ public class KinectManager : MonoBehaviour
                 cellStart = cellEnd + 1; //one position after the separator
             }
         }
+        else
+        {
+            //Untested: remove comment marks below to return to the beginning of the file
+            playbackFile.Seek(0, SeekOrigin.Begin);
+        }
     }
 
     private Quaternion QuaternionFromString(string str)
@@ -2012,29 +2021,34 @@ public class KinectManager : MonoBehaviour
     private void JointFromString(string str, ref KinectInterop.JointData joint)
     {
         int startIndex = 1; //skip double quote
-        int endIndex = str.IndexOf(',', startIndex);
+        int endIndex = str.IndexOf(')', startIndex);
+
+        joint.direction = Vector3FromString(str.Substring(startIndex, endIndex - startIndex + 1)); //include parentheses when dealing with vectors
+
+        startIndex = endIndex + 2; //skip comma
+        endIndex = str.IndexOf(',', startIndex);
 
         joint.jointType = (KinectInterop.JointType) Enum.Parse(typeof(KinectInterop.JointType), str.Substring(startIndex, endIndex - startIndex));
 
         startIndex = endIndex + 1;
         endIndex = str.IndexOf(')', startIndex);
-        joint.kinectPos = Vector3FromString(str.Substring(startIndex, endIndex - startIndex));
+        joint.kinectPos = Vector3FromString(str.Substring(startIndex, endIndex - startIndex + 1));
 
         startIndex = endIndex + 2; //comma in between members
         endIndex = str.IndexOf(')', startIndex);
-        joint.mirroredRotation = QuaternionFromString(str.Substring(startIndex, endIndex - startIndex));
+        joint.mirroredRotation = QuaternionFromString(str.Substring(startIndex, endIndex - startIndex + 1));
 
         startIndex = endIndex + 2;
         endIndex = str.IndexOf(')', startIndex);
-        joint.normalRotation = QuaternionFromString(str.Substring(startIndex, endIndex - startIndex));
+        joint.normalRotation = QuaternionFromString(str.Substring(startIndex, endIndex - startIndex + 1));
 
         startIndex = endIndex + 2;
         endIndex = str.IndexOf(')', startIndex);
-        joint.orientation = QuaternionFromString(str.Substring(startIndex, endIndex - startIndex));
+        joint.orientation = QuaternionFromString(str.Substring(startIndex, endIndex - startIndex + 1));
 
         startIndex = endIndex + 2;
         endIndex = str.IndexOf(')', startIndex);
-        joint.position = Vector3FromString(str.Substring(startIndex, endIndex - startIndex));
+        joint.position = Vector3FromString(str.Substring(startIndex, endIndex - startIndex + 1));
 
         startIndex = endIndex + 2;
         endIndex = str.IndexOf('"', startIndex);
@@ -2044,7 +2058,6 @@ public class KinectManager : MonoBehaviour
     private void ReadCellData(ref KinectInterop.BodyData frame, string line, int cellStart, int cellEnd, int cellIndex)
     {
         cell = line.Substring(cellStart, cellEnd - cellStart);
-        //Debug.Log(cell);
 
         switch (cellIndex)
         {
@@ -2134,6 +2147,11 @@ public class KinectManager : MonoBehaviour
                 frame.turnAroundFactor = float.Parse(cell);
                 break;
 
+            case 21:
+                //TODO: save frametime somewhere, maybe even move it to the beginning of the line so it can be parsed
+                //separately before our saved BodyData
+                break;
+
             default:
                 JointFromString(cell, ref frame.joint[cellIndex - 22]);
                 break;
@@ -2175,8 +2193,7 @@ public class KinectManager : MonoBehaviour
     {
         if (kinectWriter != null)
         {
-            kinectWriter.Flush();
-            kinectWriter.Dispose();
+            kinectWriter.Close();
         }
     }
 
