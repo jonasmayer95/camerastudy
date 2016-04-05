@@ -36,7 +36,7 @@ public class PlayAnimationUI : MonoBehaviour {
         }
         else
         {
-            KinectManager.Instance.StartPlayBack(kinectFileName.text);
+            //KinectManager.Instance.StartPlayback(kinectFileName.text);
         }
         recordingUI.SetActive(false);
         playRecordingButton.gameObject.SetActive(false);
@@ -58,7 +58,7 @@ public class PlayAnimationUI : MonoBehaviour {
         }
          else
         {
-            KinectManager.Instance.EndPlayBack();
+            KinectManager.Instance.EndPlayback();
         }
             recordingUI.SetActive(true);
             playRecordingButton.gameObject.SetActive(true);

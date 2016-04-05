@@ -1,10 +1,15 @@
 ﻿using UnityEngine;
+using UnityEngine.Events;
 using System.Collections;
 using System.IO;
 using System;
 
 public class KinectRecorder : MonoBehaviour
 {
+    public bool LoopPlayback { get; set; }
+
+    public string PlaybackFileName { get; set; }
+
     // A line from our playback file
     private string line = "";
 
@@ -15,21 +20,14 @@ public class KinectRecorder : MonoBehaviour
     private StreamReader reader;
     private Stream playbackFile;
 
-    public string playbackFileName;
     private float recordStartTime;
 
-    void Start()
-    {
-        //TODO: delete this and call the method below from GUI
-        SetPlaybackFile(playbackFileName);
-    }
 
     /// <summary>
     /// Sets up the file stream for playing back recorded data, destroying the
     /// previous stream if there was one.
     /// </summary>
-    /// <param name="path">Path to the playback data file.</param>
-    public void SetPlaybackFile(string path)
+    public void OpenPlaybackFile()
     {
         try
         {
@@ -38,9 +36,9 @@ public class KinectRecorder : MonoBehaviour
                 reader.Close();
             }
 
-            if (path != "")
+            if (PlaybackFileName != "")
             {
-                playbackFile = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+                playbackFile = new FileStream(PlaybackFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
                 reader = new StreamReader(playbackFile);
             }
         }
@@ -75,7 +73,7 @@ public class KinectRecorder : MonoBehaviour
                 cellStart = cellEnd + 1; //one position after the separator
             }
         }
-        else
+        else if (LoopPlayback == true)
         {
             playbackFile.Seek(0, SeekOrigin.Begin);
         }

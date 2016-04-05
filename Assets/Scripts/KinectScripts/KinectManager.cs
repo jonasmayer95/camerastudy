@@ -1837,16 +1837,16 @@ public class KinectManager : MonoBehaviour
         }
     }
 
-    public void StartPlayBack(string name)
+    public void StartPlayback(/*string name*/)
     {
         //name = "MovieCapture-2016-03-23-50812s-512x424";
         //reader = new StreamReader((Application.dataPath).Remove(Application.dataPath.Length - 6) + name + ".csv");
         playBackStartTime = Time.time;
         playback = true;
-        loadedFrame = new KinectInterop.BodyData();
+        //loadedFrame = new KinectInterop.BodyData();
         
         //ParseFrames(ref loadedFrame);
-        StartCoroutine(loadAndPlayMovie(name));
+        //StartCoroutine(loadAndPlayMovie(name));
     }
 
     IEnumerator loadAndPlayMovie(string name)
@@ -1869,11 +1869,11 @@ public class KinectManager : MonoBehaviour
         movieToPlay.Play();     
     }
 
-    public void EndPlayBack()
+    public void EndPlayback()
     {
         playback = false;
-        movieToPlay.Stop();
-        userMapImage.texture = kinectTexture;
+        //movieToPlay.Stop();
+        //userMapImage.texture = kinectTexture;
     }
     
 
