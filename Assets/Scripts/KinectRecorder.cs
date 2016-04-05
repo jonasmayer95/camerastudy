@@ -9,6 +9,7 @@ public class KinectRecorder : MonoBehaviour
     public bool LoopPlayback { get; set; }
 
     public string PlaybackFileName { get; set; }
+    public string RecordingFileName { get; set; }
 
     // A line from our playback file
     private string line = "";
@@ -77,7 +78,10 @@ public class KinectRecorder : MonoBehaviour
         {
             playbackFile.Seek(0, SeekOrigin.Begin);
         }
+
+        //TODO: fire event when playback has finished so UI can reset
     }
+
 
     /// <summary>
     /// Constructs a Quaternion from a string.
@@ -197,94 +201,94 @@ public class KinectRecorder : MonoBehaviour
         switch (cellIndex)
         {
             case 0:
-                frame.bIsRestricted = short.Parse(cell);
+                //TODO: save frametime somewhere, maybe even move it to the beginning of the line so it can be parsed
+                //separately before our saved BodyData
                 break;
 
             case 1:
-                frame.bIsTracked = short.Parse(cell);
+                frame.bIsRestricted = short.Parse(cell);
                 break;
 
             case 2:
-                frame.bodyFullAngle = float.Parse(cell);
+                frame.bIsTracked = short.Parse(cell);
                 break;
 
 
             case 3:
-                frame.bodyTurnAngle = float.Parse(cell);
+                frame.bodyFullAngle = float.Parse(cell);
                 break;
 
             case 4:
-                frame.dwClippedEdges = uint.Parse(cell);
+                frame.bodyTurnAngle = float.Parse(cell);
                 break;
 
             case 5:
-                frame.headOrientation = QuaternionFromString(cell);
+                frame.dwClippedEdges = uint.Parse(cell);
                 break;
 
             case 6:
-                frame.hipsDirection = Vector3FromString(cell);
+                frame.headOrientation = QuaternionFromString(cell);
                 break;
 
             case 7:
-                frame.isTurnedAround = bool.Parse(cell);
+                frame.hipsDirection = Vector3FromString(cell);
                 break;
 
             case 8:
-                frame.leftHandConfidence = (KinectInterop.TrackingConfidence)Enum.Parse(typeof(KinectInterop.TrackingConfidence), cell);
+                frame.isTurnedAround = bool.Parse(cell);
                 break;
 
             case 9:
-                frame.leftHandOrientation = QuaternionFromString(cell);
+                frame.leftHandConfidence = (KinectInterop.TrackingConfidence)Enum.Parse(typeof(KinectInterop.TrackingConfidence), cell);
                 break;
 
             case 10:
-                frame.leftHandState = (KinectInterop.HandState)Enum.Parse(typeof(KinectInterop.HandState), cell);
+                frame.leftHandOrientation = QuaternionFromString(cell);
                 break;
 
             case 11:
-                frame.liTrackingID = long.Parse(cell);
+                frame.leftHandState = (KinectInterop.HandState)Enum.Parse(typeof(KinectInterop.HandState), cell);
                 break;
 
             case 12:
-                frame.mirroredRotation = QuaternionFromString(cell);
+                frame.liTrackingID = long.Parse(cell);
                 break;
 
             case 13:
-                frame.normalRotation = QuaternionFromString(cell);
+                frame.mirroredRotation = QuaternionFromString(cell);
                 break;
 
             case 14:
-                frame.orientation = QuaternionFromString(cell);
+                frame.normalRotation = QuaternionFromString(cell);
                 break;
 
             case 15:
-                frame.position = Vector3FromString(cell);
+                frame.orientation = QuaternionFromString(cell);
                 break;
 
             case 16:
-                frame.rightHandConfidence = (KinectInterop.TrackingConfidence)Enum.Parse(typeof(KinectInterop.TrackingConfidence), cell);
+                frame.position = Vector3FromString(cell);
                 break;
 
             case 17:
-                frame.rightHandOrientation = QuaternionFromString(cell);
+                frame.rightHandConfidence = (KinectInterop.TrackingConfidence)Enum.Parse(typeof(KinectInterop.TrackingConfidence), cell);
                 break;
 
             case 18:
+                frame.rightHandOrientation = QuaternionFromString(cell);
+                break;
+
+            case 19:
                 var e = (KinectInterop.HandState)Enum.Parse(typeof(KinectInterop.HandState), cell);
                 frame.rightHandState = e;
                 break;
 
-            case 19:
+            case 20:
                 frame.shouldersDirection = Vector3FromString(cell);
                 break;
 
-            case 20:
-                frame.turnAroundFactor = float.Parse(cell);
-                break;
-
             case 21:
-                //TODO: save frametime somewhere, maybe even move it to the beginning of the line so it can be parsed
-                //separately before our saved BodyData
+                frame.turnAroundFactor = float.Parse(cell);
                 break;
 
             default:
@@ -295,9 +299,19 @@ public class KinectRecorder : MonoBehaviour
 
     public void StartRecording()
     {
-        var today = DateTime.Now;
-        string fileName = string.Concat("kinectstream_", today.Day.ToString("00"), today.Month.ToString("00"), today.Year.ToString(),
-            "_", today.Hour.ToString("00"), today.Minute.ToString("00"), today.Second.ToString("00"), ".csv");
+        string fileName;
+
+        if (String.IsNullOrEmpty(RecordingFileName))
+        {
+            var today = DateTime.Now;
+            fileName = string.Concat("kinectstream_", today.Day.ToString("00"), today.Month.ToString("00"), today.Year.ToString(),
+                "_", today.Hour.ToString("00"), today.Minute.ToString("00"), today.Second.ToString("00"), ".csv");
+        }
+        else
+        {
+            fileName = RecordingFileName + ".csv";
+        }
+
 
         kinectWriter = new StreamWriter(fileName);
         kinectWriter.AutoFlush = false;
@@ -322,13 +336,13 @@ public class KinectRecorder : MonoBehaviour
         //the semicolon is used as a cell separator (at least by libreoffice), just because we talked about it last time
 
         //write all fields except joints
-        kinectWriter.Write("{0};{1};{2};{3};{4};\"{5}\";\"{6}\";{7};{8};\"{9}\";{10};{11};\"{12}\";\"{13}\";\"{14}\";\"{15}\";{16};\"{17}\";{18};\"{19}\";{20};{21};",
-            userBodyData.bIsRestricted, userBodyData.bIsTracked, userBodyData.bodyFullAngle, userBodyData.bodyTurnAngle, userBodyData.dwClippedEdges,
-            userBodyData.headOrientation.ToString("G"), userBodyData.hipsDirection.ToString("G"), userBodyData.isTurnedAround, userBodyData.leftHandConfidence,
-            userBodyData.leftHandOrientation.ToString("G"), userBodyData.leftHandState, userBodyData.liTrackingID, userBodyData.mirroredRotation.ToString("G"),
-            userBodyData.normalRotation.ToString("G"), userBodyData.orientation.ToString("G"), userBodyData.position.ToString("G"), userBodyData.rightHandConfidence,
-            userBodyData.rightHandOrientation.ToString("G"), userBodyData.rightHandState, userBodyData.shouldersDirection.ToString("G"), userBodyData.turnAroundFactor,
-            (Time.time - recordStartTime).ToString("G"));
+        kinectWriter.Write("{0};{1};{2};{3};{4};{5};\"{6}\";\"{7}\";{8};{9};\"{10}\";{11};{12};\"{13}\";\"{14}\";\"{15}\";\"{16}\";{17};\"{18}\";{19};\"{20}\";{21};",
+            (Time.time - recordStartTime).ToString("G"), userBodyData.bIsRestricted, userBodyData.bIsTracked, userBodyData.bodyFullAngle, userBodyData.bodyTurnAngle, 
+            userBodyData.dwClippedEdges, userBodyData.headOrientation.ToString("G"), userBodyData.hipsDirection.ToString("G"), userBodyData.isTurnedAround, 
+            userBodyData.leftHandConfidence, userBodyData.leftHandOrientation.ToString("G"), userBodyData.leftHandState, userBodyData.liTrackingID, 
+            userBodyData.mirroredRotation.ToString("G"), userBodyData.normalRotation.ToString("G"), userBodyData.orientation.ToString("G"), userBodyData.position.ToString("G"), 
+            userBodyData.rightHandConfidence, userBodyData.rightHandOrientation.ToString("G"), userBodyData.rightHandState, userBodyData.shouldersDirection.ToString("G"), 
+            userBodyData.turnAroundFactor);
 
         //write all joints
         for (int i = 0; i < userBodyData.joint.Length; ++i)
