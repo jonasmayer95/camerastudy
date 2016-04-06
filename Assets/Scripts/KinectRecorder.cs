@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 using System.Collections;
 using System.IO;
 using System;
@@ -22,6 +24,9 @@ public class KinectRecorder : MonoBehaviour
     private Stream playbackFile;
 
     private float recordStartTime;
+    public AVProMovieCaptureFromTexture movieRec;
+    private float frameTime = 0;
+    public Button stopButton;
 
 
     /// <summary>
@@ -41,6 +46,8 @@ public class KinectRecorder : MonoBehaviour
             {
                 playbackFile = new FileStream(PlaybackFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
                 reader = new StreamReader(playbackFile);
+                StartCoroutine(KinectManager.Instance.loadAndPlayMovie(PlaybackFileName));
+                frameTime = 0;
             }
         }
         catch (IOException ex)
@@ -54,12 +61,26 @@ public class KinectRecorder : MonoBehaviour
     /// is reached, it seeks back to the beginning.
     /// </summary>
     /// <param name="frame"></param>
-    public void GetFrame(ref KinectInterop.BodyData frame)
+    public void GetFrame(ref KinectInterop.BodyData frame, float time)
     {
         int cellStart = 0;
         int cellEnd = 0;
         int cellIndex = 0;
-        line = reader.ReadLine();
+
+        while (time >= frameTime)
+        {
+            line = reader.ReadLine();
+            if (line != null)
+            {
+                cellEnd = line.IndexOf(";", cellStart);
+               // if (cellEnd != line.Length - 1)
+                    ReadCellData(ref frame, ref frameTime, line, cellStart, cellEnd, 0);
+            }
+            else
+            {
+                break;
+            }
+        }
 
         if (line != null)
         {
@@ -68,18 +89,24 @@ public class KinectRecorder : MonoBehaviour
                 //get cell, increment counter, do work on it, set new cell start
                 cellEnd = line.IndexOf(";", cellStart);
 
-                ReadCellData(ref frame, line, cellStart, cellEnd, cellIndex);
+                ReadCellData(ref frame, ref frameTime, line, cellStart, cellEnd, cellIndex);
 
                 cellIndex++;
                 cellStart = cellEnd + 1; //one position after the separator
             }
         }
-        else if (LoopPlayback == true)
+        else if (LoopPlayback == true && reader.EndOfStream)
         {
             playbackFile.Seek(0, SeekOrigin.Begin);
+            frameTime = 0;
+            KinectManager.Instance.RestartPlayback();
         }
 
-        //TODO: fire event when playback has finished so UI can reset
+        if (reader.EndOfStream)
+        {
+            //TODO: fire event when playback has finished so UI can reset
+            ExecuteEvents.Execute(stopButton.gameObject, new PointerEventData(EventSystem.current), ExecuteEvents.submitHandler);
+        }
     }
 
 
@@ -194,8 +221,8 @@ public class KinectRecorder : MonoBehaviour
     /// <param name="cellStart"></param>
     /// <param name="cellEnd"></param>
     /// <param name="cellIndex"></param>
-    private void ReadCellData(ref KinectInterop.BodyData frame, string line, int cellStart, int cellEnd, int cellIndex)
-    {
+    private void ReadCellData(ref KinectInterop.BodyData frame, ref float time, string line, int cellStart, int cellEnd, int cellIndex)
+    {     
         cell = line.Substring(cellStart, cellEnd - cellStart);
 
         switch (cellIndex)
@@ -203,6 +230,7 @@ public class KinectRecorder : MonoBehaviour
             case 0:
                 //TODO: save frametime somewhere, maybe even move it to the beginning of the line so it can be parsed
                 //separately before our saved BodyData
+                time = float.Parse(cell);
                 break;
 
             case 1:
@@ -300,27 +328,35 @@ public class KinectRecorder : MonoBehaviour
     public void StartRecording()
     {
         string fileName;
+        string movieFileName;
 
         if (String.IsNullOrEmpty(RecordingFileName))
         {
             var today = DateTime.Now;
             fileName = string.Concat("kinectstream_", today.Day.ToString("00"), today.Month.ToString("00"), today.Year.ToString(),
                 "_", today.Hour.ToString("00"), today.Minute.ToString("00"), today.Second.ToString("00"), ".csv");
+            movieFileName = string.Concat("kinectstream_", today.Day.ToString("00"), today.Month.ToString("00"), today.Year.ToString(),
+                "_", today.Hour.ToString("00"), today.Minute.ToString("00"), today.Second.ToString("00"), ".avi");
         }
         else
         {
+            movieFileName = RecordingFileName + ".avi";
             fileName = RecordingFileName + ".csv";
         }
 
-
+        movieRec._forceFilename = movieFileName;
+        movieRec.StartCapture();
         kinectWriter = new StreamWriter(fileName);
         kinectWriter.AutoFlush = false;
         recordStartTime = Time.time;
+
+
     }
 
     public void EndRecording()
     {
         kinectWriter.Close();
+        movieRec.StopCapture();
     }
 
     void OnApplicationQuit()

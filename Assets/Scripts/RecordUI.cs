@@ -48,7 +48,6 @@ public class RecordUI : MonoBehaviour
             KinectManager.Instance.EndRecording();
             movie.StopCapture();
         }
-
         recordKinect.gameObject.SetActive(true);
         recordART_IK.gameObject.SetActive(true);
         endRecordButton.gameObject.SetActive(false);

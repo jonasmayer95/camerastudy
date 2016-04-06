@@ -1386,7 +1386,7 @@ public class KinectManager : MonoBehaviour
             Quaternion quatTiltAngle = Quaternion.Euler(-sensorAngle, 0.0f, 0.0f);
             kinectToWorld.SetTRS(new Vector3(0.0f, sensorHeight, 0.0f), quatTiltAngle, Vector3.one);
 
-            
+
         }
         catch (DllNotFoundException ex)
         {
@@ -1655,7 +1655,7 @@ public class KinectManager : MonoBehaviour
             else
             {
                 //TODO: get BodyFrameData from file, and set bAcquiredBodyFrame according to frame pacing (30FPS)
-                recorder.GetFrame(ref bodyFrame.bodyData[0]);
+                recorder.GetFrame(ref bodyFrame.bodyData[0], Time.time - playBackStartTime);
                 bAcquiredBodyFrame = true;
                 //1. load some lines in advance if required, write to bodyData[0] if we're playing back
 
@@ -1664,6 +1664,7 @@ public class KinectManager : MonoBehaviour
                 //3. check if 1/30th of a second passed
 
                 //4. play back next frame and go to 3. until the file is at the end
+                //Made frame pacing according to our recording in recorder.GetFrame method
             }
 
             if (bAcquiredBodyFrame)
@@ -1845,38 +1846,52 @@ public class KinectManager : MonoBehaviour
         playBackStartTime = Time.time;
         playback = true;
         //loadedFrame = new KinectInterop.BodyData();
-        
+
         //ParseFrames(ref loadedFrame);
         //StartCoroutine(loadAndPlayMovie(name));
     }
 
-    IEnumerator loadAndPlayMovie(string name)
+    public IEnumerator loadAndPlayMovie(string movieName)
     {
+        movieName = movieName.Substring(2);
+        movieName = movieName.Remove(movieName.Length - 4);
         string path = "file:///" + (Application.dataPath).Remove(Application.dataPath.Length - 6);
-        Debug.Log(path + name + ".ogv");
-        WWW diskMovieDir = new WWW(path + name + ".ogv");
-
-        //Wait for file finish loading
-        while (!diskMovieDir.movie.isReadyToPlay)
+        if (File.Exists("./"  + movieName + ".ogv"))
         {
-            yield return 0;
+            WWW diskMovieDir = new WWW(path + movieName + ".ogv");
+
+            //Wait for file finish loading
+            while (!diskMovieDir.movie.isReadyToPlay)
+            {
+                yield return 0;
+            }
+
+            //Save the loaded movie from WWW to movetexture
+            movieToPlay = diskMovieDir.movie as MovieTexture;
+
+            //Hook the movie texture to the current renderer
+            userMapImage.texture = movieToPlay;
+            movieToPlay.Play();
         }
-
-        //Save the loaded movie from WWW to movetexture
-        movieToPlay = diskMovieDir.movie as MovieTexture;
-
-        //Hook the movie texture to the current renderer
-        userMapImage.texture = movieToPlay;
-        movieToPlay.Play();     
     }
 
     public void EndPlayback()
     {
         playback = false;
-        //movieToPlay.Stop();
-        //userMapImage.texture = kinectTexture;
+        movieToPlay.Stop();
+        userMapImage.texture = kinectTexture;
     }
-    
+
+    public void RestartPlayback()
+    {
+        playback = true;
+        playBackStartTime = Time.time;
+        movieToPlay.Stop();
+        userMapImage.texture = movieToPlay; 
+        movieToPlay.Play();
+        
+    }
+
 
     // Parses two lines for linear interpolation between two timesteps
     //private void ParseFrames(ref KinectInterop.BodyData loadedFrame)

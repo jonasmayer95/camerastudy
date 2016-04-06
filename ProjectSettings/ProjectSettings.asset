@@ -19,9 +19,9 @@ PlayerSettings:
   defaultScreenHeight: 768
   defaultScreenWidthWeb: 960
   defaultScreenHeightWeb: 600
-  m_RenderingPath: 3
+  m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  m_ActiveColorSpace: 1
+  m_ActiveColorSpace: 0
   m_MTRendering: 1
   m_MobileMTRendering: 0
   m_Stereoscopic3D: 0
@@ -174,8 +174,8 @@ PlayerSettings:
     m_Icons:
     - serializedVersion: 2
       m_Icon: {fileID: 0}
-      m_Width: 34230
-      m_Height: 34230
+      m_Width: 36271
+      m_Height: 36271
   m_BuildTargetBatching:
   - m_BuildTarget: Standalone
     m_StaticBatching: 1
