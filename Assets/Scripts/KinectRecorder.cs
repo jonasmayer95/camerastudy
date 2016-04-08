@@ -387,12 +387,20 @@ public class KinectRecorder : MonoBehaviour
         ProcessStartInfo info = new ProcessStartInfo();
         info.FileName = Path.Combine(Path.Combine(Application.streamingAssetsPath, "video"), "ffmpeg2theora.exe");
         info.CreateNoWindow = true;
-        info.Arguments = videoPath;
+        info.Arguments = videoPath; //TODO: fix file paths with spaces
         
-        Process.Start(info);
         
-        //TODO: wait for the process to finish and then delete the avi
+        var process = Process.Start(info);
+        process.WaitForExit();
+
+        //process.Exited += (sender, e) => File.Delete(videoPath);
+        
+        //TODO: instead of halting the process and waiting for the converter, use the exited event
     }
+
+ 
+
+
 
     public void WriteBodyData(KinectInterop.BodyData userBodyData)
     {

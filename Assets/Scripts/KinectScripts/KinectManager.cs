@@ -1855,10 +1855,13 @@ public class KinectManager : MonoBehaviour
     {
         movieName = movieName.Substring(2);
         movieName = movieName.Remove(movieName.Length - 4);
-        string path = "file:///" + (Application.dataPath).Remove(Application.dataPath.Length - 6);
-        if (File.Exists("./"  + movieName + ".ogv"))
+        string wd = Path.GetFullPath(".");
+        string path = Path.Combine(wd, movieName + ".ogv");
+
+        if (File.Exists(path))
         {
-            WWW diskMovieDir = new WWW(path + movieName + ".ogv");
+            path = path.Replace('\\', '/');
+            WWW diskMovieDir = new WWW("file:///" + path);
 
             //Wait for file finish loading
             while (!diskMovieDir.movie.isReadyToPlay)
