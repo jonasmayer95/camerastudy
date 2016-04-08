@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System.Collections;
 using System.IO;
 using System;
+using System.Diagnostics;
 
 public class KinectRecorder : MonoBehaviour
 {
@@ -31,7 +32,7 @@ public class KinectRecorder : MonoBehaviour
 
     /// <summary>
     /// Sets up the file stream for playing back recorded data, destroying the
-    /// previous stream if there was one.
+    /// previous stream if there was one and starts playback in KinectManager.
     /// </summary>
     public void OpenPlaybackFile()
     {
@@ -42,17 +43,18 @@ public class KinectRecorder : MonoBehaviour
                 reader.Close();
             }
 
-            if (PlaybackFileName != "")
+            if (!String.IsNullOrEmpty(PlaybackFileName))
             {
                 playbackFile = new FileStream(PlaybackFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
                 reader = new StreamReader(playbackFile);
+                KinectManager.Instance.StartPlayback();
                 StartCoroutine(KinectManager.Instance.loadAndPlayMovie(PlaybackFileName));
                 frameTime = 0;
             }
         }
         catch (IOException ex)
         {
-            Debug.LogException(ex);
+            UnityEngine.Debug.LogException(ex);
         }
     }
 
@@ -95,18 +97,21 @@ public class KinectRecorder : MonoBehaviour
                 cellStart = cellEnd + 1; //one position after the separator
             }
         }
-        else if (LoopPlayback == true && reader.EndOfStream)
+        else
         {
-            playbackFile.Seek(0, SeekOrigin.Begin);
-            frameTime = 0;
-            KinectManager.Instance.RestartPlayback();
+            if (LoopPlayback == true)
+            {
+                playbackFile.Seek(0, SeekOrigin.Begin);
+                frameTime = 0;
+                KinectManager.Instance.RestartPlayback();
+            }
+            else
+            {
+                ExecuteEvents.Execute(stopButton.gameObject, new PointerEventData(EventSystem.current), ExecuteEvents.submitHandler);
+            }
         }
 
-        if (reader.EndOfStream)
-        {
-            //TODO: fire event when playback has finished so UI can reset
-            ExecuteEvents.Execute(stopButton.gameObject, new PointerEventData(EventSystem.current), ExecuteEvents.submitHandler);
-        }
+
     }
 
 
@@ -333,10 +338,11 @@ public class KinectRecorder : MonoBehaviour
         if (String.IsNullOrEmpty(RecordingFileName))
         {
             var today = DateTime.Now;
-            fileName = string.Concat("kinectstream_", today.Day.ToString("00"), today.Month.ToString("00"), today.Year.ToString(),
-                "_", today.Hour.ToString("00"), today.Minute.ToString("00"), today.Second.ToString("00"), ".csv");
-            movieFileName = string.Concat("kinectstream_", today.Day.ToString("00"), today.Month.ToString("00"), today.Year.ToString(),
-                "_", today.Hour.ToString("00"), today.Minute.ToString("00"), today.Second.ToString("00"), ".avi");
+            RecordingFileName = string.Concat("kinectstream_", today.Day.ToString("00"), today.Month.ToString("00"), today.Year.ToString(),
+                "_", today.Hour.ToString("00"), today.Minute.ToString("00"), today.Second.ToString("00"));
+
+            fileName = RecordingFileName + ".csv";
+            movieFileName = RecordingFileName + ".avi";
         }
         else
         {
@@ -346,17 +352,18 @@ public class KinectRecorder : MonoBehaviour
 
         movieRec._forceFilename = movieFileName;
         movieRec.StartCapture();
+        
         kinectWriter = new StreamWriter(fileName);
         kinectWriter.AutoFlush = false;
+
         recordStartTime = Time.time;
-
-
     }
 
     public void EndRecording()
     {
         kinectWriter.Close();
         movieRec.StopCapture();
+        ConvertVideo(RecordingFileName);
     }
 
     void OnApplicationQuit()
@@ -365,6 +372,26 @@ public class KinectRecorder : MonoBehaviour
         {
             kinectWriter.Close();
         }
+
+    }
+
+    /// <summary>
+    /// Starts a process that converts the recorded video to .ogv
+    /// </summary>
+    /// <param name="filename"></param>
+    void ConvertVideo(string filename)
+    {
+        string workingDirectory = Path.GetFullPath(".");
+        string videoPath = Path.Combine(workingDirectory, filename + ".avi");
+
+        ProcessStartInfo info = new ProcessStartInfo();
+        info.FileName = Path.Combine(Path.Combine(Application.streamingAssetsPath, "video"), "ffmpeg2theora.exe");
+        info.CreateNoWindow = true;
+        info.Arguments = videoPath;
+        
+        Process.Start(info);
+        
+        //TODO: wait for the process to finish and then delete the avi
     }
 
     public void WriteBodyData(KinectInterop.BodyData userBodyData)

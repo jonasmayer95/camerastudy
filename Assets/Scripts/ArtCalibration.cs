@@ -61,7 +61,9 @@ public class ArtCalibration : MonoBehaviour
     /// <param name="path">Path to calibration file</param>
     public static void ReadCalibrationFile(out Vector3 position, out Quaternion rotation, string fileName)
     {
-        string path = Path.Combine("cfg", fileName);
+        string cfg = Path.Combine(Application.streamingAssetsPath, "cfg");
+        string path = Path.Combine(cfg, fileName);
+
         string content = File.ReadAllText(path, Encoding.UTF8);
 
         NumberFormatInfo nfi = new CultureInfo("en-US", false).NumberFormat;

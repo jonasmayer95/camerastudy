@@ -1878,7 +1878,12 @@ public class KinectManager : MonoBehaviour
     public void EndPlayback()
     {
         playback = false;
-        movieToPlay.Stop();
+
+        if (movieToPlay != null)
+        {
+            movieToPlay.Stop();
+        }
+        
         userMapImage.texture = kinectTexture;
     }
 
@@ -1886,10 +1891,13 @@ public class KinectManager : MonoBehaviour
     {
         playback = true;
         playBackStartTime = Time.time;
-        movieToPlay.Stop();
-        userMapImage.texture = movieToPlay; 
-        movieToPlay.Play();
-        
+
+        if (movieToPlay != null)
+        {
+            movieToPlay.Stop();
+            userMapImage.texture = movieToPlay;
+            movieToPlay.Play();
+        }
     }
 
 

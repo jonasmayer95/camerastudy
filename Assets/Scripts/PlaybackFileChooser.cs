@@ -25,7 +25,12 @@ public class PlaybackFileChooser : MonoBehaviour
         string[] fileNames = Directory.GetFiles(".", "*.csv");
         options = new List<string>(fileNames);
 
-        fileChooser.AddOptions(options);
+        if (fileChooser != null)
+        {
+            fileChooser.ClearOptions();
+            fileChooser.AddOptions(options);
+            SetPlaybackFileName(fileChooser.value);
+        }
     }
 
     /// <summary>
@@ -35,6 +40,9 @@ public class PlaybackFileChooser : MonoBehaviour
     /// <param name="dropdownIndex">The index in the dropdown menu.</param>
     public void SetPlaybackFileName(int dropdownIndex)
     {
-        recorder.PlaybackFileName = fileChooser.options[dropdownIndex].text;
+        if (dropdownIndex < fileChooser.options.Count)
+        {
+            recorder.PlaybackFileName = fileChooser.options[dropdownIndex].text;
+        }
     }
 }

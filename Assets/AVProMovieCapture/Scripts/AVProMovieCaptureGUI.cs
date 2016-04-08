@@ -1,7 +1,10 @@
 using UnityEngine;
 using System.Text;
 using System.Collections;
+
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 //-----------------------------------------------------------------------------
 // Copyright 2012-2015 RenderHeads Ltd.  All rights reserved.
