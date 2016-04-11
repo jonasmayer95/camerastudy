@@ -3408,7 +3408,7 @@ MonoBehaviour:
   - ffdshow video encoder
   - Cinepak Codec by Radius
   _audioCodecPriority: []
-  _forceVideoCodecIndex: 1
+  _forceVideoCodecIndex: -1
   _forceAudioCodecIndex: 0
   _forceAudioDeviceIndex: 0
   _frameRate: 30
