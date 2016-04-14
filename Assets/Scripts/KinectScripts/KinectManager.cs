@@ -151,7 +151,7 @@ public class KinectManager : MonoBehaviour
     private int usersClrSize;
 
     // Kinect body frame data
-    private KinectInterop.BodyFrameData bodyFrame;
+    private KinectInterop.BodyFrameData bodyFrame; //TODO: make it easy to use multiple data sets for filters, i.e. this should be an array
     private KinectInterop.BodyFrameData bodyFrameArt;
     //private Int64 lastBodyFrameTime = 0;
 
@@ -1654,17 +1654,8 @@ public class KinectManager : MonoBehaviour
             }
             else
             {
-                //TODO: get BodyFrameData from file, and set bAcquiredBodyFrame according to frame pacing (30FPS)
                 recorder.GetFrame(ref bodyFrame.bodyData[0], Time.time - playBackStartTime);
                 bAcquiredBodyFrame = true;
-                //1. load some lines in advance if required, write to bodyData[0] if we're playing back
-
-                //2. play back the first frame if we're at the start
-
-                //3. check if 1/30th of a second passed
-
-                //4. play back next frame and go to 3. until the file is at the end
-                //Made frame pacing according to our recording in recorder.GetFrame method
             }
 
             if (bAcquiredBodyFrame)
