@@ -47,6 +47,7 @@ public class KinectRecorder : MonoBehaviour
             {
                 playbackFile = new FileStream(PlaybackFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
                 reader = new StreamReader(playbackFile);
+
                 KinectManager.Instance.StartPlayback();
                 StartCoroutine(KinectManager.Instance.loadAndPlayMovie(PlaybackFileName));
                 frameTime = 0;

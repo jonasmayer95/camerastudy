@@ -713,6 +713,37 @@ public class Kinect2Interface : DepthSensorInterface
 		// no fixes are needed
 	}
 
+    public Vector2 MapSpacePointToColorCoords(KinectInterop.SensorData sensorData, Vector3 spacePos)
+    {
+        Vector2 vPoint = new Vector2(-1f, -1f);
+
+        if (coordMapper != null)
+        {
+            CameraSpacePoint camPoint = new CameraSpacePoint();
+            camPoint.X = spacePos.x;
+            camPoint.Y = spacePos.y;
+            camPoint.Z = spacePos.z;
+
+            CameraSpacePoint[] camPoints = new CameraSpacePoint[1];
+            camPoints[0] = camPoint;
+
+            ColorSpacePoint[] colorPoints = new ColorSpacePoint[1];
+
+            coordMapper.MapCameraPointsToColorSpace(camPoints, colorPoints);
+
+            ColorSpacePoint result = colorPoints[0];
+
+            if (result.X >= 0 && result.X < sensorData.colorImageWidth &&
+                result.Y >= 0 && result.Y < sensorData.colorImageHeight)
+            {
+                vPoint.x = result.X;
+                vPoint.y = result.Y;
+            }
+        }
+
+        return vPoint;
+    }
+
 	public Vector2 MapSpacePointToDepthCoords (KinectInterop.SensorData sensorData, Vector3 spacePos)
 	{
 		Vector2 vPoint = Vector2.zero;

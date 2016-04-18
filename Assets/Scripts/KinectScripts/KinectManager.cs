@@ -109,7 +109,9 @@ public class KinectManager : MonoBehaviour
     // GUI Text to show gesture debug message.
     public GUIText gesturesDebugText;
 
-    public RawImage userMapImage;
+    public RawImage colorImage;
+    public RawImage depthImage;
+    public RawImage infraredImage;
 
     public GameObject TestObject;
 
@@ -117,7 +119,7 @@ public class KinectManager : MonoBehaviour
     public GameObject handMarker;
 
     // Whether to use the sensor or playback data from a file
-    public bool playback;
+    private bool playback;
 
     // Bool to keep track of whether Kinect has been initialized
     private bool kinectInitialized = false;
@@ -143,6 +145,8 @@ public class KinectManager : MonoBehaviour
     private int usersMapSize;
     //	private int minDepth;
     //	private int maxDepth;
+
+    private Texture2D irTexture;
 
     // Color map
     //private KinectInterop.ColorBuffer colorImage;
@@ -191,7 +195,7 @@ public class KinectManager : MonoBehaviour
 
     private float playBackStartTime;
     private MovieTexture movieToPlay;
-    private Texture2D kinectTexture;
+    //private Texture2D kinectTexture;
 
     // Set if either the sensor or the playback interface acquired a new frame
     private bool bAcquiredBodyFrame;
@@ -1470,8 +1474,10 @@ public class KinectManager : MonoBehaviour
         {
             // Initialize depth & label map related stuff
             usersLblTex = new Texture2D(sensorData.depthImageWidth, sensorData.depthImageHeight, TextureFormat.ARGB32, false);
-            userMapImage.texture = usersLblTex;
-            kinectTexture = usersLblTex;
+
+
+            depthImage.texture = usersLblTex;
+            //kinectTexture = usersLblTex;
 
             usersMapSize = sensorData.depthImageWidth * sensorData.depthImageHeight;
             usersHistogramImage = new Color32[usersMapSize];
@@ -1485,6 +1491,13 @@ public class KinectManager : MonoBehaviour
             //usersClrTex = new Texture2D(sensorData.colorImageWidth, sensorData.colorImageHeight, TextureFormat.RGBA32, false);
             usersClrSize = sensorData.colorImageWidth * sensorData.colorImageHeight;
 
+            colorImage.texture = sensorData.colorImageTexture;
+        }
+
+        if (computeInfraredMap)
+        {
+            irTexture = new Texture2D(sensorData.depthImageWidth, sensorData.depthImageHeight, TextureFormat.RGBA32, false);
+            infraredImage.texture = irTexture;
         }
 
         // try to automatically use the available avatar controllers in the scene
@@ -1549,68 +1562,68 @@ public class KinectManager : MonoBehaviour
         }
     }
 
-    void OnGUI()
-    {
-        if (kinectInitialized)
-        {
-            if (computeUserMap && displayUserMap)
-            {
-                //if (usersMapRect.width == 0 || usersMapRect.height == 0)
-                //{
-                //    // get the main camera rectangle
-                //    Rect cameraRect = Camera.main != null ? Camera.main.pixelRect : new Rect(0, 0, Screen.width, Screen.height);
+    //void OnGUI()
+    //{
+    //    if (kinectInitialized)
+    //    {
+    //        if (computeUserMap && displayUserMap)
+    //        {
+    //            if (usersMapRect.width == 0 || usersMapRect.height == 0)
+    //            {
+    //                // get the main camera rectangle
+    //                Rect cameraRect = Camera.main != null ? Camera.main.pixelRect : new Rect(0, 0, Screen.width, Screen.height);
 
-                //    // calculate map width and height in percent, if needed
-                //    if (DisplayMapsWidthPercent == 0f)
-                //    {
-                //        DisplayMapsWidthPercent = (sensorData.depthImageWidth / 2) * 100 / cameraRect.width;
-                //    }
+    //                // calculate map width and height in percent, if needed
+    //                if (DisplayMapsWidthPercent == 0f)
+    //                {
+    //                    DisplayMapsWidthPercent = (sensorData.depthImageWidth / 2) * 100 / cameraRect.width;
+    //                }
 
-                //    float displayMapsWidthPercent = DisplayMapsWidthPercent / 100f;
-                //    float displayMapsHeightPercent = displayMapsWidthPercent * sensorData.depthImageHeight / sensorData.depthImageWidth;
+    //                float displayMapsWidthPercent = DisplayMapsWidthPercent / 100f;
+    //                float displayMapsHeightPercent = displayMapsWidthPercent * sensorData.depthImageHeight / sensorData.depthImageWidth;
 
-                //    float displayWidth = cameraRect.width * displayMapsWidthPercent;
-                //    float displayHeight = cameraRect.width * displayMapsHeightPercent;
+    //                float displayWidth = cameraRect.width * displayMapsWidthPercent;
+    //                float displayHeight = cameraRect.width * displayMapsHeightPercent;
 
-                //    usersMapRect = new Rect(cameraRect.width - displayWidth, cameraRect.height, displayWidth, -displayHeight);
-                //}
+    //                usersMapRect = new Rect(cameraRect.width - displayWidth, cameraRect.height, displayWidth, -displayHeight);
+    //            }
 
-                //GUI.DrawTexture(usersMapRect, usersLblTex);
+    //            GUI.DrawTexture(usersMapRect, usersLblTex);
 
 
-            }
-            else if (computeColorMap && displayColorMap)
-            {
-                if (usersClrRect.width == 0 || usersClrRect.height == 0)
-                {
-                    // get the main camera rectangle
-                    Rect cameraRect = Camera.main != null ? Camera.main.pixelRect : new Rect(0, 0, Screen.width, Screen.height);
+    //        }
+    //        else if (computeColorMap && displayColorMap)
+    //        {
+    //            if (usersClrRect.width == 0 || usersClrRect.height == 0)
+    //            {
+    //                // get the main camera rectangle
+    //                Rect cameraRect = Camera.main != null ? Camera.main.pixelRect : new Rect(0, 0, Screen.width, Screen.height);
 
-                    // calculate map width and height in percent, if needed
-                    if (DisplayMapsWidthPercent == 0f)
-                    {
-                        DisplayMapsWidthPercent = (sensorData.depthImageWidth / 2) * 100 / cameraRect.width;
-                    }
+    //                // calculate map width and height in percent, if needed
+    //                if (DisplayMapsWidthPercent == 0f)
+    //                {
+    //                    DisplayMapsWidthPercent = (sensorData.depthImageWidth / 2) * 100 / cameraRect.width;
+    //                }
 
-                    float displayMapsWidthPercent = DisplayMapsWidthPercent / 100f;
-                    float displayMapsHeightPercent = displayMapsWidthPercent * sensorData.colorImageHeight / sensorData.colorImageWidth;
+    //                float displayMapsWidthPercent = DisplayMapsWidthPercent / 100f;
+    //                float displayMapsHeightPercent = displayMapsWidthPercent * sensorData.colorImageHeight / sensorData.colorImageWidth;
 
-                    float displayWidth = cameraRect.width * displayMapsWidthPercent;
-                    float displayHeight = cameraRect.width * displayMapsHeightPercent;
+    //                float displayWidth = cameraRect.width * displayMapsWidthPercent;
+    //                float displayHeight = cameraRect.width * displayMapsHeightPercent;
 
-                    usersClrRect = new Rect(cameraRect.width - displayWidth, cameraRect.height, displayWidth, -displayHeight);
+    //                usersClrRect = new Rect(cameraRect.width - displayWidth, cameraRect.height, displayWidth, -displayHeight);
 
-                    //					if(computeUserMap && displayColorMap)
-                    //					{
-                    //						usersMapRect.x -= cameraRect.width * displayMapsWidthPercent;
-                    //					}
-                }
+    //                //					if(computeUserMap && displayColorMap)
+    //                //					{
+    //                //						usersMapRect.x -= cameraRect.width * displayMapsWidthPercent;
+    //                //					}
+    //            }
 
-                //GUI.DrawTexture(usersClrRect, usersClrTex);
-                GUI.DrawTexture(usersClrRect, sensorData.colorImageTexture);
-            }
-        }
-    }
+    //            //GUI.DrawTexture(usersClrRect, usersClrTex);
+    //            GUI.DrawTexture(usersClrRect, sensorData.colorImageTexture);
+    //        }
+    //    }
+    //}
 
     void Update()
     {
@@ -1864,7 +1877,7 @@ public class KinectManager : MonoBehaviour
             movieToPlay = diskMovieDir.movie as MovieTexture;
 
             //Hook the movie texture to the current renderer
-            userMapImage.texture = movieToPlay;
+            colorImage.texture = movieToPlay;
             movieToPlay.Play();
         }
     }
@@ -1877,8 +1890,8 @@ public class KinectManager : MonoBehaviour
         {
             movieToPlay.Stop();
         }
-        
-        userMapImage.texture = kinectTexture;
+
+        colorImage.texture = /*kinectTexture*/ usersLblTex;
     }
 
     public void RestartPlayback()
@@ -1889,7 +1902,7 @@ public class KinectManager : MonoBehaviour
         if (movieToPlay != null)
         {
             movieToPlay.Stop();
-            userMapImage.texture = movieToPlay;
+            colorImage.texture = movieToPlay;
             movieToPlay.Play();
         }
     }
@@ -1976,15 +1989,18 @@ public class KinectManager : MonoBehaviour
             {
                 if (sensorData.depth2ColorTexture)
                 {
-                    if (KinectInterop.RenderDepth2ColorTex(sensorData))
+                    //switch the order of these 2 statements to get the user drawn on top instead of just
+                    //the colored depth map
+                    if (sensorData.depthImageTexture)
+                    {
+                        KinectInterop.RenderTex2Tex2D(sensorData.depthImageTexture, ref usersLblTex);
+                    }
+                    else if (KinectInterop.RenderDepth2ColorTex(sensorData))
                     {
                         KinectInterop.RenderTex2Tex2D(sensorData.depth2ColorTexture, ref usersLblTex);
                     }
                 }
-                else if (sensorData.depthImageTexture)
-                {
-                    KinectInterop.RenderTex2Tex2D(sensorData.depthImageTexture, ref usersLblTex);
-                }
+
             }
 
             // draw skeleton lines
@@ -2003,20 +2019,36 @@ public class KinectManager : MonoBehaviour
                         }
                         else
                         {
-                            DrawSkeleton(usersLblTex, ref bodyFrame.bodyData[index]);
+                            DrawSkeletonToColor(colorImage.texture as Texture2D, ref bodyFrame.bodyData[index]);
                         }
                     }
                 }
             }
 
             usersLblTex.Apply();
+            (colorImage.texture as Texture2D).Apply();
         }
     }
 
     // Update the user infrared map
     void UpdateInfraredMap()
     {
-        // does nothing at the moment
+        // get raw data from kinect and apply to irTexture
+
+        //if (sensorData.infraredImage != null)
+        //{
+        //    for (int y = 0; y < sensorData.depthImageHeight; ++y)
+        //    {
+        //        for (int x = 0; x < sensorData.depthImageWidth; ++x)
+        //        {
+        //            //get pixel values into [0;1]
+        //            float color = sensorData.infraredImage[y * sensorData.depthImageHeight + x] / (float)ushort.MaxValue;
+        //            irTexture.SetPixel(x, y, new Color(color, color, color));
+        //        }
+        //    }
+        //    irTexture.Apply();
+        //}
+
     }
 
     // Update the user histogram map
@@ -2722,6 +2754,7 @@ public class KinectManager : MonoBehaviour
                 Vector2 posParent = KinectInterop.MapSpacePointToDepthCoords(sensorData, bodyData.joint[parent].kinectPos);
                 Vector2 posJoint = KinectInterop.MapSpacePointToDepthCoords(sensorData, bodyData.joint[i].kinectPos);
 
+
                 if (posParent != Vector2.zero && posJoint != Vector2.zero)
                 {
                     //Color lineColor = playerJointsTracked[i] && playerJointsTracked[parent] ? Color.red : Color.yellow;
@@ -2731,6 +2764,45 @@ public class KinectManager : MonoBehaviour
         }
 
         //aTexture.Apply();
+    }
+
+    /// <summary>
+    /// Draws a skeleton to the kinect color texture instead of the depth one. Uses Kinect v2 specific functions.
+    /// </summary>
+    /// <param name="colorTexture"></param>
+    /// <param name="bodyData"></param>
+    private void DrawSkeletonToColor(Texture2D colorTexture, ref KinectInterop.BodyData bodyData)
+    {
+        Kinect2Interface k2Interface;
+
+        if (sensorData.sensorInterface is Kinect2Interface)
+        {
+            k2Interface = sensorData.sensorInterface as Kinect2Interface;
+
+            int jointsCount = sensorData.jointCount;
+
+            for (int i = 0; i < jointsCount; i++)
+            {
+                int parent = (int)sensorData.sensorInterface.GetParentJoint((KinectInterop.JointType)i);
+
+                if (bodyData.joint[i].trackingState != KinectInterop.TrackingState.NotTracked &&
+                   bodyData.joint[parent].trackingState != KinectInterop.TrackingState.NotTracked)
+                {
+
+                    Vector2 posParent = k2Interface.MapSpacePointToColorCoords(sensorData, bodyData.joint[parent].kinectPos);
+                    Vector2 posJoint = k2Interface.MapSpacePointToColorCoords(sensorData, bodyData.joint[i].kinectPos);
+
+
+                    Vector2 error = new Vector2(-1, -1);
+                    if (posParent != error && posJoint != error)
+                    {
+
+                        KinectInterop.DrawLine(colorTexture, (int)posParent.x, (int)posParent.y, (int)posJoint.x, (int)posJoint.y, Color.yellow);
+
+                    }
+                }
+            }
+        }
     }
 
     // switches the positional data of two joints
