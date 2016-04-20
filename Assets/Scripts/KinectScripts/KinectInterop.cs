@@ -302,6 +302,10 @@ public class KinectInterop
         public Material bodyIndexMaterial;
         public ComputeBuffer bodyIndexBuffer;
 
+        public RenderTexture infraredTexture;
+        public Material infraredMaterial;
+        public ComputeBuffer infraredBuffer;
+
         public RenderTexture depthImageTexture;
         public Material depthImageMaterial;
         public ComputeBuffer depthImageBuffer;
@@ -609,6 +613,27 @@ public class KinectInterop
                             }
                         }
 
+                        if (sensorData.infraredImage != null)
+                        {
+                            Shader infraredShader = Shader.Find("Kinect/InfraredShader");
+
+                            if (infraredShader != null)
+                            {
+                                sensorData.infraredTexture = new RenderTexture(sensorData.depthImageWidth, sensorData.depthImageHeight, 0);
+                                sensorData.infraredTexture.wrapMode = TextureWrapMode.Clamp;
+                                sensorData.infraredTexture.filterMode = FilterMode.Point;
+
+                                sensorData.infraredMaterial = new Material(infraredShader);
+                                sensorData.infraredMaterial.SetFloat("_TexResX", (float)sensorData.depthImageWidth);
+                                sensorData.infraredMaterial.SetFloat("_TexResY", (float)sensorData.depthImageHeight);
+                                sensorData.infraredMaterial.SetFloat("_Amplification", 1f);
+                                sensorData.infraredMaterial.SetFloat("_Gamma", 0.32f);
+
+                                sensorData.infraredBuffer = new ComputeBuffer(sensorData.infraredImage.Length, sizeof(float));
+                                sensorData.infraredMaterial.SetBuffer("_InfraredBuffer", sensorData.infraredBuffer);
+                            }
+                        }
+
                         if (sensorData.depthImage != null && IsDirectX11Available())
                         {
                             Shader depthImageShader = Shader.Find("Kinect/DepthShader");
@@ -704,6 +729,12 @@ public class KinectInterop
         {
             sensorData.bodyIndexBuffer.Release();
             sensorData.bodyIndexBuffer = null;
+        }
+
+        if (sensorData.infraredBuffer != null)
+        {
+            sensorData.infraredBuffer.Release();
+            sensorData.infraredBuffer = null;
         }
 
         if (sensorData.depthImageBuffer != null)
@@ -992,6 +1023,25 @@ public class KinectInterop
         if (sensorData.sensorInterface != null)
         {
             bNewFrame = sensorData.sensorInterface.PollInfraredFrame(sensorData);
+
+            if (bNewFrame)
+            {
+                if (sensorData.infraredBuffer != null)
+                {
+                    float[] buffer = new float[sensorData.infraredImage.Length];
+
+                    //read raw data that the sensor acquired, upload to GPU and let the shader do the rest
+                    for (int i = 0; i < sensorData.infraredImage.Length; ++i)
+                    {
+                        buffer[i] = (float)sensorData.infraredImage[i];
+                    }
+
+                    sensorData.infraredBuffer.SetData(buffer);
+                    buffer = null;
+
+                    Graphics.Blit(null, sensorData.infraredTexture, sensorData.infraredMaterial);
+                }
+            }
         }
 
         return bNewFrame;

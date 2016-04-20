@@ -109,9 +109,7 @@ public class KinectManager : MonoBehaviour
     // GUI Text to show gesture debug message.
     public GUIText gesturesDebugText;
 
-    public RawImage colorImage;
-    public RawImage depthImage;
-    public RawImage infraredImage;
+    public RawImage kinectImage;
 
     public GameObject TestObject;
 
@@ -141,7 +139,7 @@ public class KinectManager : MonoBehaviour
     private float[] usersHistogramMap;
 
     private Texture2D usersLblTex;
-    private Rect usersMapRect;
+    //private Rect usersMapRect;
     private int usersMapSize;
     //	private int minDepth;
     //	private int maxDepth;
@@ -151,7 +149,7 @@ public class KinectManager : MonoBehaviour
     // Color map
     //private KinectInterop.ColorBuffer colorImage;
     //private Texture2D usersClrTex;
-    private Rect usersClrRect;
+    //private Rect usersClrRect;
     private int usersClrSize;
 
     // Kinect body frame data
@@ -191,7 +189,7 @@ public class KinectManager : MonoBehaviour
     private bool characterScaled = false;
 
     private bool recording = false;
-    private KinectInterop.BodyData loadedFrame;
+    //private KinectInterop.BodyData loadedFrame;
 
     private float playBackStartTime;
     private MovieTexture movieToPlay;
@@ -1046,6 +1044,28 @@ public class KinectManager : MonoBehaviour
         return bResult;
     }
 
+    // changes the stream displayed on our RawImage an resizes it
+    public void SwitchStreamAndResizeImage(int index)
+    {
+        switch (index)
+        {
+            case 0:
+            default:
+                //color stream
+                kinectImage.rectTransform.sizeDelta = new Vector2(1024, 600);
+                kinectImage.texture = GetUsersClrTex();
+                break;
+            case 1:
+                kinectImage.rectTransform.sizeDelta = new Vector2(GetDepthImageWidth(), GetDepthImageHeight());
+                kinectImage.texture = GetUsersLblTex();
+                break;
+            case 2:
+                kinectImage.rectTransform.sizeDelta = new Vector2(GetDepthImageWidth(), GetDepthImageHeight());
+                kinectImage.texture = irTexture;
+                break; 
+        }
+    }
+
     // removes the currently detected kinect users, allowing a new detection/calibration process to start
     public void ClearKinectUsers()
     {
@@ -1476,9 +1496,6 @@ public class KinectManager : MonoBehaviour
             usersLblTex = new Texture2D(sensorData.depthImageWidth, sensorData.depthImageHeight, TextureFormat.ARGB32, false);
 
 
-            depthImage.texture = usersLblTex;
-            //kinectTexture = usersLblTex;
-
             usersMapSize = sensorData.depthImageWidth * sensorData.depthImageHeight;
             usersHistogramImage = new Color32[usersMapSize];
             usersPrevState = new ushort[usersMapSize];
@@ -1491,13 +1508,13 @@ public class KinectManager : MonoBehaviour
             //usersClrTex = new Texture2D(sensorData.colorImageWidth, sensorData.colorImageHeight, TextureFormat.RGBA32, false);
             usersClrSize = sensorData.colorImageWidth * sensorData.colorImageHeight;
 
-            colorImage.texture = sensorData.colorImageTexture;
+            kinectImage.texture = GetUsersClrTex();
         }
 
         if (computeInfraredMap)
         {
-            irTexture = new Texture2D(sensorData.depthImageWidth, sensorData.depthImageHeight, TextureFormat.RGBA32, false);
-            infraredImage.texture = irTexture;
+            irTexture = new Texture2D(sensorData.depthImageWidth, sensorData.depthImageHeight, TextureFormat.ARGB32, false);
+            //infraredImage.texture = irTexture;
         }
 
         // try to automatically use the available avatar controllers in the scene
@@ -1559,6 +1576,16 @@ public class KinectManager : MonoBehaviour
             //			KinectInterop.ShutdownKinectSensor();
 
             instance = null;
+        }
+    }
+
+    // sets the gamma value in the infrared shader
+    public void SetInfraredGamma(float gamma, float amplification)
+    {
+        if (sensorData != null && sensorData.infraredMaterial != null)
+        {
+            sensorData.infraredMaterial.SetFloat("_Gamma", gamma);
+            sensorData.infraredMaterial.SetFloat("_Amplification", amplification);
         }
     }
 
@@ -1877,7 +1904,7 @@ public class KinectManager : MonoBehaviour
             movieToPlay = diskMovieDir.movie as MovieTexture;
 
             //Hook the movie texture to the current renderer
-            colorImage.texture = movieToPlay;
+            kinectImage.texture = movieToPlay;
             movieToPlay.Play();
         }
     }
@@ -1891,7 +1918,7 @@ public class KinectManager : MonoBehaviour
             movieToPlay.Stop();
         }
 
-        colorImage.texture = /*kinectTexture*/ usersLblTex;
+        kinectImage.texture = /*kinectTexture*/ usersLblTex;
     }
 
     public void RestartPlayback()
@@ -1902,7 +1929,7 @@ public class KinectManager : MonoBehaviour
         if (movieToPlay != null)
         {
             movieToPlay.Stop();
-            colorImage.texture = movieToPlay;
+            kinectImage.texture = movieToPlay;
             movieToPlay.Play();
         }
     }
@@ -2019,14 +2046,14 @@ public class KinectManager : MonoBehaviour
                         }
                         else
                         {
-                            DrawSkeletonToColor(colorImage.texture as Texture2D, ref bodyFrame.bodyData[index]);
+                            DrawSkeletonToColor(kinectImage.texture as Texture2D, ref bodyFrame.bodyData[index]);
                         }
                     }
                 }
             }
 
             usersLblTex.Apply();
-            (colorImage.texture as Texture2D).Apply();
+            (kinectImage.texture as Texture2D).Apply();
         }
     }
 
@@ -2049,6 +2076,10 @@ public class KinectManager : MonoBehaviour
         //    irTexture.Apply();
         //}
 
+        if (sensorData.infraredTexture)
+        {
+            KinectInterop.RenderTex2Tex2D(sensorData.infraredTexture, ref irTexture);
+        }
     }
 
     // Update the user histogram map
@@ -2796,10 +2827,9 @@ public class KinectManager : MonoBehaviour
                     Vector2 error = new Vector2(-1, -1);
                     if (posParent != error && posJoint != error)
                     {
-
                         KinectInterop.DrawLine(colorTexture, (int)posParent.x, (int)posParent.y, (int)posJoint.x, (int)posJoint.y, Color.yellow);
-
                     }
+
                 }
             }
         }
