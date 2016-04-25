@@ -100,7 +100,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &14393094
 RectTransform:
   m_ObjectHideFlags: 0
@@ -218,6 +218,74 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
   m_IsPrefabParent: 0
+--- !u!1 &38160489
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 38160491}
+  - 114: {fileID: 38160490}
+  m_Layer: 0
+  m_Name: ColorRecorder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &38160490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 38160489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de5a7a2f274da2340a2de24a1fffee45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _captureKey: 0
+  _captureOnStart: 0
+  _listVideoCodecsOnStart: 0
+  _videoCodecPriority:
+  - Lagarith Lossless Codec
+  - x264vfw - H.264/MPEG-4 AVC codec
+  - Xvid MPEG-4 Codec
+  - ffdshow video encoder
+  - Cinepak Codec by Radius
+  _audioCodecPriority: []
+  _forceVideoCodecIndex: -1
+  _forceAudioCodecIndex: -1
+  _forceAudioDeviceIndex: -1
+  _frameRate: 30
+  _downScale: 1
+  _maxVideoSize: {x: 0, y: 0}
+  _isRealTime: 1
+  _autoGenerateFilename: 0
+  _outputFolderType: 0
+  _outputFolderPath: 
+  _autoFilenamePrefix: MovieCapture
+  _autoFilenameExtension: avi
+  _forceFilename: movie.avi
+  _outputType: 0
+  _noAudio: 1
+  _audioCapture: {fileID: 0}
+  _useFastPixelFormat: 1
+  _shaderSwapRedBlue: {fileID: 4800000, guid: f8dc701632c759e4a8f2ee16201149cd, type: 3}
+  _shaderRGBA2YCbCr: {fileID: 4800000, guid: d21befa361dcbc6489decfa310898604, type: 3}
+--- !u!4 &38160491
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 38160489}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2040214782}
+  m_RootOrder: 0
 --- !u!1 &87977541
 GameObject:
   m_ObjectHideFlags: 0
@@ -588,7 +656,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
 --- !u!1 &303212955
 GameObject:
   m_ObjectHideFlags: 0
@@ -805,7 +873,7 @@ Transform:
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
 --- !u!4 &438502868 stripped
 Transform:
   m_PrefabParentObject: {fileID: 400046, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
@@ -1153,6 +1221,74 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 528091295}
+--- !u!1 &531652423
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 531652424}
+  - 114: {fileID: 531652425}
+  m_Layer: 0
+  m_Name: DepthRecorder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &531652424
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 531652423}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2040214782}
+  m_RootOrder: 1
+--- !u!114 &531652425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 531652423}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de5a7a2f274da2340a2de24a1fffee45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _captureKey: 0
+  _captureOnStart: 0
+  _listVideoCodecsOnStart: 0
+  _videoCodecPriority:
+  - Lagarith Lossless Codec
+  - x264vfw - H.264/MPEG-4 AVC codec
+  - Xvid MPEG-4 Codec
+  - ffdshow video encoder
+  - Cinepak Codec by Radius
+  _audioCodecPriority: []
+  _forceVideoCodecIndex: -1
+  _forceAudioCodecIndex: -1
+  _forceAudioDeviceIndex: -1
+  _frameRate: 30
+  _downScale: 1
+  _maxVideoSize: {x: 0, y: 0}
+  _isRealTime: 1
+  _autoGenerateFilename: 0
+  _outputFolderType: 0
+  _outputFolderPath: 
+  _autoFilenamePrefix: MovieCapture
+  _autoFilenameExtension: avi
+  _forceFilename: movie.avi
+  _outputType: 0
+  _noAudio: 1
+  _audioCapture: {fileID: 0}
+  _useFastPixelFormat: 1
+  _shaderSwapRedBlue: {fileID: 4800000, guid: f8dc701632c759e4a8f2ee16201149cd, type: 3}
+  _shaderRGBA2YCbCr: {fileID: 4800000, guid: d21befa361dcbc6489decfa310898604, type: 3}
 --- !u!1 &536470231
 GameObject:
   m_ObjectHideFlags: 0
@@ -1657,7 +1793,7 @@ Transform:
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
 --- !u!23 &638387391
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3767,7 +3903,7 @@ Transform:
   m_Children:
   - {fileID: 1431119105}
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
 --- !u!114 &1053274181
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3822,7 +3958,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29a2e78d99a72014a84eb9f1c7475464, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movieRec: {fileID: 1059045182}
+  colorCapture: {fileID: 38160490}
+  depthCapture: {fileID: 531652425}
+  irCapture: {fileID: 1506681332}
   stopButton: {fileID: 1209796195}
 --- !u!1 &1054825063
 GameObject:
@@ -4057,8 +4195,6 @@ GameObject:
   - 92: {fileID: 1059045178}
   - 124: {fileID: 1059045177}
   - 81: {fileID: 1059045176}
-  - 114: {fileID: 1059045184}
-  - 114: {fileID: 1059045185}
   - 114: {fileID: 1059045182}
   - 114: {fileID: 1059045181}
   - 114: {fileID: 1059045183}
@@ -4135,7 +4271,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
 --- !u!114 &1059045181
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4157,7 +4293,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1059045175}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: de5a7a2f274da2340a2de24a1fffee45, type: 3}
   m_Name: 
@@ -4197,38 +4333,15 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1059045175}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 51fc6768202ea27438d33a1f19d80030, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _movieCapture: {fileID: 1059045182}
-  image: {fileID: 1490064032}
---- !u!114 &1059045184
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1059045175}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ecf9a849381e69f43acccbeb10396d51, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  avatar: {fileID: 0}
---- !u!114 &1059045185
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1059045175}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 81358ff5299b5974d8f0276c83b27637, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  speed: 4
-  border: 0.25
+  colorCapture: {fileID: 0}
+  depthCapture: {fileID: 0}
+  irCapture: {fileID: 0}
+  kinect: {fileID: 0}
 --- !u!1 &1065573815
 GameObject:
   m_ObjectHideFlags: 0
@@ -4433,7 +4546,7 @@ Transform:
   - {fileID: 1736650401}
   - {fileID: 1751506449}
   m_Father: {fileID: 0}
-  m_RootOrder: 12
+  m_RootOrder: 13
 --- !u!4 &1147110876 stripped
 Transform:
   m_PrefabParentObject: {fileID: 400020, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
@@ -4468,7 +4581,7 @@ Transform:
   - {fileID: 685273789}
   - {fileID: 2046298064}
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
 --- !u!114 &1148159913
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5534,7 +5647,7 @@ Transform:
   m_Children:
   - {fileID: 1794712469}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
 --- !u!1 &1490064030
 GameObject:
   m_ObjectHideFlags: 0
@@ -5567,7 +5680,7 @@ RectTransform:
   m_RootOrder: 1
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.000006479544}
+  m_AnchoredPosition: {x: 0, y: 40}
   m_SizeDelta: {x: 1024, y: 600}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1490064032
@@ -5749,6 +5862,74 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1499557710}
+--- !u!1 &1506681330
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 1506681331}
+  - 114: {fileID: 1506681332}
+  m_Layer: 0
+  m_Name: IrRecorder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1506681331
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1506681330}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 2040214782}
+  m_RootOrder: 2
+--- !u!114 &1506681332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1506681330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de5a7a2f274da2340a2de24a1fffee45, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _captureKey: 0
+  _captureOnStart: 0
+  _listVideoCodecsOnStart: 0
+  _videoCodecPriority:
+  - Lagarith Lossless Codec
+  - x264vfw - H.264/MPEG-4 AVC codec
+  - Xvid MPEG-4 Codec
+  - ffdshow video encoder
+  - Cinepak Codec by Radius
+  _audioCodecPriority: []
+  _forceVideoCodecIndex: -1
+  _forceAudioCodecIndex: -1
+  _forceAudioDeviceIndex: -1
+  _frameRate: 30
+  _downScale: 1
+  _maxVideoSize: {x: 0, y: 0}
+  _isRealTime: 1
+  _autoGenerateFilename: 0
+  _outputFolderType: 0
+  _outputFolderPath: 
+  _autoFilenamePrefix: MovieCapture
+  _autoFilenameExtension: avi
+  _forceFilename: movie.avi
+  _outputType: 0
+  _noAudio: 1
+  _audioCapture: {fileID: 0}
+  _useFastPixelFormat: 1
+  _shaderSwapRedBlue: {fileID: 4800000, guid: f8dc701632c759e4a8f2ee16201149cd, type: 3}
+  _shaderRGBA2YCbCr: {fileID: 4800000, guid: d21befa361dcbc6489decfa310898604, type: 3}
 --- !u!1 &1511720531
 GameObject:
   m_ObjectHideFlags: 0
@@ -6164,7 +6345,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 4
 --- !u!1 &1602659022
 GameObject:
   m_ObjectHideFlags: 0
@@ -6219,7 +6400,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
 --- !u!82 &1602659025
 AudioSource:
   m_ObjectHideFlags: 0
@@ -6544,7 +6725,7 @@ Transform:
   - {fileID: 155847628}
   - {fileID: 316175921}
   m_Father: {fileID: 0}
-  m_RootOrder: 11
+  m_RootOrder: 12
 --- !u!1 &1652283175 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 100062, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
@@ -6688,7 +6869,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
 --- !u!1 &1727458848
 GameObject:
   m_ObjectHideFlags: 0
@@ -7304,7 +7485,7 @@ Transform:
   - {fileID: 1026495061}
   - {fileID: 1652283176}
   m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_RootOrder: 2
 --- !u!1 &1893988847
 GameObject:
   m_ObjectHideFlags: 0
@@ -7866,6 +8047,52 @@ CanvasRenderer:
 Transform:
   m_PrefabParentObject: {fileID: 400048, guid: dce90974431e53e49a402b3debce9dfc, type: 3}
   m_PrefabInternal: {fileID: 32269657}
+--- !u!1 &2040214780
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 4
+  m_Component:
+  - 4: {fileID: 2040214782}
+  - 114: {fileID: 2040214781}
+  m_Layer: 0
+  m_Name: VideoRecorders
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2040214781
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2040214780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 51fc6768202ea27438d33a1f19d80030, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  colorCapture: {fileID: 38160490}
+  depthCapture: {fileID: 531652425}
+  irCapture: {fileID: 1506681332}
+  kinect: {fileID: 1053274181}
+--- !u!4 &2040214782
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2040214780}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 435.62628, y: 105.28372, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 38160491}
+  - {fileID: 531652424}
+  - {fileID: 1506681331}
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
 --- !u!1 &2040299052
 GameObject:
   m_ObjectHideFlags: 0

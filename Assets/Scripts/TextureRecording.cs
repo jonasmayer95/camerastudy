@@ -2,22 +2,39 @@
 using System.Collections;
 using UnityEngine.UI;
 
-public class TextureRecording : MonoBehaviour {
+public class TextureRecording : MonoBehaviour
+{
+    public AVProMovieCaptureFromTexture colorCapture;
+    public AVProMovieCaptureFromTexture depthCapture;
+    public AVProMovieCaptureFromTexture irCapture;
 
-    public AVProMovieCaptureFromTexture _movieCapture;
-    public RawImage image;
-    private Texture2D _texture;
+    public KinectManager kinect;
+    private Texture2D colorTexture;
+    private Texture2D depthTexture;
+    private Texture2D irTexture;
 
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start()
+    {
 
-        _texture = (Texture2D)image.texture;
+        colorTexture = kinect.GetUsersClrTex();
+        depthTexture = kinect.GetUsersLblTex();
+        irTexture = kinect.GetUsersIrTex();
 
-        if (_movieCapture)
+        if (colorCapture)
         {
-            _movieCapture.SetSourceTexture(_texture);
+            colorCapture.SetSourceTexture(colorTexture);
         }
-	
-	}
+
+        if (depthCapture)
+        {
+            depthCapture.SetSourceTexture(depthTexture);
+        }
+
+        if (irCapture)
+        {
+            irCapture.SetSourceTexture(irTexture);
+        }
+    }
 }

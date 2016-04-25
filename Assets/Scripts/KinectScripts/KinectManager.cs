@@ -192,7 +192,7 @@ public class KinectManager : MonoBehaviour
     //private KinectInterop.BodyData loadedFrame;
 
     private float playBackStartTime;
-    private MovieTexture movieToPlay;
+    private MovieTexture video;
     //private Texture2D kinectTexture;
 
     // Set if either the sensor or the playback interface acquired a new frame
@@ -335,6 +335,12 @@ public class KinectManager : MonoBehaviour
     public Texture2D GetUsersLblTex()
     {
         return usersLblTex;
+    }
+
+    // returns the infrared texture
+    public Texture2D GetUsersIrTex()
+    {
+        return irTexture;
     }
 
     // returns the color image texture,if ComputeColorMap is true
@@ -1872,17 +1878,13 @@ public class KinectManager : MonoBehaviour
 
     public void StartPlayback(/*string name*/)
     {
-        //name = "MovieCapture-2016-03-23-50812s-512x424";
-        //reader = new StreamReader((Application.dataPath).Remove(Application.dataPath.Length - 6) + name + ".csv");
+
         playBackStartTime = Time.time;
         playback = true;
-        //loadedFrame = new KinectInterop.BodyData();
 
-        //ParseFrames(ref loadedFrame);
-        //StartCoroutine(loadAndPlayMovie(name));
     }
 
-    public IEnumerator loadAndPlayMovie(string movieName)
+    public IEnumerator LoadAndPlayMovie(string movieName)
     {
         movieName = movieName.Substring(2);
         movieName = movieName.Remove(movieName.Length - 4);
@@ -1901,11 +1903,11 @@ public class KinectManager : MonoBehaviour
             }
 
             //Save the loaded movie from WWW to movetexture
-            movieToPlay = diskMovieDir.movie as MovieTexture;
+            video = diskMovieDir.movie as MovieTexture;
 
             //Hook the movie texture to the current renderer
-            kinectImage.texture = movieToPlay;
-            movieToPlay.Play();
+            kinectImage.texture = video;
+            video.Play();
         }
     }
 
@@ -1913,9 +1915,9 @@ public class KinectManager : MonoBehaviour
     {
         playback = false;
 
-        if (movieToPlay != null)
+        if (video != null)
         {
-            movieToPlay.Stop();
+            video.Stop();
         }
 
         kinectImage.texture = /*kinectTexture*/ usersLblTex;
@@ -1926,11 +1928,11 @@ public class KinectManager : MonoBehaviour
         playback = true;
         playBackStartTime = Time.time;
 
-        if (movieToPlay != null)
+        if (video != null)
         {
-            movieToPlay.Stop();
-            kinectImage.texture = movieToPlay;
-            movieToPlay.Play();
+            video.Stop();
+            kinectImage.texture = video;
+            video.Play();
         }
     }
 
@@ -2031,7 +2033,7 @@ public class KinectManager : MonoBehaviour
             }
 
             // draw skeleton lines
-            if (displaySkeletonLines)
+            if (displaySkeletonLines && !playback)
             {
                 for (int i = 0; i < alUserIds.Count; i++)
                 {
@@ -2046,6 +2048,7 @@ public class KinectManager : MonoBehaviour
                         }
                         else
                         {
+
                             DrawSkeletonToColor(kinectImage.texture as Texture2D, ref bodyFrame.bodyData[index]);
                         }
                     }
@@ -2053,7 +2056,6 @@ public class KinectManager : MonoBehaviour
             }
 
             usersLblTex.Apply();
-            (kinectImage.texture as Texture2D).Apply();
         }
     }
 
@@ -2062,21 +2064,7 @@ public class KinectManager : MonoBehaviour
     {
         // get raw data from kinect and apply to irTexture
 
-        //if (sensorData.infraredImage != null)
-        //{
-        //    for (int y = 0; y < sensorData.depthImageHeight; ++y)
-        //    {
-        //        for (int x = 0; x < sensorData.depthImageWidth; ++x)
-        //        {
-        //            //get pixel values into [0;1]
-        //            float color = sensorData.infraredImage[y * sensorData.depthImageHeight + x] / (float)ushort.MaxValue;
-        //            irTexture.SetPixel(x, y, new Color(color, color, color));
-        //        }
-        //    }
-        //    irTexture.Apply();
-        //}
-
-        if (sensorData.infraredTexture)
+        if (sensorData.infraredTexture != null)
         {
             KinectInterop.RenderTex2Tex2D(sensorData.infraredTexture, ref irTexture);
         }
@@ -2832,6 +2820,7 @@ public class KinectManager : MonoBehaviour
 
                 }
             }
+            colorTexture.Apply();
         }
     }
 

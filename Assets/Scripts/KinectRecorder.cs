@@ -6,6 +6,7 @@ using System.Collections;
 using System.IO;
 using System;
 using System.Diagnostics;
+using System.Text;
 
 public class KinectRecorder : MonoBehaviour
 {
@@ -14,20 +15,35 @@ public class KinectRecorder : MonoBehaviour
     public string PlaybackFileName { get; set; }
     public string RecordingFileName { get; set; }
 
+    public AVProMovieCaptureFromTexture colorCapture;
+    public AVProMovieCaptureFromTexture depthCapture;
+    public AVProMovieCaptureFromTexture irCapture;
+
+    public Button stopButton;
+
     // A line from our playback file
     private string line = "";
 
     // A single item from our line, e.g. a joint
     private string cell = "";
 
+    //text writing/reading
     private StreamWriter kinectWriter;
     private StreamReader reader;
-    private Stream playbackFile;
+    private Stream bodyPlaybackFile;
 
+    //sync variables
     private float recordStartTime;
-    public AVProMovieCaptureFromTexture movieRec;
     private float frameTime = 0;
-    public Button stopButton;
+
+    private Process cmd = new Process();
+
+
+    void Start()
+    {
+        cmd.EnableRaisingEvents = true;
+        cmd.Exited += ConversionFinished;
+    }
 
 
     /// <summary>
@@ -45,11 +61,12 @@ public class KinectRecorder : MonoBehaviour
 
             if (!String.IsNullOrEmpty(PlaybackFileName))
             {
-                playbackFile = new FileStream(PlaybackFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
-                reader = new StreamReader(playbackFile);
+                bodyPlaybackFile = new FileStream(PlaybackFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
+                reader = new StreamReader(bodyPlaybackFile);
 
                 KinectManager.Instance.StartPlayback();
-                StartCoroutine(KinectManager.Instance.loadAndPlayMovie(PlaybackFileName));
+                StartCoroutine(KinectManager.Instance.LoadAndPlayMovie(PlaybackFileName));
+
                 frameTime = 0;
             }
         }
@@ -102,7 +119,7 @@ public class KinectRecorder : MonoBehaviour
         {
             if (LoopPlayback == true)
             {
-                playbackFile.Seek(0, SeekOrigin.Begin);
+                bodyPlaybackFile.Seek(0, SeekOrigin.Begin);
                 frameTime = 0;
                 KinectManager.Instance.RestartPlayback();
             }
@@ -333,28 +350,26 @@ public class KinectRecorder : MonoBehaviour
 
     public void StartRecording()
     {
-        string fileName;
-        string movieFileName;
+        string bodyFileName;
 
         if (String.IsNullOrEmpty(RecordingFileName))
         {
             var today = DateTime.Now;
             RecordingFileName = string.Concat("kinectstream_", today.Day.ToString("00"), today.Month.ToString("00"), today.Year.ToString(),
                 "_", today.Hour.ToString("00"), today.Minute.ToString("00"), today.Second.ToString("00"));
-
-            fileName = RecordingFileName + ".csv";
-            movieFileName = RecordingFileName + ".avi";
-        }
-        else
-        {
-            movieFileName = RecordingFileName + ".avi";
-            fileName = RecordingFileName + ".csv";
         }
 
-        movieRec._forceFilename = movieFileName;
-        movieRec.StartCapture();
+        bodyFileName = RecordingFileName + ".csv";
+
+        colorCapture._forceFilename = RecordingFileName + "_color" + ".avi";
+        depthCapture._forceFilename = RecordingFileName + "_depth" + ".avi";
+        irCapture._forceFilename = RecordingFileName + "_infrared" + ".avi";
+
+        colorCapture.StartCapture();
+        depthCapture.StartCapture();
+        irCapture.StartCapture();
         
-        kinectWriter = new StreamWriter(fileName);
+        kinectWriter = new StreamWriter(bodyFileName);
         kinectWriter.AutoFlush = false;
 
         recordStartTime = Time.time;
@@ -363,7 +378,10 @@ public class KinectRecorder : MonoBehaviour
     public void EndRecording()
     {
         kinectWriter.Close();
-        movieRec.StopCapture();
+        colorCapture.StopCapture();
+        depthCapture.StopCapture();
+        irCapture.StopCapture();
+
         ConvertVideo(RecordingFileName);
     }
 
@@ -374,6 +392,7 @@ public class KinectRecorder : MonoBehaviour
             kinectWriter.Close();
         }
 
+        cmd.Exited -= ConversionFinished;
     }
 
     /// <summary>
@@ -383,24 +402,42 @@ public class KinectRecorder : MonoBehaviour
     void ConvertVideo(string filename)
     {
         string workingDirectory = Path.GetFullPath(".");
-        string videoPath = Path.Combine(workingDirectory, filename + ".avi");
+        string colorPath = Path.Combine(workingDirectory, filename + "_color.avi");
+        string depthPath = Path.Combine(workingDirectory, filename + "_depth.avi");
+        string irPath = Path.Combine(workingDirectory, filename + "_infrared.avi");
 
-        ProcessStartInfo info = new ProcessStartInfo();
-        info.FileName = Path.Combine(Path.Combine(Application.streamingAssetsPath, "video"), "ffmpeg2theora.exe");
-        info.CreateNoWindow = true;
-        info.Arguments = videoPath; //TODO: fix file paths with spaces
-        
-        
-        var process = Process.Start(info);
-        process.WaitForExit();
+        string converterDir = Path.Combine(Application.streamingAssetsPath, "video");
+        string batFilePath = Path.Combine(converterDir, "convert.bat");
 
-        //process.Exited += (sender, e) => File.Delete(videoPath);
-        
-        //TODO: instead of halting the process and waiting for the converter, use the exited event
+        string filePaths = string.Concat(colorPath, " ", depthPath, " ", irPath);
+
+        cmd.StartInfo.FileName = batFilePath;
+        cmd.StartInfo.RedirectStandardInput = true;
+        cmd.StartInfo.RedirectStandardOutput = true;
+        cmd.StartInfo.WorkingDirectory = converterDir;
+        cmd.StartInfo.UseShellExecute = false;
+        cmd.StartInfo.Arguments = filePaths;
+
+        cmd.Start();
     }
 
- 
+    /// <summary>
+    /// Deletes all .avi files in the current working directory.
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
+    void ConversionFinished(object sender, EventArgs e)
+    {
+        string[] aviFiles = Directory.GetFiles(".", "*.avi");
 
+        for (int i = 0; i < aviFiles.Length; ++i)
+        {
+            if (File.Exists(aviFiles[i]))
+            {
+                File.Delete(aviFiles[i]);
+            }
+        }
+    }
 
 
     public void WriteBodyData(KinectInterop.BodyData userBodyData)
