@@ -1,4 +1,4 @@
-﻿Shader "Kinect/InfraredShader"
+﻿Shader "Kinect/RawGammaCorrectionShader"
 {
 	Properties
 	{
@@ -14,6 +14,8 @@
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+
+			#pragma target 5.0
 			
 			#include "UnityCG.cginc"
 
@@ -22,7 +24,7 @@
 			uniform float _Amplification;
 			uniform float _Gamma;
 
-			StructuredBuffer<float> _InfraredBuffer;
+			StructuredBuffer<float> _Buffer;
 
 			struct appdata
 			{
@@ -53,7 +55,7 @@
 				int y = (int)(i.uv.y * _TexResY);
 				int index = y * _TexResX + x;
 
-				float normalizedColor = _InfraredBuffer[index] / (float)0xFFFF;
+				float normalizedColor = _Buffer[index] / (float)0xFFFF;
 				float color = _Amplification * pow(normalizedColor, _Gamma);
 
 				return float4(color, color, color, 1);

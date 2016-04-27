@@ -303,8 +303,11 @@ public class KinectInterop
         public ComputeBuffer bodyIndexBuffer;
 
         public RenderTexture infraredTexture;
+        public RenderTexture rawDepthTexture;
         public Material infraredMaterial;
+        public Material rawDepthMaterial;
         public ComputeBuffer infraredBuffer;
+        public ComputeBuffer rawDepthBuffer;
 
         public RenderTexture depthImageTexture;
         public Material depthImageMaterial;
@@ -615,22 +618,35 @@ public class KinectInterop
 
                         if (sensorData.infraredImage != null)
                         {
-                            Shader infraredShader = Shader.Find("Kinect/InfraredShader");
+                            Shader rawGammaShader = Shader.Find("Kinect/RawGammaCorrectionShader");
 
-                            if (infraredShader != null)
+                            if (rawGammaShader != null)
                             {
                                 sensorData.infraredTexture = new RenderTexture(sensorData.depthImageWidth, sensorData.depthImageHeight, 0);
                                 sensorData.infraredTexture.wrapMode = TextureWrapMode.Clamp;
                                 sensorData.infraredTexture.filterMode = FilterMode.Point;
 
-                                sensorData.infraredMaterial = new Material(infraredShader);
+                                sensorData.rawDepthTexture = new RenderTexture(sensorData.depthImageWidth, sensorData.depthImageHeight, 0);
+                                sensorData.rawDepthTexture.wrapMode = TextureWrapMode.Clamp;
+                                sensorData.rawDepthTexture.filterMode = FilterMode.Point;
+
+                                sensorData.infraredMaterial = new Material(rawGammaShader);
                                 sensorData.infraredMaterial.SetFloat("_TexResX", (float)sensorData.depthImageWidth);
                                 sensorData.infraredMaterial.SetFloat("_TexResY", (float)sensorData.depthImageHeight);
                                 sensorData.infraredMaterial.SetFloat("_Amplification", 1f);
                                 sensorData.infraredMaterial.SetFloat("_Gamma", 0.32f);
 
                                 sensorData.infraredBuffer = new ComputeBuffer(sensorData.infraredImage.Length, sizeof(float));
-                                sensorData.infraredMaterial.SetBuffer("_InfraredBuffer", sensorData.infraredBuffer);
+                                sensorData.infraredMaterial.SetBuffer("_Buffer", sensorData.infraredBuffer);
+
+                                sensorData.rawDepthMaterial = new Material(rawGammaShader);
+                                sensorData.rawDepthMaterial.SetFloat("_TexResX", (float)sensorData.depthImageWidth);
+                                sensorData.rawDepthMaterial.SetFloat("_TexResY", (float)sensorData.depthImageHeight);
+                                sensorData.rawDepthMaterial.SetFloat("_Amplification", 1f);
+                                sensorData.rawDepthMaterial.SetFloat("_Gamma", 0.32f);
+
+                                sensorData.rawDepthBuffer = new ComputeBuffer(sensorData.depthImage.Length, sizeof(float));
+                                sensorData.rawDepthMaterial.SetBuffer("_Buffer", sensorData.rawDepthBuffer);
                             }
                         }
 
@@ -735,6 +751,12 @@ public class KinectInterop
         {
             sensorData.infraredBuffer.Release();
             sensorData.infraredBuffer = null;
+        }
+
+        if (sensorData.rawDepthBuffer != null)
+        {
+            sensorData.rawDepthBuffer.Release();
+            sensorData.rawDepthBuffer = null;
         }
 
         if (sensorData.depthImageBuffer != null)
@@ -938,6 +960,21 @@ public class KinectInterop
                     buffer = null;
 
                     Graphics.Blit(null, sensorData.bodyIndexTexture, sensorData.bodyIndexMaterial);
+                }
+
+                if (sensorData.rawDepthBuffer != null)
+                {
+                    float[] buffer = new float[sensorData.depthImage.Length];
+
+                    for (int i = 0; i < sensorData.depthImage.Length; i++)
+                    {
+                        buffer[i] = (float)sensorData.depthImage[i];
+                    }
+
+                    sensorData.rawDepthBuffer.SetData(buffer);
+                    buffer = null;
+
+                    Graphics.Blit(null, sensorData.rawDepthTexture, sensorData.rawDepthMaterial);
                 }
 
                 if (sensorData.depthImageBuffer != null && sensorData.depthHistBuffer != null)

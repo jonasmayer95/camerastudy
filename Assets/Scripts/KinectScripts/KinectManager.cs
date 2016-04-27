@@ -144,6 +144,7 @@ public class KinectManager : MonoBehaviour
     //	private int minDepth;
     //	private int maxDepth;
 
+    private Texture2D rawDepthTexture;
     private Texture2D irTexture;
 
     // Color map
@@ -341,6 +342,11 @@ public class KinectManager : MonoBehaviour
     public Texture2D GetUsersIrTex()
     {
         return irTexture;
+    }
+
+    public Texture2D GetRawDepthTex()
+    {
+        return rawDepthTexture;
     }
 
     // returns the color image texture,if ComputeColorMap is true
@@ -1061,11 +1067,18 @@ public class KinectManager : MonoBehaviour
                 kinectImage.rectTransform.sizeDelta = new Vector2(1024, 600);
                 kinectImage.texture = GetUsersClrTex();
                 break;
+
             case 1:
+                kinectImage.rectTransform.sizeDelta = new Vector2(GetDepthImageWidth(), GetDepthImageHeight());
+                kinectImage.texture = GetRawDepthTex();
+                break;
+
+            case 2:
                 kinectImage.rectTransform.sizeDelta = new Vector2(GetDepthImageWidth(), GetDepthImageHeight());
                 kinectImage.texture = GetUsersLblTex();
                 break;
-            case 2:
+
+            case 3:
                 kinectImage.rectTransform.sizeDelta = new Vector2(GetDepthImageWidth(), GetDepthImageHeight());
                 kinectImage.texture = irTexture;
                 break; 
@@ -1500,6 +1513,7 @@ public class KinectManager : MonoBehaviour
         {
             // Initialize depth & label map related stuff
             usersLblTex = new Texture2D(sensorData.depthImageWidth, sensorData.depthImageHeight, TextureFormat.ARGB32, false);
+            rawDepthTexture = new Texture2D(sensorData.depthImageWidth, sensorData.depthImageHeight, TextureFormat.ARGB32, false);
 
 
             usersMapSize = sensorData.depthImageWidth * sensorData.depthImageHeight;
@@ -1920,7 +1934,7 @@ public class KinectManager : MonoBehaviour
             video.Stop();
         }
 
-        kinectImage.texture = /*kinectTexture*/ usersLblTex;
+        kinectImage.texture = GetUsersClrTex();
     }
 
     public void RestartPlayback()
@@ -2028,6 +2042,11 @@ public class KinectManager : MonoBehaviour
                     {
                         KinectInterop.RenderTex2Tex2D(sensorData.depth2ColorTexture, ref usersLblTex);
                     }
+                }
+
+                if (sensorData.rawDepthTexture)
+                {
+                    KinectInterop.RenderTex2Tex2D(sensorData.rawDepthTexture, ref rawDepthTexture);
                 }
 
             }
