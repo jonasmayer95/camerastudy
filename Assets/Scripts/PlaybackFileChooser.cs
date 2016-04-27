@@ -7,14 +7,15 @@ using System.IO;
 public class PlaybackFileChooser : MonoBehaviour
 {
     public KinectRecorder recorder;
-    private Dropdown fileChooser;
+    public Dropdown streamSelectionDropdown;
+    public Dropdown fileChooser;
+
     private List<string> options;
 
     void Start()
     {
         fileChooser = gameObject.GetComponent<Dropdown>();
         ListPlaybackFiles();
-        SetPlaybackFileName(fileChooser.value);
     }
 
     /// <summary>
@@ -30,6 +31,7 @@ public class PlaybackFileChooser : MonoBehaviour
             fileChooser.ClearOptions();
             fileChooser.AddOptions(options);
             SetPlaybackFileName(fileChooser.value);
+            SetStreamSuffix(streamSelectionDropdown.value);
         }
     }
 
@@ -43,6 +45,32 @@ public class PlaybackFileChooser : MonoBehaviour
         if (dropdownIndex < fileChooser.options.Count)
         {
             recorder.PlaybackFileName = fileChooser.options[dropdownIndex].text;
+        }
+    }
+
+    public void SetStreamSuffix(int dropdownIndex)
+    {
+        if (dropdownIndex < streamSelectionDropdown.options.Count)
+        {
+            string streamSuffix;
+
+            switch (dropdownIndex)
+            {
+                default:
+                case 0:
+                    streamSuffix = "_color";
+                    break;
+
+                case 1:
+                    streamSuffix = "_depth";
+                    break;
+
+                case 2:
+                    streamSuffix = "_infrared";
+                    break;
+            }
+
+            recorder.StreamSuffix = streamSuffix;
         }
     }
 }

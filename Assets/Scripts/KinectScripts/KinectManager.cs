@@ -1898,12 +1898,12 @@ public class KinectManager : MonoBehaviour
 
     }
 
-    public IEnumerator LoadAndPlayMovie(string movieName)
+    public IEnumerator LoadAndPlayMovie(string movieName, string streamName)
     {
         movieName = movieName.Substring(2);
         movieName = movieName.Remove(movieName.Length - 4);
-        string wd = Path.GetFullPath(".");
-        string path = Path.Combine(wd, movieName + ".ogv");
+        string workingDir = Path.GetFullPath(".");
+        string path = Path.Combine(workingDir, movieName + streamName + ".ogv");
 
         if (File.Exists(path))
         {

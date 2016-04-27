@@ -13,6 +13,7 @@ public class KinectRecorder : MonoBehaviour
     public bool LoopPlayback { get; set; }
 
     public string PlaybackFileName { get; set; }
+    public string StreamSuffix { get; set; }
     public string RecordingFileName { get; set; }
 
     public AVProMovieCaptureFromTexture colorCapture;
@@ -65,7 +66,7 @@ public class KinectRecorder : MonoBehaviour
                 reader = new StreamReader(bodyPlaybackFile);
 
                 KinectManager.Instance.StartPlayback();
-                StartCoroutine(KinectManager.Instance.LoadAndPlayMovie(PlaybackFileName));
+                StartCoroutine(KinectManager.Instance.LoadAndPlayMovie(PlaybackFileName, StreamSuffix));
 
                 frameTime = 0;
             }
@@ -428,6 +429,8 @@ public class KinectRecorder : MonoBehaviour
     /// <param name="e"></param>
     void ConversionFinished(object sender, EventArgs e)
     {
+        UnityEngine.Debug.Log("calling conversionfinished");
+
         string[] aviFiles = Directory.GetFiles(".", "*.avi");
 
         for (int i = 0; i < aviFiles.Length; ++i)
