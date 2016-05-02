@@ -404,8 +404,13 @@ public class KinectRecorder : MonoBehaviour
     {
         string workingDirectory = Path.GetFullPath(".");
         string colorPath = Path.Combine(workingDirectory, filename + "_color.avi");
+        colorPath = string.Format("\"{0}\"", colorPath);
+
         string depthPath = Path.Combine(workingDirectory, filename + "_depth.avi");
+        depthPath = string.Format("\"{0}\"", depthPath);
+
         string irPath = Path.Combine(workingDirectory, filename + "_infrared.avi");
+        irPath = string.Format("\"{0}\"", irPath); //wrap in quotes so we can use dirs with spaces
 
         string converterDir = Path.Combine(Application.streamingAssetsPath, "video");
         string batFilePath = Path.Combine(converterDir, "convert.bat");

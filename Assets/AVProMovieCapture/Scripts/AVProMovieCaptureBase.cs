@@ -483,7 +483,6 @@ public class AVProMovieCaptureBase : MonoBehaviour
 				result = System.IO.Path.Combine(path, filename);
 			}
 		}
-		
 		return result;
 	}
 	

@@ -1921,7 +1921,7 @@ public class KinectManager : MonoBehaviour
 
             //Hook the movie texture to the current renderer
             kinectImage.texture = video;
-            video.Play();
+            video.Play(); 
         }
     }
 
