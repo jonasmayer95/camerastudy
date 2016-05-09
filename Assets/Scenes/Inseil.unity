@@ -4508,7 +4508,7 @@ MonoBehaviour:
   computeInfraredMap: 1
   displayUserMap: 0
   displayColorMap: 0
-  displaySkeletonLines: 1
+  displaySkeletonLines: 0
   DisplayMapsWidthPercent: 20
   useMultiSourceReader: 0
   minUserDistance: 0.5

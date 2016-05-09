@@ -328,6 +328,9 @@ public class KinectInterop
 
         public RenderTexture alphaBodyTexture;
         public Material erodeBodyMaterial, dilateBodyMaterial, blurBodyMaterial;
+
+        public float[] tmpDepthBuffer;
+        public float[] tmpInfraredBuffer;
     }
 
     public struct SmoothParameters
@@ -486,6 +489,7 @@ public class KinectInterop
             }
         }
     }
+
 
 
     // initializes the available sensor interfaces
@@ -647,6 +651,8 @@ public class KinectInterop
 
                                 sensorData.rawDepthBuffer = new ComputeBuffer(sensorData.depthImage.Length, sizeof(float));
                                 sensorData.rawDepthMaterial.SetBuffer("_Buffer", sensorData.rawDepthBuffer);
+
+                                sensorData.tmpInfraredBuffer = new float[sensorData.infraredImage.Length];
                             }
                         }
 
@@ -672,6 +678,8 @@ public class KinectInterop
 
                                 sensorData.depthHistBuffer = new ComputeBuffer(5001, sizeof(float));
                                 sensorData.depthImageMaterial.SetBuffer("_HistBuffer", sensorData.depthHistBuffer);
+
+                                sensorData.tmpDepthBuffer = new float[sensorData.depthImage.Length];
                             }
                         }
 
@@ -964,15 +972,15 @@ public class KinectInterop
 
                 if (sensorData.rawDepthBuffer != null)
                 {
-                    float[] buffer = new float[sensorData.depthImage.Length];
+                    //float[] buffer = new float[sensorData.depthImage.Length];
 
                     for (int i = 0; i < sensorData.depthImage.Length; i++)
                     {
-                        buffer[i] = (float)sensorData.depthImage[i];
+                        sensorData.tmpDepthBuffer[i] = (float)sensorData.depthImage[i];
                     }
 
-                    sensorData.rawDepthBuffer.SetData(buffer);
-                    buffer = null;
+                    sensorData.rawDepthBuffer.SetData(sensorData.tmpDepthBuffer);
+                    //buffer = null;
 
                     Graphics.Blit(null, sensorData.rawDepthTexture, sensorData.rawDepthMaterial);
                 }
@@ -980,14 +988,14 @@ public class KinectInterop
                 if (sensorData.depthImageBuffer != null && sensorData.depthHistBuffer != null)
                 {
                     // create depth texture
-                    float[] bufDepth = new float[sensorData.depthImage.Length];
+                    //float[] bufDepth = new float[sensorData.depthImage.Length];
                     int[] bufDepthHist = new int[5001];
                     int totalPoints = 0;
 
                     for (int i = 0; i < sensorData.depthImage.Length; i++)
                     {
                         int depth = sensorData.depthImage[i] < 5000 ? (int)sensorData.depthImage[i] : 5000;
-                        bufDepth[i] = (float)depth;
+                        /*bufDepth*/sensorData.tmpDepthBuffer[i] = (float)depth;
 
                         if (sensorData.bodyIndexImage[i] != 255)
                         {
@@ -1005,10 +1013,10 @@ public class KinectInterop
                     }
 
                     sensorData.depthImageMaterial.SetFloat("_TotalPoints", (float)totalPoints);
-                    sensorData.depthImageBuffer.SetData(bufDepth);
+                    sensorData.depthImageBuffer.SetData(/*bufDepth*/ sensorData.tmpDepthBuffer);
                     sensorData.depthHistBuffer.SetData(bufEqualHist);
 
-                    bufDepth = null;
+                    //bufDepth = null;
                     bufEqualHist = null;
                     bufDepthHist = null;
 
@@ -1065,16 +1073,16 @@ public class KinectInterop
             {
                 if (sensorData.infraredBuffer != null)
                 {
-                    float[] buffer = new float[sensorData.infraredImage.Length];
+                    //float[] buffer = new float[sensorData.infraredImage.Length];
 
                     //read raw data that the sensor acquired, upload to GPU and let the shader do the rest
                     for (int i = 0; i < sensorData.infraredImage.Length; ++i)
                     {
-                        buffer[i] = (float)sensorData.infraredImage[i];
+                        sensorData.tmpInfraredBuffer[i] = (float)sensorData.infraredImage[i];
                     }
 
-                    sensorData.infraredBuffer.SetData(buffer);
-                    buffer = null;
+                    sensorData.infraredBuffer.SetData(/*buffer*/ sensorData.tmpInfraredBuffer);
+                    //buffer = null;
 
                     Graphics.Blit(null, sensorData.infraredTexture, sensorData.infraredMaterial);
                 }

@@ -2073,7 +2073,7 @@ public class KinectManager : MonoBehaviour
                         }
                         else
                         {
-
+                            //we can't draw stuff over a movietexture, so...
                             DrawSkeletonToColor(kinectImage.texture as Texture2D, ref bodyFrame.bodyData[index]);
                         }
                     }
