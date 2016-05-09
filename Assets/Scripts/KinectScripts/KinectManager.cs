@@ -110,6 +110,7 @@ public class KinectManager : MonoBehaviour
     public GUIText gesturesDebugText;
 
     public RawImage kinectImage;
+    private Vector2 kinectImageInitialSize;
 
     public GameObject TestObject;
 
@@ -1056,6 +1057,7 @@ public class KinectManager : MonoBehaviour
         return bResult;
     }
 
+    // TODO: do image resizing somewhere else, km is bloated as hell already
     // changes the stream displayed on our RawImage an resizes it
     public void SwitchStreamAndResizeImage(int index)
     {
@@ -1064,22 +1066,22 @@ public class KinectManager : MonoBehaviour
             case 0:
             default:
                 //color stream
-                kinectImage.rectTransform.sizeDelta = new Vector2(1024, 600);
+                kinectImage.rectTransform.sizeDelta = kinectImageInitialSize;
                 kinectImage.texture = GetUsersClrTex();
                 break;
 
             case 1:
-                kinectImage.rectTransform.sizeDelta = new Vector2(GetDepthImageWidth(), GetDepthImageHeight());
+                kinectImage.rectTransform.sizeDelta = new Vector2((int)(GetDepthImageWidth() * 1.3584906f), (int)(GetDepthImageHeight() * 1.3584906f));
                 kinectImage.texture = GetRawDepthTex();
                 break;
 
             case 2:
-                kinectImage.rectTransform.sizeDelta = new Vector2(GetDepthImageWidth(), GetDepthImageHeight());
+                kinectImage.rectTransform.sizeDelta = new Vector2((int)(GetDepthImageWidth() * 1.3584906f), (int)(GetDepthImageHeight() * 1.3584906f));
                 kinectImage.texture = GetUsersLblTex();
                 break;
 
             case 3:
-                kinectImage.rectTransform.sizeDelta = new Vector2(GetDepthImageWidth(), GetDepthImageHeight());
+                kinectImage.rectTransform.sizeDelta = new Vector2((int)(GetDepthImageWidth() * 1.3584906f), (int)(GetDepthImageHeight() * 1.3584906f));
                 kinectImage.texture = irTexture;
                 break; 
         }
@@ -1515,6 +1517,10 @@ public class KinectManager : MonoBehaviour
             usersLblTex = new Texture2D(sensorData.depthImageWidth, sensorData.depthImageHeight, TextureFormat.ARGB32, false);
             rawDepthTexture = new Texture2D(sensorData.depthImageWidth, sensorData.depthImageHeight, TextureFormat.ARGB32, false);
 
+            if (kinectImage != null)
+            {
+                kinectImageInitialSize = new Vector2(kinectImage.rectTransform.sizeDelta.x, kinectImage.rectTransform.sizeDelta.y);
+            }
 
             usersMapSize = sensorData.depthImageWidth * sensorData.depthImageHeight;
             usersHistogramImage = new Color32[usersMapSize];
