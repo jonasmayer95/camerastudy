@@ -109,8 +109,8 @@ public class KinectManager : MonoBehaviour
     // GUI Text to show gesture debug message.
     public GUIText gesturesDebugText;
 
-    public RawImage kinectImage;
-    private Vector2 kinectImageInitialSize;
+    //public RawImage kinectImage;
+    
 
     public GameObject TestObject;
 
@@ -194,7 +194,7 @@ public class KinectManager : MonoBehaviour
     //private KinectInterop.BodyData loadedFrame;
 
     private float playBackStartTime;
-    private MovieTexture video;
+    //private MovieTexture video;
     //private Texture2D kinectTexture;
 
     // Set if either the sensor or the playback interface acquired a new frame
@@ -1057,35 +1057,7 @@ public class KinectManager : MonoBehaviour
         return bResult;
     }
 
-    // TODO: do image resizing somewhere else, km is bloated as hell already
-    // changes the stream displayed on our RawImage an resizes it
-    public void SwitchStreamAndResizeImage(int index)
-    {
-        switch (index)
-        {
-            case 0:
-            default:
-                //color stream
-                kinectImage.rectTransform.sizeDelta = kinectImageInitialSize;
-                kinectImage.texture = GetUsersClrTex();
-                break;
 
-            case 1:
-                kinectImage.rectTransform.sizeDelta = new Vector2((int)(GetDepthImageWidth() * 1.3584906f), (int)(GetDepthImageHeight() * 1.3584906f));
-                kinectImage.texture = GetRawDepthTex();
-                break;
-
-            case 2:
-                kinectImage.rectTransform.sizeDelta = new Vector2((int)(GetDepthImageWidth() * 1.3584906f), (int)(GetDepthImageHeight() * 1.3584906f));
-                kinectImage.texture = GetUsersLblTex();
-                break;
-
-            case 3:
-                kinectImage.rectTransform.sizeDelta = new Vector2((int)(GetDepthImageWidth() * 1.3584906f), (int)(GetDepthImageHeight() * 1.3584906f));
-                kinectImage.texture = irTexture;
-                break; 
-        }
-    }
 
     // removes the currently detected kinect users, allowing a new detection/calibration process to start
     public void ClearKinectUsers()
@@ -1517,10 +1489,6 @@ public class KinectManager : MonoBehaviour
             usersLblTex = new Texture2D(sensorData.depthImageWidth, sensorData.depthImageHeight, TextureFormat.ARGB32, false);
             rawDepthTexture = new Texture2D(sensorData.depthImageWidth, sensorData.depthImageHeight, TextureFormat.ARGB32, false);
 
-            if (kinectImage != null)
-            {
-                kinectImageInitialSize = new Vector2(kinectImage.rectTransform.sizeDelta.x, kinectImage.rectTransform.sizeDelta.y);
-            }
 
             usersMapSize = sensorData.depthImageWidth * sensorData.depthImageHeight;
             usersHistogramImage = new Color32[usersMapSize];
@@ -1533,8 +1501,6 @@ public class KinectManager : MonoBehaviour
             // Initialize color map related stuff
             //usersClrTex = new Texture2D(sensorData.colorImageWidth, sensorData.colorImageHeight, TextureFormat.RGBA32, false);
             usersClrSize = sensorData.colorImageWidth * sensorData.colorImageHeight;
-
-            kinectImage.texture = GetUsersClrTex();
         }
 
         if (computeInfraredMap)
@@ -1896,7 +1862,7 @@ public class KinectManager : MonoBehaviour
         }
     }
 
-    public void StartPlayback(/*string name*/)
+    public void StartPlayback()
     {
 
         playBackStartTime = Time.time;
@@ -1904,56 +1870,17 @@ public class KinectManager : MonoBehaviour
 
     }
 
-    public IEnumerator LoadAndPlayMovie(string movieName, string streamName)
-    {
-        movieName = movieName.Substring(2);
-        movieName = movieName.Remove(movieName.Length - 4);
-        string workingDir = Path.GetFullPath(".");
-        string path = Path.Combine(workingDir, movieName + streamName + ".ogv");
 
-        if (File.Exists(path))
-        {
-            path = path.Replace('\\', '/');
-            WWW diskMovieDir = new WWW("file:///" + path);
-
-            //Wait for file finish loading
-            while (!diskMovieDir.movie.isReadyToPlay)
-            {
-                yield return 0;
-            }
-
-            //Save the loaded movie from WWW to movetexture
-            video = diskMovieDir.movie as MovieTexture;
-
-            //Hook the movie texture to the current renderer
-            kinectImage.texture = video;
-            video.Play(); 
-        }
-    }
 
     public void EndPlayback()
     {
         playback = false;
-
-        if (video != null)
-        {
-            video.Stop();
-        }
-
-        kinectImage.texture = GetUsersClrTex();
     }
 
     public void RestartPlayback()
     {
         playback = true;
         playBackStartTime = Time.time;
-
-        if (video != null)
-        {
-            video.Stop();
-            kinectImage.texture = video;
-            video.Play();
-        }
     }
 
 
@@ -2074,7 +2001,7 @@ public class KinectManager : MonoBehaviour
                         else
                         {
                             //we can't draw stuff over a movietexture, so...
-                            DrawSkeletonToColor(kinectImage.texture as Texture2D, ref bodyFrame.bodyData[index]);
+                            //DrawSkeletonToColor(kinectImage.texture as Texture2D, ref bodyFrame.bodyData[index]);
                         }
                     }
                 }

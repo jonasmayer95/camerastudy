@@ -16,11 +16,19 @@ public class KinectRecorder : MonoBehaviour
     public string StreamSuffix { get; set; }
     public string RecordingFileName { get; set; }
 
+    public int Stream { get; set; }
+
     public AVProMovieCaptureFromTexture colorCapture;
     public AVProMovieCaptureFromTexture depthCapture;
     public AVProMovieCaptureFromTexture irCapture;
 
     public Button stopButton;
+
+    public RawImage kinectRawImage;
+
+    private Vector2 kinectImageInitialSize;
+
+    private MovieTexture video;
 
     // A line from our playback file
     private string line = "";
@@ -44,8 +52,50 @@ public class KinectRecorder : MonoBehaviour
     {
         cmd.EnableRaisingEvents = true;
         cmd.Exited += ConversionFinished;
+
+        if (kinectRawImage != null)
+        {
+            kinectImageInitialSize = new Vector2(kinectRawImage.rectTransform.sizeDelta.x, kinectRawImage.rectTransform.sizeDelta.y);
+
+            if (KinectManager.Instance.computeColorMap)
+            {
+                kinectRawImage.texture = KinectManager.Instance.GetUsersClrTex();
+            }
+        }
     }
 
+    public void EndPlayback()
+    {
+        if (video != null)
+        {
+            video.Stop();
+        }
+
+        int selectedStream = Stream;
+        Stream = 0;
+        ResizeImage();
+        Stream = selectedStream;
+
+        kinectRawImage.texture = KinectManager.Instance.GetUsersClrTex();
+        KinectManager.Instance.EndPlayback();
+    }
+
+    public void StartPlayback()
+    {
+        KinectManager.Instance.StartPlayback();
+    }
+
+    public void RestartPlayback()
+    {
+        if (video != null)
+        {
+            video.Stop();
+            //kinectImage.texture = video;
+            video.Play();
+        }
+
+        KinectManager.Instance.RestartPlayback();
+    }
 
     /// <summary>
     /// Sets up the file stream for playing back recorded data, destroying the
@@ -65,8 +115,8 @@ public class KinectRecorder : MonoBehaviour
                 bodyPlaybackFile = new FileStream(PlaybackFileName, FileMode.Open, FileAccess.Read, FileShare.Read);
                 reader = new StreamReader(bodyPlaybackFile);
 
-                KinectManager.Instance.StartPlayback();
-                StartCoroutine(KinectManager.Instance.LoadAndPlayMovie(PlaybackFileName, StreamSuffix));
+                this.StartPlayback();
+                StartCoroutine(this.LoadAndPlayMovie(PlaybackFileName, StreamSuffix));
 
                 frameTime = 0;
             }
@@ -122,7 +172,7 @@ public class KinectRecorder : MonoBehaviour
             {
                 bodyPlaybackFile.Seek(0, SeekOrigin.Begin);
                 frameTime = 0;
-                KinectManager.Instance.RestartPlayback();
+                this.RestartPlayback();
             }
             else
             {
@@ -133,6 +183,89 @@ public class KinectRecorder : MonoBehaviour
 
     }
 
+
+    // changes the stream displayed on our RawImage
+    public void SwitchStream()
+    {
+        switch (Stream)
+        {
+            case 0:
+            default:
+                //color stream
+                kinectRawImage.texture = KinectManager.Instance.GetUsersClrTex();
+                break;
+
+            case 1:
+                kinectRawImage.texture = KinectManager.Instance.GetRawDepthTex();
+                break;
+
+            case 2:
+                kinectRawImage.texture = KinectManager.Instance.GetUsersLblTex();
+                break;
+
+            case 3:
+                kinectRawImage.texture = KinectManager.Instance.GetUsersIrTex();
+                break;
+        }
+    }
+
+    /// <summary>
+    /// Resizes kinectRawImage depending on which stream we want to display.
+    /// </summary>
+    /// <param name="index">The stream index.</param>
+    public void ResizeImage()
+    {
+        switch (Stream)
+        {
+            case 0:
+            default:
+                //color stream
+                kinectRawImage.rectTransform.sizeDelta = kinectImageInitialSize;
+                break;
+
+            case 1:
+                kinectRawImage.rectTransform.sizeDelta = new Vector2((int)(KinectManager.Instance.GetDepthImageWidth() * 1.3584906f),
+                    (int)(KinectManager.Instance.GetDepthImageHeight() * 1.3584906f));
+                break;
+
+            case 2:
+                kinectRawImage.rectTransform.sizeDelta = new Vector2((int)(KinectManager.Instance.GetDepthImageWidth() * 1.3584906f),
+                    (int)(KinectManager.Instance.GetDepthImageHeight() * 1.3584906f));
+                break;
+
+            case 3:
+                kinectRawImage.rectTransform.sizeDelta = new Vector2((int)(KinectManager.Instance.GetDepthImageWidth() * 1.3584906f),
+                    (int)(KinectManager.Instance.GetDepthImageHeight() * 1.3584906f));
+                break;
+        }
+    }
+
+    public IEnumerator LoadAndPlayMovie(string movieName, string streamName)
+    {
+        movieName = movieName.Substring(2);
+        movieName = movieName.Remove(movieName.Length - 4);
+        string workingDir = Path.GetFullPath(".");
+        string path = Path.Combine(workingDir, movieName + streamName + ".ogv");
+
+        if (File.Exists(path))
+        {
+            path = path.Replace('\\', '/');
+            WWW diskMovieDir = new WWW("file:///" + path);
+
+            //Wait for file finish loading
+            while (!diskMovieDir.movie.isReadyToPlay)
+            {
+                yield return 0;
+            }
+
+            //Save the loaded movie from WWW to movetexture
+            video = diskMovieDir.movie as MovieTexture;
+
+            
+            kinectRawImage.texture = video;
+            video.Play();
+        }
+    }
 
     /// <summary>
     /// Constructs a Quaternion from a string.
