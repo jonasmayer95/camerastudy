@@ -1704,9 +1704,15 @@ public class KinectManager : MonoBehaviour
                     }
                 }
 
+                //we have at least one body frame (raw kinect) and 0 filters
+                for (int i = 0; i < filters.Count; ++i)
+                {
+                    //copy data set for each filter, then do processing
+                    //TODO: loop just once instead of 3 times (above and below this)
 
-                //filters: update filter list, copy data set for each filter, let each filter work on it, then ProcessBodyFrameData()
-                //bodyFrame.Copy(ref bodyFrameArt);
+                    //bodyFrame.Copy(ref bodyFrameArt);
+                }
+                
 
                 var userId = GetPrimaryUserID();
 
