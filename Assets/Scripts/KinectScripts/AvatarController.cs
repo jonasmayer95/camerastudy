@@ -6,7 +6,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.IO;
-using System.Text; 
+using System.Text;
+using UnityEngine.UI; 
 
 [RequireComponent(typeof(Animator))]
 public class AvatarController : MonoBehaviour
@@ -71,6 +72,8 @@ public class AvatarController : MonoBehaviour
 	protected KinectManager kinectManager;
     
     private BoneMap bonemap;
+
+    public RawImage kinectImage;
 
 	// returns the number of bone transforms (array length)
 	public int GetBoneTransformCount()
@@ -349,8 +352,10 @@ public class AvatarController : MonoBehaviour
 	
 		// Smoothly transition to the new position
 		Vector3 targetPos = bodyRootPosition + Kinect2AvatarPos(trans, verticalMovement);
-
-		if(isRigidBody && !verticalMovement)
+        KinectInterop.BodyData bodyData = kinectManager.GetUserBodyData(UserID);
+        targetPos = kinectManager.MapSpineBaseColorPosToWorldPos(kinectImage,ref bodyData);
+        bones[0].transform.position = targetPos;
+		/*if(isRigidBody && !verticalMovement)
 		{
 			// workaround for obeying the physics (e.g. gravity falling)
 			targetPos.y = bodyRoot != null ? bodyRoot.position.y : transform.position.y;
@@ -365,8 +370,9 @@ public class AvatarController : MonoBehaviour
 		{
 			transform.position = smoothFactor != 0f ? 
 				Vector3.Lerp(transform.position, targetPos, smoothFactor * Time.deltaTime) : targetPos;
-		}
+		}*/
 	}
+
 	
 	// If the bones to be mapped have been declared, map that bone to the model.
 	protected virtual void MapBones()

@@ -2776,6 +2776,41 @@ public class KinectManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Returns the Spinebase Color Image Position
+    /// </summary>
+    /// <param name="bodyData"></param>
+    /// <returns></returns>
+    private Vector2 GetSkeletonRootColorPos(ref KinectInterop.BodyData bodyData)
+    {
+        Kinect2Interface k2Interface;
+        Vector2 colorPosSpinebase = Vector2.zero;
+        if(sensorData.sensorInterface is Kinect2Interface)
+        {
+            k2Interface = sensorData.sensorInterface as Kinect2Interface;
+            colorPosSpinebase = k2Interface.MapSpacePointToColorCoords(sensorData, bodyData.joint[0].kinectPos);
+            
+        }
+        return colorPosSpinebase;
+    }
+
+    public Vector3 MapSpineBaseColorPosToWorldPos(RawImage texture, ref KinectInterop.BodyData bodyData)
+    {
+        RectTransform textureTransform = texture.gameObject.GetComponent<RectTransform>();
+        Vector3 targetPos = bodyData.joint[0].position;
+        Vector2 colorPos = GetSkeletonRootColorPos(ref bodyData);
+        colorPos.x = colorPos.x * textureTransform.sizeDelta.x / 1920.0f - textureTransform.sizeDelta.x/2;
+        colorPos.y = textureTransform.sizeDelta.y/2 -colorPos.y * textureTransform.sizeDelta.y/ 1080.0f;
+        
+        Vector2 textureScreenPos = Camera.main.WorldToScreenPoint(texture.gameObject.GetComponent<RectTransform>().position);
+        colorPos.x = colorPos.x + textureScreenPos.x;
+        colorPos.y = colorPos.y + textureScreenPos.y;
+        Debug.Log(textureScreenPos);
+        Debug.Log(colorPos);
+        targetPos = Camera.main.ScreenToWorldPoint(new Vector3(colorPos.x, colorPos.y, targetPos.z));
+        return targetPos;
+    }
+
     // switches the positional data of two joints
     private void SwitchJointsData(ref KinectInterop.BodyData bodyData, int joint1, int joint2)
     {
