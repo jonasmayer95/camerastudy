@@ -109,9 +109,6 @@ public class KinectManager : MonoBehaviour
     // GUI Text to show gesture debug message.
     public GUIText gesturesDebugText;
 
-    //public RawImage kinectImage;
-    
-
     public GameObject TestObject;
 
     // Object that corresponds to the square marker on our target
@@ -156,6 +153,7 @@ public class KinectManager : MonoBehaviour
 
     // Kinect body frame data
     private List<KinectInterop.BodyFrameData> bodyFrames; //first element is unfiltered (default), others can be anything
+    public List<AbstractFilter> filters;
     private KinectInterop.BodyFrameData bodyFrameArt;
     //private Int64 lastBodyFrameTime = 0;
 
@@ -180,9 +178,6 @@ public class KinectManager : MonoBehaviour
     private Dictionary<Int64, List<KinectGestures.GestureData>> playerGesturesData = new Dictionary<Int64, List<KinectGestures.GestureData>>();
     private Dictionary<Int64, float> gesturesTrackingAtTime = new Dictionary<Int64, float>();
 
-    //// List of Gesture Listeners. They must implement KinectGestures.GestureListenerInterface
-    //public List<KinectGestures.GestureListenerInterface> gestureListenerInts;
-
     // Body filter instances
     private JointPositionsFilter jointPositionFilter = null;
     private BoneOrientationsConstraint boneConstraintsFilter = null;
@@ -191,11 +186,8 @@ public class KinectManager : MonoBehaviour
     private bool characterScaled = false;
 
     private bool recording = false;
-    //private KinectInterop.BodyData loadedFrame;
 
     private float playBackStartTime;
-    //private MovieTexture video;
-    //private Texture2D kinectTexture;
 
     // Set if either the sensor or the playback interface acquired a new frame
     private bool bAcquiredBodyFrame;
@@ -1437,6 +1429,8 @@ public class KinectManager : MonoBehaviour
         instance = this;
 
         // init skeleton structures
+        filters = new List<AbstractFilter>();
+
         bodyFrames = new List<KinectInterop.BodyFrameData>();
         bodyFrames.Add(new KinectInterop.BodyFrameData(sensorData.bodyCount, KinectInterop.Constants.JointCount));
 
