@@ -355,6 +355,7 @@ public class AvatarController : MonoBehaviour
         KinectInterop.BodyData bodyData = kinectManager.GetUserBodyData(UserID);
         targetPos = kinectManager.MapSpineBaseColorPosToWorldPos(kinectImage,ref bodyData);
         bones[0].transform.position = targetPos;
+
 		/*if(isRigidBody && !verticalMovement)
 		{
 			// workaround for obeying the physics (e.g. gravity falling)

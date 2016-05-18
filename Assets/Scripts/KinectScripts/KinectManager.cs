@@ -2798,32 +2798,38 @@ public class KinectManager : MonoBehaviour
     /// </summary>
     /// <param name="bodyData"></param>
     /// <returns></returns>
-    private Vector2 GetSkeletonRootColorPos(ref KinectInterop.BodyData bodyData)
+    public Vector2 GetJointColorPos(ref KinectInterop.BodyData bodyData, int jointindex)
     {
         Kinect2Interface k2Interface;
         Vector2 colorPosSpinebase = Vector2.zero;
         if(sensorData.sensorInterface is Kinect2Interface)
         {
             k2Interface = sensorData.sensorInterface as Kinect2Interface;
-            colorPosSpinebase = k2Interface.MapSpacePointToColorCoords(sensorData, bodyData.joint[0].kinectPos);
+            colorPosSpinebase = k2Interface.MapSpacePointToColorCoords(sensorData, bodyData.joint[jointindex].kinectPos);
             
         }
         return colorPosSpinebase;
     }
 
+    /// <summary>
+    /// calculate world space position from colorimage spine position
+    /// </summary>
+    /// <param name="texture"></param>
+    /// <param name="bodyData"></param>
+    /// <returns></returns>
     public Vector3 MapSpineBaseColorPosToWorldPos(RawImage texture, ref KinectInterop.BodyData bodyData)
     {
         RectTransform textureTransform = texture.gameObject.GetComponent<RectTransform>();
         Vector3 targetPos = bodyData.joint[0].position;
-        Vector2 colorPos = GetSkeletonRootColorPos(ref bodyData);
+        Vector2 colorPos = GetJointColorPos(ref bodyData, 0);
         colorPos.x = colorPos.x * textureTransform.sizeDelta.x / 1920.0f - textureTransform.sizeDelta.x/2;
         colorPos.y = textureTransform.sizeDelta.y/2 -colorPos.y * textureTransform.sizeDelta.y/ 1080.0f;
-        
+        colorPos = colorPos * Screen.width/ textureTransform.sizeDelta.x;
         Vector2 textureScreenPos = Camera.main.WorldToScreenPoint(texture.gameObject.GetComponent<RectTransform>().position);
         colorPos.x = colorPos.x + textureScreenPos.x;
         colorPos.y = colorPos.y + textureScreenPos.y;
-        Debug.Log(textureScreenPos);
-        Debug.Log(colorPos);
+
+        
         targetPos = Camera.main.ScreenToWorldPoint(new Vector3(colorPos.x, colorPos.y, targetPos.z));
         return targetPos;
     }
