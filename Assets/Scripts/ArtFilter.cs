@@ -33,7 +33,7 @@ public class ArtFilter : AbstractFilter
     //way we can be sure that kinectmanager will be initialized before us (if it exists)
     void Start()
     {
-        kinectManager = KinectManager.Instance;
+        this.kinectManager = KinectManager.Instance;
         if (kinectManager != null)
         {
             this.bodyFrame = new KinectInterop.BodyFrameData(kinectManager.GetBodyCount(), kinectManager.GetJointCount());
@@ -171,7 +171,7 @@ public class ArtFilter : AbstractFilter
     private void InitSocket()
     {
 
-        //TODO: get local IP instead of using a hardcoded string
+        //TODO: get local IP instead of using a hardcoded string, like here http://stackoverflow.com/questions/6803073/get-local-ip-address
         artSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         artSocket.Bind(new IPEndPoint(IPAddress.Parse("131.159.10.228"), 5000));
         artSocket.ReceiveTimeout = 3000; //3sec timeout, then close the socket
