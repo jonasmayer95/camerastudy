@@ -14,7 +14,7 @@ public abstract class AbstractFilter : MonoBehaviour
     //we might need an UpdateFilter() call e.g. to encapsulate ART recv stuff
     //implementors would call this from their unity Update()
 
-    public abstract void ApplyFilter();
+    public abstract void ApplyFilter(int bodyIndex);
 
     public KinectInterop.BodyFrameData bodyFrame;
     protected KinectManager kinectManager;

@@ -109,10 +109,9 @@ public class KinectManager : MonoBehaviour
     // GUI Text to show gesture debug message.
     public GUIText gesturesDebugText;
 
-    public GameObject TestObject;
+    //public GameObject TestObject;
 
-    // Object that corresponds to the square marker on our target
-    public GameObject handMarker;
+
 
     // Whether to use the sensor or playback data from a file
     private bool playback;
@@ -1702,58 +1701,25 @@ public class KinectManager : MonoBehaviour
 
                 if (userId != 0)
                 {
-                    int index = GetBodyIndexByUserId(userId);
+                    int bodyIndex = GetBodyIndexByUserId(userId);
 
-                    //TODO: remove this when debugging is done
-                    //TestObject.transform.position = bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].kinectPos;
+                    for (int i = 0; i < filters.Count; ++i)
+                    {
+                        //filters should be applied before any AvatarController work happens, regardless of lateUpdateAvatars
+                        filters[i].ApplyFilter(bodyIndex);
 
+                        ProcessBodyFrameData(ref filters[i].bodyFrame);
+                    }
 
                     //TODO: adapt this to write multiple bodies, i.e. loop it + include BodyFrameData
                     if (recording)
                     {
-                        var userBodyData = bodyFrame.bodyData[index];
+                        var userBodyData = bodyFrame.bodyData[bodyIndex];
                         recorder.WriteBodyData(userBodyData);
                     }
-
-                    //overwrite wrist data with art gameobject data
-                    //if (handMarker != null)
-                    //{
-                    //    var markerKinectPos = handMarker.transform.position;
-
-
-                    //    //Debug.Log(string.Format("KinectManager: handMarker kinectPos: {0}", markerKinectPos));
-                    //    //Debug.Log(string.Format("KinectManager: kinectPos, worldPos before setting: {0}, {1}", TestObject.transform.position, bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position));
-                    //    bodyFrameArt.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].kinectPos = markerKinectPos;
-                    //    bodyFrameArt.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position = kinectToWorld.MultiplyPoint3x4(markerKinectPos);
-                    //    bodyFrameArt.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].orientation = Quaternion.identity;
-
-                    //    //bodyFrameArt.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].trackingState = KinectInterop.TrackingState.NotTracked;
-
-
-                    //    //mask right arm components to prevent kinectmanager from calculating wrong directions, use ik instead
-                    //    //bodyFrameArt.bodyData[index].joint[(int)KinectInterop.JointType.ShoulderRight].trackingState = KinectInterop.TrackingState.NotTracked;
-                    //    //bodyFrameArt.bodyData[index].joint[(int)KinectInterop.JointType.ElbowRight].trackingState = KinectInterop.TrackingState.NotTracked;
-                    //    bodyFrameArt.bodyData[index].joint[(int)KinectInterop.JointType.HandRight].trackingState = KinectInterop.TrackingState.NotTracked;
-                    //    bodyFrameArt.bodyData[index].joint[(int)KinectInterop.JointType.HandTipRight].trackingState = KinectInterop.TrackingState.NotTracked;
-                    //    bodyFrameArt.bodyData[index].joint[(int)KinectInterop.JointType.ThumbRight].trackingState = KinectInterop.TrackingState.NotTracked;
-
-                    //    Debug.Log(string.Format("KinectManager: after setting: {0}, {1}", markerKinectPos, kinectToWorld.MultiplyPoint3x4(markerKinectPos)));
-
-                    //    //recalculate directions because wrist data has been overwritten
-                    //    for (int j = 1; j < sensorData.jointCount; ++j)
-                    //    {
-                    //        KinectInterop.CalculateJointDirection(index, (int)KinectInterop.JointType.WristRight, ref bodyFrameArt, sensorData);
-                    //    }
-                    //}
                 }
-
 
                 ProcessBodyFrameData(ref bodyFrame);
-
-                for (int i = 0; i < filters.Count; ++i)
-                {
-                    ProcessBodyFrameData(ref filters[i].bodyFrame);
-                }
             }
 
             if (useMultiSourceReader)

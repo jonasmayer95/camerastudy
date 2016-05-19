@@ -27,6 +27,7 @@ public class ArtFilter : AbstractFilter
     private EndPoint trackingEndpoint = new IPEndPoint(IPAddress.Parse("131.159.10.100"), 0);
 
     private GameObject artObject;
+    private Transform squareMarker;
 
     //Start() is used instead of Awake() because loading order is arbitrary and this
     //way we can be sure that kinectmanager will be initialized before us (if it exists)
@@ -44,7 +45,7 @@ public class ArtFilter : AbstractFilter
         }
     }
 
-    
+
     void Update()
     {
         UpdateFilter();
@@ -62,25 +63,9 @@ public class ArtFilter : AbstractFilter
 
         try
         {
-            //TODO: get local IP instead of using a hardcoded string
-            artSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            artSocket.Bind(new IPEndPoint(IPAddress.Parse("131.159.10.228"), 5000));
-            artSocket.ReceiveTimeout = 3000; //3sec timeout, then close the socket
-
-            //set up thread, kick off recv loop
-            if (recvThread == null)
-            {
-                recvThread = new Thread(() => Run());
-                recvThread.Start();
-                Debug.Log("ArtFilter: started recvThread");
-            }
-
-            artObject = GameObject.Find("ARTTarget");
-
-            if (artObject != null)
-            {
-                initialized = true;
-            }
+            InitGameObjects();
+            InitSocket();
+            InitRecvThread();
         }
         catch (SocketException ex)
         {
@@ -136,11 +121,74 @@ public class ArtFilter : AbstractFilter
         }
     }
 
-    public override void ApplyFilter()
+    public override void ApplyFilter(int bodyIndex)
     {
         print("ArtFilter: applying");
 
-        //TODO: copy overwriting stuff from kinectmanager and apply here
+        //overwrite wrist data with art gameobject data
+
+        var markerKinectPos = squareMarker.position;
+
+
+        //Debug.Log(string.Format("KinectManager: squareMarker kinectPos: {0}", markerKinectPos));
+        //Debug.Log(string.Format("KinectManager: kinectPos, worldPos before setting: {0}, {1}", TestObject.transform.position, bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.WristRight].position));
+        bodyFrame.bodyData[bodyIndex].joint[(int)KinectInterop.JointType.WristRight].kinectPos = markerKinectPos;
+        bodyFrame.bodyData[bodyIndex].joint[(int)KinectInterop.JointType.WristRight].position = kinectManager.KinectToWorld.MultiplyPoint3x4(markerKinectPos);
+        bodyFrame.bodyData[bodyIndex].joint[(int)KinectInterop.JointType.WristRight].orientation = Quaternion.identity;
+
+        //bodyFrame.bodyData[bodyIndex].joint[(int)KinectInterop.JointType.WristRight].trackingState = KinectInterop.TrackingState.NotTracked;
+
+
+        //mask right arm components to prevent kinectmanager from calculating wrong directions, use ik instead
+        //bodyFrame.bodyData[bodyIndex].joint[(int)KinectInterop.JointType.ShoulderRight].trackingState = KinectInterop.TrackingState.NotTracked;
+        //bodyFrame.bodyData[bodyIndex].joint[(int)KinectInterop.JointType.ElbowRight].trackingState = KinectInterop.TrackingState.NotTracked;
+        bodyFrame.bodyData[bodyIndex].joint[(int)KinectInterop.JointType.HandRight].trackingState = KinectInterop.TrackingState.NotTracked;
+        bodyFrame.bodyData[bodyIndex].joint[(int)KinectInterop.JointType.HandTipRight].trackingState = KinectInterop.TrackingState.NotTracked;
+        bodyFrame.bodyData[bodyIndex].joint[(int)KinectInterop.JointType.ThumbRight].trackingState = KinectInterop.TrackingState.NotTracked;
+
+        //Debug.Log(string.Format("KinectManager: after setting: {0}, {1}", markerKinectPos, kinectManager.KinectToWorld.MultiplyPoint3x4(markerKinectPos)));
+        var sensorData = kinectManager.GetSensorData();
+
+        //recalculate directions because wrist data has been overwritten
+        for (int j = 1; j < sensorData.jointCount; ++j)
+        {
+            KinectInterop.CalculateJointDirection(bodyIndex, (int)KinectInterop.JointType.WristRight, ref bodyFrame, sensorData);
+        }
+
+    }
+
+    private void InitRecvThread()
+    {
+        //set up thread, kick off recv loop
+        if (recvThread == null)
+        {
+            recvThread = new Thread(() => Run());
+            recvThread.Start();
+            Debug.Log("ArtFilter: started recvThread");
+        }
+    }
+
+    private void InitSocket()
+    {
+
+        //TODO: get local IP instead of using a hardcoded string
+        artSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+        artSocket.Bind(new IPEndPoint(IPAddress.Parse("131.159.10.228"), 5000));
+        artSocket.ReceiveTimeout = 3000; //3sec timeout, then close the socket
+    }
+
+    private void InitGameObjects()
+    {
+        artObject = GameObject.Find("ARTTarget");
+
+        if (artObject != null)
+        {
+            if (artObject.transform.childCount > 0)
+            {
+                squareMarker = artObject.transform.GetChild(0);
+                initialized = true;
+            }
+        }
     }
 
     private void Run()
