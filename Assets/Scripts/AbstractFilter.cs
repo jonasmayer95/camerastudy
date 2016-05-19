@@ -16,8 +16,9 @@ public abstract class AbstractFilter : MonoBehaviour
 
     public abstract void ApplyFilter();
 
-    protected KinectManager kinectManager;
     public KinectInterop.BodyFrameData bodyFrame;
+    protected KinectManager kinectManager;
+    protected bool initialized;
 }
 
 //filters are applied to avatars (on the fly, just add a filter script)

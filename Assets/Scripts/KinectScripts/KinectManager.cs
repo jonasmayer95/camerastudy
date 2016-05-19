@@ -184,7 +184,7 @@ public class KinectManager : MonoBehaviour
     private BoneOrientationsConstraint boneConstraintsFilter = null;
     //private BoneOrientationsFilter boneOrientationFilter = null;
 
-    private bool characterScaled = false;
+    //private bool characterScaled = false;
 
     private bool recording = false;
 
