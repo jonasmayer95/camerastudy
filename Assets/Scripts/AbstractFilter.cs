@@ -4,7 +4,7 @@
 /// <summary>
 /// Allows the implementation of generic filter scripts that modify KinectManager's
 /// data sets and can be attached to GameObjects (e.g. avatars). Derives from MonoBehaviour
-/// for Awake() and OnDestroy() methods (for setup and tear down).
+/// for Start() and OnDestroy() methods (for setup and tear down).
 /// </summary>
 public abstract class AbstractFilter : MonoBehaviour
 {

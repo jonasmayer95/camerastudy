@@ -4,10 +4,10 @@ using System.Collections;
 
 public class ArtFilter : AbstractFilter
 {
-
-    void Awake()
+    //Start() is used instead of Awake() because loading order is arbitrary and this
+    //way we can be sure that kinectmanager will be initialized before us (if it exists)
+    void Start()
     {
-        //if we save our modified data set inside the filter, we need kinectmanager for init
         kinectManager = KinectManager.Instance;
         if (kinectManager != null)
         {
@@ -45,7 +45,11 @@ public class ArtFilter : AbstractFilter
     {
         print("ArtFilter: shutting down");
 
-        kinectManager.filters.Remove(this);
+        //kinectManager can be torn down before this, so a null check is needed
+        if (kinectManager != null)
+        {
+            kinectManager.filters.Remove(this);
+        }
     }
 
     protected override void UpdateFilter()
