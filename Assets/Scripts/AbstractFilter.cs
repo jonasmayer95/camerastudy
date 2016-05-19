@@ -14,10 +14,10 @@ public abstract class AbstractFilter : MonoBehaviour
     //we might need an UpdateFilter() call e.g. to encapsulate ART recv stuff
     //implementors would call this from their unity Update()
 
-    public abstract void ApplyFilter(ref KinectInterop.BodyData bodyData);
+    public abstract void ApplyFilter();
 
     protected KinectManager kinectManager;
-    public KinectInterop.BodyFrameData BodyFrame { get; set; }
+    public KinectInterop.BodyFrameData bodyFrame;
 }
 
 //filters are applied to avatars (on the fly, just add a filter script)

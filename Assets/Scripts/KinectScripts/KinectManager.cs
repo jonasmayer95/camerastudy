@@ -152,8 +152,9 @@ public class KinectManager : MonoBehaviour
     private int usersClrSize;
 
     // Kinect body frame data
-    private List<KinectInterop.BodyFrameData> bodyFrames; //first element is unfiltered (default), others can be anything
+    private KinectInterop.BodyFrameData bodyFrame;
     public List<AbstractFilter> filters;
+
     private KinectInterop.BodyFrameData bodyFrameArt;
     //private Int64 lastBodyFrameTime = 0;
 
@@ -433,7 +434,7 @@ public class KinectManager : MonoBehaviour
 
             if (index >= 0 && index < sensorData.bodyCount)
             {
-                return bodyFrames[0].bodyData[index];
+                return bodyFrame.bodyData[index];
             }
         }
 
@@ -453,9 +454,9 @@ public class KinectManager : MonoBehaviour
                 {
                     return bodyFrameArt.bodyData[index].position;
                 }
-                else if (bodyFrames[0].bodyData[index].bIsTracked != 0)
+                else if (bodyFrame.bodyData[index].bIsTracked != 0)
                 {
-                    return bodyFrames[0].bodyData[index].position;
+                    return bodyFrame.bodyData[index].position;
                 }
             }
         }
@@ -471,12 +472,12 @@ public class KinectManager : MonoBehaviour
             int index = dictUserIdToIndex[userId];
 
             if (index >= 0 && index < sensorData.bodyCount &&
-               bodyFrames[0].bodyData[index].bIsTracked != 0)
+               bodyFrame.bodyData[index].bIsTracked != 0)
             {
                 if (flip)
-                    return bodyFrames[0].bodyData[index].normalRotation;
+                    return bodyFrame.bodyData[index].normalRotation;
                 else
-                    return bodyFrames[0].bodyData[index].mirroredRotation;
+                    return bodyFrame.bodyData[index].mirroredRotation;
             }
         }
 
@@ -491,11 +492,11 @@ public class KinectManager : MonoBehaviour
             int index = dictUserIdToIndex[userId];
 
             if (index >= 0 && index < sensorData.bodyCount &&
-                bodyFrames[0].bodyData[index].bIsTracked != 0)
+                bodyFrame.bodyData[index].bIsTracked != 0)
             {
                 if (joint >= 0 && joint < sensorData.jointCount)
                 {
-                    return bodyFrames[0].bodyData[index].joint[joint].trackingState;
+                    return bodyFrame.bodyData[index].joint[joint].trackingState;
                 }
             }
         }
@@ -511,11 +512,11 @@ public class KinectManager : MonoBehaviour
             int index = dictUserIdToIndex[userId];
 
             if (index >= 0 && index < sensorData.bodyCount &&
-                bodyFrames[0].bodyData[index].bIsTracked != 0)
+                bodyFrame.bodyData[index].bIsTracked != 0)
             {
                 if (joint >= 0 && joint < sensorData.jointCount)
                 {
-                    KinectInterop.JointData jointData = bodyFrames[0].bodyData[index].joint[joint];
+                    KinectInterop.JointData jointData = bodyFrame.bodyData[index].joint[joint];
 
                     return ignoreInferredJoints ? (jointData.trackingState == KinectInterop.TrackingState.Tracked) :
                         (jointData.trackingState != KinectInterop.TrackingState.NotTracked);
@@ -534,11 +535,11 @@ public class KinectManager : MonoBehaviour
             int index = dictUserIdToIndex[userId];
 
             if (index >= 0 && index < sensorData.bodyCount &&
-               bodyFrames[0].bodyData[index].bIsTracked != 0)
+               bodyFrame.bodyData[index].bIsTracked != 0)
             {
                 if (joint >= 0 && joint < sensorData.jointCount)
                 {
-                    KinectInterop.JointData jointData = bodyFrames[0].bodyData[index].joint[joint];
+                    KinectInterop.JointData jointData = bodyFrame.bodyData[index].joint[joint];
                     return jointData.kinectPos;
                 }
             }
@@ -555,11 +556,11 @@ public class KinectManager : MonoBehaviour
             int index = dictUserIdToIndex[userId];
 
             if (index >= 0 && index < sensorData.bodyCount &&
-                bodyFrames[0].bodyData[index].bIsTracked != 0)
+                bodyFrame.bodyData[index].bIsTracked != 0)
             {
                 if (joint >= 0 && joint < sensorData.jointCount)
                 {
-                    KinectInterop.JointData jointData = bodyFrames[0].bodyData[index].joint[joint];
+                    KinectInterop.JointData jointData = bodyFrame.bodyData[index].joint[joint];
                     return jointData.position;
                 }
             }
@@ -576,7 +577,7 @@ public class KinectManager : MonoBehaviour
             int index = dictUserIdToIndex[userId];
 
             if (index >= 0 && index < sensorData.bodyCount &&
-                bodyFrames[0].bodyData[index].bIsTracked != 0)
+                bodyFrame.bodyData[index].bIsTracked != 0)
             {
                 if (joint >= 0 && joint < sensorData.jointCount)
                 {
@@ -588,7 +589,7 @@ public class KinectManager : MonoBehaviour
                     }
                     else
                     {
-                        jointData = bodyFrames[0].bodyData[index].joint[joint];
+                        jointData = bodyFrame.bodyData[index].joint[joint];
                     }
 
                     Vector3 jointDir = jointData.direction;
@@ -615,9 +616,9 @@ public class KinectManager : MonoBehaviour
             int index = dictUserIdToIndex[userId];
 
             if (index >= 0 && index < sensorData.bodyCount &&
-                bodyFrames[0].bodyData[index].bIsTracked != 0)
+                bodyFrame.bodyData[index].bIsTracked != 0)
             {
-                KinectInterop.BodyData bodyData = bodyFrames[0].bodyData[index];
+                KinectInterop.BodyData bodyData = bodyFrame.bodyData[index];
 
                 if (firstJoint >= 0 && firstJoint < sensorData.jointCount &&
                     secondJoint >= 0 && secondJoint < sensorData.jointCount)
@@ -648,21 +649,21 @@ public class KinectManager : MonoBehaviour
             int index = dictUserIdToIndex[userId];
 
             if (index >= 0 && index < sensorData.bodyCount &&
-               bodyFrames[0].bodyData[index].bIsTracked != 0)
+               bodyFrame.bodyData[index].bIsTracked != 0)
             {
                 if (flip)
                 {
                     if (useArt)
                         return bodyFrameArt.bodyData[index].joint[joint].normalRotation;
                     else
-                        return bodyFrames[0].bodyData[index].joint[joint].normalRotation;
+                        return bodyFrame.bodyData[index].joint[joint].normalRotation;
                 }
                 else
                 {
                     if (useArt)
                         return bodyFrameArt.bodyData[index].joint[joint].mirroredRotation;
                     else
-                        return bodyFrames[0].bodyData[index].joint[joint].mirroredRotation;
+                        return bodyFrame.bodyData[index].joint[joint].mirroredRotation;
                 }
             }
         }
@@ -678,11 +679,11 @@ public class KinectManager : MonoBehaviour
             int index = dictUserIdToIndex[userId];
 
             if (index >= 0 && index < sensorData.bodyCount &&
-               bodyFrames[0].bodyData[index].bIsTracked != 0)
+               bodyFrame.bodyData[index].bIsTracked != 0)
             {
                 if (joint >= 0 && joint < sensorData.jointCount)
                 {
-                    KinectInterop.JointData jointData = bodyFrames[0].bodyData[index].joint[joint];
+                    KinectInterop.JointData jointData = bodyFrame.bodyData[index].joint[joint];
                     Vector3 posJointRaw = jointData.kinectPos;
 
                     if (posJointRaw != Vector3.zero)
@@ -724,11 +725,11 @@ public class KinectManager : MonoBehaviour
             int index = dictUserIdToIndex[userId];
 
             if (index >= 0 && index < sensorData.bodyCount &&
-               bodyFrames[0].bodyData[index].bIsTracked != 0)
+               bodyFrame.bodyData[index].bIsTracked != 0)
             {
                 if (joint >= 0 && joint < sensorData.jointCount)
                 {
-                    KinectInterop.JointData jointData = bodyFrames[0].bodyData[index].joint[joint];
+                    KinectInterop.JointData jointData = bodyFrame.bodyData[index].joint[joint];
                     Vector3 posJointRaw = jointData.kinectPos;
 
                     if (posJointRaw != Vector3.zero)
@@ -779,9 +780,9 @@ public class KinectManager : MonoBehaviour
             int index = dictUserIdToIndex[userId];
 
             if (index >= 0 && index < sensorData.bodyCount &&
-               bodyFrames[0].bodyData[index].bIsTracked != 0)
+               bodyFrame.bodyData[index].bIsTracked != 0)
             {
-                return bodyFrames[0].bodyData[index].isTurnedAround;
+                return bodyFrame.bodyData[index].isTurnedAround;
             }
         }
 
@@ -797,9 +798,9 @@ public class KinectManager : MonoBehaviour
             int index = dictUserIdToIndex[userId];
 
             if (index >= 0 && index < sensorData.bodyCount &&
-                bodyFrames[0].bodyData[index].bIsTracked != 0)
+                bodyFrame.bodyData[index].bIsTracked != 0)
             {
-                return (bodyFrames[0].bodyData[index].leftHandConfidence == KinectInterop.TrackingConfidence.High);
+                return (bodyFrame.bodyData[index].leftHandConfidence == KinectInterop.TrackingConfidence.High);
             }
         }
 
@@ -815,9 +816,9 @@ public class KinectManager : MonoBehaviour
             int index = dictUserIdToIndex[userId];
 
             if (index >= 0 && index < sensorData.bodyCount &&
-                bodyFrames[0].bodyData[index].bIsTracked != 0)
+                bodyFrame.bodyData[index].bIsTracked != 0)
             {
-                return (bodyFrames[0].bodyData[index].rightHandConfidence == KinectInterop.TrackingConfidence.High);
+                return (bodyFrame.bodyData[index].rightHandConfidence == KinectInterop.TrackingConfidence.High);
             }
         }
 
@@ -832,9 +833,9 @@ public class KinectManager : MonoBehaviour
             int index = dictUserIdToIndex[userId];
 
             if (index >= 0 && index < sensorData.bodyCount &&
-                bodyFrames[0].bodyData[index].bIsTracked != 0)
+                bodyFrame.bodyData[index].bIsTracked != 0)
             {
-                return bodyFrames[0].bodyData[index].leftHandState;
+                return bodyFrame.bodyData[index].leftHandState;
             }
         }
 
@@ -849,9 +850,9 @@ public class KinectManager : MonoBehaviour
             int index = dictUserIdToIndex[userId];
 
             if (index >= 0 && index < sensorData.bodyCount &&
-                bodyFrames[0].bodyData[index].bIsTracked != 0)
+                bodyFrame.bodyData[index].bIsTracked != 0)
             {
-                return bodyFrames[0].bodyData[index].rightHandState;
+                return bodyFrame.bodyData[index].rightHandState;
             }
         }
 
@@ -866,9 +867,9 @@ public class KinectManager : MonoBehaviour
             int index = dictUserIdToIndex[userId];
 
             if (index >= 0 && index < sensorData.bodyCount &&
-                bodyFrames[0].bodyData[index].bIsTracked != 0)
+                bodyFrame.bodyData[index].bIsTracked != 0)
             {
-                KinectInterop.BodyData bodyData = bodyFrames[0].bodyData[index];
+                KinectInterop.BodyData bodyData = bodyFrame.bodyData[index];
                 bool bResult = true;
 
                 if (bodyData.joint[(int)KinectInterop.JointType.ShoulderRight].trackingState != KinectInterop.TrackingState.NotTracked &&
@@ -922,9 +923,9 @@ public class KinectManager : MonoBehaviour
             int index = dictUserIdToIndex[userId];
 
             if (index >= 0 && index < sensorData.bodyCount &&
-                bodyFrames[0].bodyData[index].bIsTracked != 0)
+                bodyFrame.bodyData[index].bIsTracked != 0)
             {
-                KinectInterop.BodyData bodyData = bodyFrames[0].bodyData[index];
+                KinectInterop.BodyData bodyData = bodyFrame.bodyData[index];
                 bool bResult = true;
 
                 if (bodyData.joint[(int)KinectInterop.JointType.ShoulderLeft].trackingState != KinectInterop.TrackingState.NotTracked &&
@@ -1431,8 +1432,7 @@ public class KinectManager : MonoBehaviour
         // init skeleton structures
         filters = new List<AbstractFilter>();
 
-        bodyFrames = new List<KinectInterop.BodyFrameData>();
-        bodyFrames.Add(new KinectInterop.BodyFrameData(sensorData.bodyCount, KinectInterop.Constants.JointCount));
+        bodyFrame = new KinectInterop.BodyFrameData(sensorData.bodyCount, KinectInterop.Constants.JointCount);
 
         bodyFrameArt = new KinectInterop.BodyFrameData(sensorData.bodyCount, KinectInterop.Constants.JointCount);
 
@@ -1677,42 +1677,26 @@ public class KinectManager : MonoBehaviour
 
             if (!playback)
             {
-                //TODO: check if making this a class member isn't a better option
-                var tmpBodyFrame = bodyFrames[0];
-                bAcquiredBodyFrame = KinectInterop.PollBodyFrame(sensorData, ref tmpBodyFrame, ref kinectToWorld);
-                bodyFrames[0] = tmpBodyFrame;
+                bAcquiredBodyFrame = KinectInterop.PollBodyFrame(sensorData, ref bodyFrame, ref kinectToWorld);
             }
             else
             {
-                recorder.GetFrame(ref bodyFrames[0].bodyData[0], Time.time - playBackStartTime);
+                recorder.GetFrame(ref bodyFrame.bodyData[0], Time.time - playBackStartTime);
                 bAcquiredBodyFrame = true;
             }
 
             if (bAcquiredBodyFrame)
             {
                 //lastFrameTime = bodyFrame.liRelativeTime;
-                
+
+                CopyBodyFrames();
 
                 // filter the tracked joint positions
                 if (smoothing != Smoothing.None)
                 {
-                    for (int i = 0; i < bodyFrames.Count; ++i)
-                    {
-                        var tmpBodyFrame = bodyFrames[i];
-                        jointPositionFilter.UpdateFilter(ref tmpBodyFrame);
-                        bodyFrames[i] = tmpBodyFrame;
-                    }
+                    jointPositionFilter.UpdateFilter(ref bodyFrame);
                 }
 
-                //we have at least one body frame (raw kinect) and 0 filters
-                for (int i = 0; i < filters.Count; ++i)
-                {
-                    //copy data set for each filter, then do processing
-                    //TODO: loop just once instead of 3 times (above and below this)
-
-                    //bodyFrame.Copy(ref bodyFrameArt);
-                }
-                
 
                 var userId = GetPrimaryUserID();
 
@@ -1727,7 +1711,7 @@ public class KinectManager : MonoBehaviour
                     //TODO: adapt this to write multiple bodies, i.e. loop it + include BodyFrameData
                     if (recording)
                     {
-                        var userBodyData = bodyFrames[0].bodyData[index];
+                        var userBodyData = bodyFrame.bodyData[index];
                         recorder.WriteBodyData(userBodyData);
                     }
 
@@ -1763,14 +1747,13 @@ public class KinectManager : MonoBehaviour
                     //}
                 }
 
-                //do magic KinectManager stuff on each data set
-                for (int i = 0; i < bodyFrames.Count; ++i)
-                {
-                    var bodyFrame = bodyFrames[i];
-                    ProcessBodyFrameData(ref bodyFrame);
-                    bodyFrames[i] = bodyFrame;
-                }
 
+                ProcessBodyFrameData(ref bodyFrame);
+
+                for (int i = 0; i < filters.Count; ++i)
+                {
+                    ProcessBodyFrameData(ref filters[i].bodyFrame);
+                }
             }
 
             if (useMultiSourceReader)
@@ -1860,6 +1843,16 @@ public class KinectManager : MonoBehaviour
                 }
             }
 
+        }
+    }
+
+    private void CopyBodyFrames()
+    {
+        //we have at least one body frame (raw kinect) and 0 filters
+        for (int i = 0; i < filters.Count; ++i)
+        {
+            //copy data set for each filter, then do processing
+            bodyFrame.Copy(ref filters[i].bodyFrame);
         }
     }
 
@@ -2802,11 +2795,11 @@ public class KinectManager : MonoBehaviour
     {
         Kinect2Interface k2Interface;
         Vector2 colorPosSpinebase = Vector2.zero;
-        if(sensorData.sensorInterface is Kinect2Interface)
+        if (sensorData.sensorInterface is Kinect2Interface)
         {
             k2Interface = sensorData.sensorInterface as Kinect2Interface;
             colorPosSpinebase = k2Interface.MapSpacePointToColorCoords(sensorData, bodyData.joint[0].kinectPos);
-            
+
         }
         return colorPosSpinebase;
     }
@@ -2816,9 +2809,9 @@ public class KinectManager : MonoBehaviour
         RectTransform textureTransform = texture.gameObject.GetComponent<RectTransform>();
         Vector3 targetPos = bodyData.joint[0].position;
         Vector2 colorPos = GetSkeletonRootColorPos(ref bodyData);
-        colorPos.x = colorPos.x * textureTransform.sizeDelta.x / 1920.0f - textureTransform.sizeDelta.x/2;
-        colorPos.y = textureTransform.sizeDelta.y/2 -colorPos.y * textureTransform.sizeDelta.y/ 1080.0f;
-        
+        colorPos.x = colorPos.x * textureTransform.sizeDelta.x / 1920.0f - textureTransform.sizeDelta.x / 2;
+        colorPos.y = textureTransform.sizeDelta.y / 2 - colorPos.y * textureTransform.sizeDelta.y / 1080.0f;
+
         Vector2 textureScreenPos = Camera.main.WorldToScreenPoint(texture.gameObject.GetComponent<RectTransform>().position);
         colorPos.x = colorPos.x + textureScreenPos.x;
         colorPos.y = colorPos.y + textureScreenPos.y;
@@ -3324,7 +3317,7 @@ public class KinectManager : MonoBehaviour
 
             if (joint >= 0)
             {
-                KinectInterop.JointData jointData = bodyFrames[0].bodyData[bodyIndex].joint[joint];
+                KinectInterop.JointData jointData = bodyFrame.bodyData[bodyIndex].joint[joint];
 
                 playerJointsTracked[joint] = jointData.trackingState != KinectInterop.TrackingState.NotTracked;
                 playerJointsPos[joint] = jointData.kinectPos;
