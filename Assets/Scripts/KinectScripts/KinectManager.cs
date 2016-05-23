@@ -441,7 +441,7 @@ public class KinectManager : MonoBehaviour
     }
 
     // returns the User position, relative to the Kinect-sensor, in meters
-    public Vector3 GetUserPosition(Int64 userId, bool art)
+    public Vector3 GetUserPosition(Int64 userId, AbstractFilter filter)
     {
         if (dictUserIdToIndex.ContainsKey(userId))
         {
@@ -449,9 +449,9 @@ public class KinectManager : MonoBehaviour
 
             if (index >= 0 && index < sensorData.bodyCount)
             {
-                if (art && bodyFrameArt.bodyData[index].bIsTracked != 0)
+                if (filter != null && filter.bodyFrame.bodyData[index].bIsTracked != 0)
                 {
-                    return bodyFrameArt.bodyData[index].position;
+                    return filter.bodyFrame.bodyData[index].position;
                 }
                 else if (bodyFrame.bodyData[index].bIsTracked != 0)
                 {
@@ -569,7 +569,7 @@ public class KinectManager : MonoBehaviour
     }
 
     // returns the joint direction of the specified user, relative to the parent joint
-    public Vector3 GetJointDirection(Int64 userId, int joint, bool flipX, bool flipZ, bool useArt)
+    public Vector3 GetJointDirection(Int64 userId, int joint, bool flipX, bool flipZ, AbstractFilter filter)
     {
         if (dictUserIdToIndex.ContainsKey(userId))
         {
@@ -582,9 +582,9 @@ public class KinectManager : MonoBehaviour
                 {
                     KinectInterop.JointData jointData;
 
-                    if (useArt)
+                    if (filter != null)
                     {
-                        jointData = bodyFrameArt.bodyData[index].joint[joint];
+                        jointData = filter.bodyFrame.bodyData[index].joint[joint];
                     }
                     else
                     {
@@ -641,7 +641,7 @@ public class KinectManager : MonoBehaviour
     }
 
     // returns the joint rotation of the specified user, relative to the Kinect-sensor
-    public Quaternion GetJointOrientation(Int64 userId, int joint, bool flip, bool useArt)
+    public Quaternion GetJointOrientation(Int64 userId, int joint, bool flip, AbstractFilter filter)
     {
         if (dictUserIdToIndex.ContainsKey(userId))
         {
@@ -652,15 +652,15 @@ public class KinectManager : MonoBehaviour
             {
                 if (flip)
                 {
-                    if (useArt)
-                        return bodyFrameArt.bodyData[index].joint[joint].normalRotation;
+                    if (filter != null)
+                        return filter.bodyFrame.bodyData[index].joint[joint].normalRotation;
                     else
                         return bodyFrame.bodyData[index].joint[joint].normalRotation;
                 }
                 else
                 {
-                    if (useArt)
-                        return bodyFrameArt.bodyData[index].joint[joint].mirroredRotation;
+                    if (filter != null)
+                        return filter.bodyFrame.bodyData[index].joint[joint].mirroredRotation;
                     else
                         return bodyFrame.bodyData[index].joint[joint].mirroredRotation;
                 }
