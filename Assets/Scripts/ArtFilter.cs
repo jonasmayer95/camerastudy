@@ -29,8 +29,8 @@ public class ArtFilter : AbstractFilter
     private GameObject artObject;
     private Transform squareMarker;
 
-    //Start() is used instead of Awake() because loading order is arbitrary and this
-    //way we can be sure that kinectmanager will be initialized before us (if it exists)
+    //Start() is used instead of Awake() because kinectmanager needs to be initialized before us 
+    //(if it exists in the scene)
     void Start()
     {
         this.kinectManager = KinectManager.Instance;
@@ -41,7 +41,8 @@ public class ArtFilter : AbstractFilter
         }
         else
         {
-            Debug.LogError("kinectmanager is null, cannot attach filter");
+            Debug.LogError("kinectmanager is null, destroying filter");
+            Destroy(this);
         }
     }
 
@@ -49,7 +50,6 @@ public class ArtFilter : AbstractFilter
     void Update()
     {
         UpdateFilter();
-        //ApplyFilter(); //this should be called by kinectmanager, so avatarcontroller can access it afterwards
     }
 
     void OnDestroy()
@@ -198,11 +198,10 @@ public class ArtFilter : AbstractFilter
             while (!terminate)
             {
                 int bytesRead = artSocket.ReceiveFrom(buffer, BufferSize, SocketFlags.None, ref trackingEndpoint);
-                //Debug.Log(Encoding.ASCII.GetString(buffer));
             }
 
             artSocket.Close();
-            Debug.Log("ArtFilter: closed artSocket");
+            Debug.Log("ArtFilter: closed artSocket, terminating regularly");
         }
         catch (SocketException ex)
         {
