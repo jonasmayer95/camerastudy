@@ -140,7 +140,7 @@ public class AvatarController : MonoBehaviour
 			return;
 
         activeFilter = GetComponent<AbstractFilter>();
-
+        
 		// Get the KinectManager instance
 		if(kinectManager == null)
 		{

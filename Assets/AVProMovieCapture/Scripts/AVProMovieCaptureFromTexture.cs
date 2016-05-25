@@ -67,7 +67,9 @@ public class AVProMovieCaptureFromTexture : AVProMovieCaptureBase
 		{
 			while (_handle >= 0 && !AVProMovieCapturePlugin.IsNewFrameDue(_handle))
 			{
-				System.Threading.Thread.Sleep(1);
+                //what kind of moron coded this?
+                //System.Threading.Thread.Sleep(1);
+                return;
 			}
 			if (_handle >= 0)
 			{
