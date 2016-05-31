@@ -25,10 +25,19 @@ public class KinectRecorder : MonoBehaviour
     public Button stopButton;
 
     public RawImage kinectRawImage;
+    public RawImage depthRawImage;
+    public RawImage infraredRawImage;
 
     private Vector2 kinectImageInitialSize;
 
-    private MovieTexture video;
+    private MovieTexture colorVideo;
+    private MovieTexture depthVideo;
+    private MovieTexture infraredVideo;
+
+    private bool playback;
+     
+    public Slider depthBlendSlider;
+    public Slider infraredBlendSlider;
 
     // A line from our playback file
     private string line = "";
@@ -64,11 +73,27 @@ public class KinectRecorder : MonoBehaviour
         }
     }
 
+    void Update()
+    {
+        if (playback)
+        {
+            depthRawImage.color = new Vector4(depthRawImage.color.r, depthRawImage.color.g, depthRawImage.color.b, depthBlendSlider.value);
+            infraredRawImage.color = new Vector4(infraredRawImage.color.r, infraredRawImage.color.g, infraredRawImage.color.b, infraredBlendSlider.value);
+        }
+        else
+        {
+            depthRawImage.color = new Vector4(depthRawImage.color.r, depthRawImage.color.g, depthRawImage.color.b, 0);
+            infraredRawImage.color = new Vector4(infraredRawImage.color.r, infraredRawImage.color.g, infraredRawImage.color.b, 0);
+        }
+    }
+
     public void EndPlayback()
     {
-        if (video != null)
+        if (colorVideo != null)
         {
-            video.Stop();
+            colorVideo.Stop();
+            depthVideo.Stop();
+            infraredVideo.Stop();
         }
 
         int selectedStream = Stream;
@@ -77,22 +102,29 @@ public class KinectRecorder : MonoBehaviour
         Stream = selectedStream;
 
         kinectRawImage.texture = KinectManager.Instance.GetUsersClrTex();
+        depthRawImage.texture = null;
+        infraredRawImage.texture = null;
         KinectManager.Instance.EndPlayback();
+        playback = false;
     }
 
     public void StartPlayback()
     {
         KinectManager.Instance.StartPlayback();
+        playback = true;
+        
     }
 
     public void RestartPlayback()
     {
-        if (video != null)
-        {
-            video.Stop();
-            //kinectImage.texture = video;
-            video.Play();
-        }
+        //if (colorVideo != null)
+        //{
+            //kinectImage.texture = colorVideo;
+            StartCoroutine(this.LoadAndPlayMovie(PlaybackFileName, StreamSuffix, kinectRawImage, colorVideo));
+            StartCoroutine(this.LoadAndPlayMovie(PlaybackFileName, "_depth", depthRawImage, depthVideo));
+            StartCoroutine(this.LoadAndPlayMovie(PlaybackFileName, "_infrared", infraredRawImage, infraredVideo));
+            playback = true;
+        //}
 
         KinectManager.Instance.RestartPlayback();
     }
@@ -116,8 +148,9 @@ public class KinectRecorder : MonoBehaviour
                 reader = new StreamReader(bodyPlaybackFile);
 
                 this.StartPlayback();
-                StartCoroutine(this.LoadAndPlayMovie(PlaybackFileName, StreamSuffix));
-
+                StartCoroutine(this.LoadAndPlayMovie(PlaybackFileName, StreamSuffix, kinectRawImage, colorVideo));
+                StartCoroutine(this.LoadAndPlayMovie(PlaybackFileName, "_depth", depthRawImage, depthVideo));
+                StartCoroutine(this.LoadAndPlayMovie(PlaybackFileName, "_infrared", infraredRawImage, infraredVideo));
                 frameTime = 0;
             }
         }
@@ -240,7 +273,7 @@ public class KinectRecorder : MonoBehaviour
         }
     }
 
-    public IEnumerator LoadAndPlayMovie(string movieName, string streamName)
+    public IEnumerator LoadAndPlayMovie(string movieName, string streamName, RawImage texture, MovieTexture video)
     {
         movieName = movieName.Substring(2);
         movieName = movieName.Remove(movieName.Length - 4);
@@ -259,10 +292,22 @@ public class KinectRecorder : MonoBehaviour
             }
 
             //Save the loaded movie from WWW to movetexture
+            switch (streamName)
+            {
+                case "_infrared":
+                    infraredVideo = diskMovieDir.movie as MovieTexture;
+                    break;
+                case "_depth":
+                    depthVideo = diskMovieDir.movie as MovieTexture;
+                    break;
+                default:
+                    colorVideo = diskMovieDir.movie as MovieTexture;
+                    break;
+            }
             video = diskMovieDir.movie as MovieTexture;
 
             
-            kinectRawImage.texture = video;
+            texture.texture = video;
             video.Play();
         }
     }
@@ -516,7 +561,7 @@ public class KinectRecorder : MonoBehaviour
         depthCapture.StopCapture();
         irCapture.StopCapture();
 
-        ConvertVideo(RecordingFileName);
+        ConvertcolorVideo(RecordingFileName);
     }
 
     void OnApplicationQuit()
@@ -530,10 +575,10 @@ public class KinectRecorder : MonoBehaviour
     }
 
     /// <summary>
-    /// Starts a process that converts the recorded video to .ogv
+    /// Starts a process that converts the recorded colorVideo to .ogv
     /// </summary>
     /// <param name="filename"></param>
-    void ConvertVideo(string filename)
+    void ConvertcolorVideo(string filename)
     {
         string workingDirectory = Path.GetFullPath(".");
         string colorPath = Path.Combine(workingDirectory, filename + "_color.avi");
@@ -545,7 +590,7 @@ public class KinectRecorder : MonoBehaviour
         string irPath = Path.Combine(workingDirectory, filename + "_infrared.avi");
         irPath = string.Format("\"{0}\"", irPath); //wrap in quotes so we can use dirs with spaces
 
-        string converterDir = Path.Combine(Application.streamingAssetsPath, "video");
+        string converterDir = Path.Combine(Application.streamingAssetsPath, "colorVideo");
         string batFilePath = Path.Combine(converterDir, "convert.bat");
 
         string filePaths = string.Concat(colorPath, " ", depthPath, " ", irPath);
