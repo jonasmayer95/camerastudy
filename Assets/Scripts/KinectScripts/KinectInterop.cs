@@ -477,15 +477,15 @@ public class KinectInterop
             }
         }
 
-        internal void Copy(ref BodyFrameData bodyFrameArt)
+        internal void Copy(ref BodyFrameData secondFrame)
         {
-            bodyFrameArt.liRelativeTime = this.liRelativeTime;
-            bodyFrameArt.floorClipPlane = this.floorClipPlane;
+            secondFrame.liRelativeTime = this.liRelativeTime;
+            secondFrame.floorClipPlane = this.floorClipPlane;
             
             //copy array without creating new instances
             for (int i = 0; i < bodyData.Length; ++i)
             {
-                bodyData[i].Copy(ref bodyFrameArt.bodyData[i]);
+                bodyData[i].Copy(ref secondFrame.bodyData[i]);
             }
         }
     }

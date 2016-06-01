@@ -150,9 +150,9 @@ public class ArtFilter : AbstractFilter
         var sensorData = kinectManager.GetSensorData();
 
         //recalculate directions because wrist data has been overwritten
-        for (int j = 1; j < sensorData.jointCount; ++j)
+        for (int j = (int)KinectInterop.JointType.WristRight ; j < sensorData.jointCount; ++j)
         {
-            KinectInterop.CalculateJointDirection(bodyIndex, (int)KinectInterop.JointType.WristRight, ref bodyFrame, sensorData);
+            KinectInterop.CalculateJointDirection(bodyIndex, j, ref bodyFrame, sensorData);
         }
 
     }

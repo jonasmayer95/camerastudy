@@ -441,7 +441,7 @@ public class KinectManager : MonoBehaviour
     }
 
     // returns the User position, relative to the Kinect-sensor, in meters
-    public Vector3 GetUserPosition(Int64 userId, AbstractFilter filter)
+    public Vector3 GetUserPosition(Int64 userId)
     {
         if (dictUserIdToIndex.ContainsKey(userId))
         {
@@ -449,9 +449,10 @@ public class KinectManager : MonoBehaviour
 
             if (index >= 0 && index < sensorData.bodyCount)
             {
-                if (filter != null && filter.bodyFrame.bodyData != null && filter.bodyFrame.bodyData[index].bIsTracked != 0)
+                int i = filters.Count - 1;
+                if (i >= 0 && filters[i].bodyFrame.bodyData[index].bIsTracked != 0)
                 {
-                    return filter.bodyFrame.bodyData[index].position;
+                    return filters[i].bodyFrame.bodyData[index].position;
                 }
                 else if (bodyFrame.bodyData[index].bIsTracked != 0)
                 {
@@ -515,7 +516,18 @@ public class KinectManager : MonoBehaviour
             {
                 if (joint >= 0 && joint < sensorData.jointCount)
                 {
-                    KinectInterop.JointData jointData = bodyFrame.bodyData[index].joint[joint];
+                    KinectInterop.JointData jointData;
+
+                    int i = filters.Count - 1;
+                    if (i >= 0)
+                    {
+                        jointData = filters[i].bodyFrame.bodyData[index].joint[joint];
+                    }
+                    else
+                    {
+                        jointData = bodyFrame.bodyData[index].joint[joint];
+                    }
+                     
 
                     return ignoreInferredJoints ? (jointData.trackingState == KinectInterop.TrackingState.Tracked) :
                         (jointData.trackingState != KinectInterop.TrackingState.NotTracked);
@@ -569,7 +581,7 @@ public class KinectManager : MonoBehaviour
     }
 
     // returns the joint direction of the specified user, relative to the parent joint
-    public Vector3 GetJointDirection(Int64 userId, int joint, bool flipX, bool flipZ, AbstractFilter filter)
+    public Vector3 GetJointDirection(Int64 userId, int joint, bool flipX, bool flipZ)
     {
         if (dictUserIdToIndex.ContainsKey(userId))
         {
@@ -582,9 +594,11 @@ public class KinectManager : MonoBehaviour
                 {
                     KinectInterop.JointData jointData;
 
-                    if (filter != null)
+                    int i = filters.Count - 1;
+
+                    if (i >= 0)
                     {
-                        jointData = filter.bodyFrame.bodyData[index].joint[joint];
+                        jointData = filters[i].bodyFrame.bodyData[index].joint[joint];
                     }
                     else
                     {
@@ -641,7 +655,7 @@ public class KinectManager : MonoBehaviour
     }
 
     // returns the joint rotation of the specified user, relative to the Kinect-sensor
-    public Quaternion GetJointOrientation(Int64 userId, int joint, bool flip, AbstractFilter filter)
+    public Quaternion GetJointOrientation(Int64 userId, int joint, bool flip)
     {
         if (dictUserIdToIndex.ContainsKey(userId))
         {
@@ -650,17 +664,19 @@ public class KinectManager : MonoBehaviour
             if (index >= 0 && index < sensorData.bodyCount &&
                bodyFrame.bodyData[index].bIsTracked != 0)
             {
+                int i = filters.Count - 1;
+
                 if (flip)
                 {
-                    if (filter != null)
-                        return filter.bodyFrame.bodyData[index].joint[joint].normalRotation;
+                    if (i >= 0)
+                        return filters[i].bodyFrame.bodyData[index].joint[joint].normalRotation;
                     else
                         return bodyFrame.bodyData[index].joint[joint].normalRotation;
                 }
                 else
                 {
-                    if (filter != null)
-                        return filter.bodyFrame.bodyData[index].joint[joint].mirroredRotation;
+                    if (i >= 0)
+                        return filters[i].bodyFrame.bodyData[index].joint[joint].mirroredRotation;
                     else
                         return bodyFrame.bodyData[index].joint[joint].mirroredRotation;
                 }
@@ -1703,22 +1719,28 @@ public class KinectManager : MonoBehaviour
                 {
                     int bodyIndex = GetBodyIndexByUserId(userId);
 
-                    for (int i = 0; i < filters.Count; ++i)
+                    //if we have at least 2 filters we need to copy from filter to filter,
+                    //otherwise just copy the kinect body frame
+                    if (filters.Count != 0)
                     {
-                        //if ((i + 1) < filters.Count)
-                        //{
-                        //    var nextFilter = filters[i+1];
-                        //    filters[i].bodyFrame.Copy(ref nextFilter.bodyFrame);
-                        //}
-                        
+                        bodyFrame.Copy(ref filters[0].bodyFrame);
+
+
+                        filters[0].ApplyFilter(bodyIndex);
+                        ProcessBodyFrameData(ref filters[0].bodyFrame);
+                    }
+
+                    for (int i = 1; i < filters.Count; ++i)
+                    {
+                        //copy from filters[0] to filters[1]
+                        filters[i - 1].bodyFrame.Copy(ref filters[i].bodyFrame);
+
                         //filters should be applied before any AvatarController work happens, regardless of lateUpdateAvatars
                         filters[i].ApplyFilter(bodyIndex);
 
-                        //TODO: filter chaining. Let's say I copy the last filter into the next and apply then.
-                        //That'd work, wouldn't it?
-
                         ProcessBodyFrameData(ref filters[i].bodyFrame);
                     }
+                    print(string.Format("KinectManager: left knee {0}", filters[1].bodyFrame.bodyData[bodyIndex].joint[(int)KinectInterop.JointType.KneeLeft].trackingState));
 
                     //TODO: adapt this to write multiple bodies, i.e. loop it + include BodyFrameData
                     if (recording)

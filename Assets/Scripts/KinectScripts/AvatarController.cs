@@ -36,7 +36,7 @@ public class AvatarController : MonoBehaviour
     // Determines if this avatar uses ART data
     //public bool useArt;
 
-    private AbstractFilter activeFilter;
+    //private AbstractFilter activeFilter;
 
 	// Makes initial avatar position, relative to the specified camera
 	// to be equal to the user's position, relative to the sensor (optional)
@@ -138,15 +138,22 @@ public class AvatarController : MonoBehaviour
     {	
 		if(!gameObject.activeInHierarchy) 
 			return;
-
-        activeFilter = GetComponent<AbstractFilter>();
         
 		// Get the KinectManager instance
 		if(kinectManager == null)
 		{
 			kinectManager = KinectManager.Instance;
 		}
-		
+
+        //int index = kinectManager.filters.Count - 1;
+        //if (index >= 0)
+        //{
+        //    activeFilter = kinectManager.filters[index];
+
+        //    print(string.Format("AvatarController: left knee {0}", activeFilter.bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.KneeLeft].trackingState));
+        //}
+        //else activeFilter = null;
+
 		// move the avatar to its Kinect position
 		MoveAvatar(UserID);
 
@@ -241,14 +248,14 @@ public class AvatarController : MonoBehaviour
 		if(boneTransform == null || kinectManager == null)
 			return;
 
-        //Debug.Log(string.Format("jointType: {0}, transform: {1}", joint, boneTransform.name));
 
 		int iJoint = (int)joint;
 		if(iJoint < 0 || !kinectManager.IsJointTracked(userId, iJoint))
 			return;
 		
 		// Get Kinect joint orientation
-		Quaternion jointRotation = kinectManager.GetJointOrientation(userId, iJoint, flip, activeFilter);
+		Quaternion jointRotation = kinectManager.GetJointOrientation(userId, iJoint, flip);
+
 		if(jointRotation == Quaternion.identity)
 			return;
 
@@ -274,7 +281,7 @@ public class AvatarController : MonoBehaviour
 			return;
 		}
 		
-		Vector3 jointDir = kinectManager.GetJointDirection(userId, (int)joint, false, true, activeFilter);
+		Vector3 jointDir = kinectManager.GetJointDirection(userId, (int)joint, false, true);
 		Quaternion jointRotation = jointDir != Vector3.zero ? Quaternion.FromToRotation(baseDir, jointDir) : Quaternion.identity;
 		
 		if(!flip)
@@ -306,7 +313,7 @@ public class AvatarController : MonoBehaviour
 			return;
 		
         // Get the position of the body and store it.
-		Vector3 trans = kinectManager.GetUserPosition(UserID, activeFilter);
+		Vector3 trans = kinectManager.GetUserPosition(UserID);
 		
 		// If this is the first time we're moving the avatar, set the offset. Otherwise ignore it.
 		if (!offsetCalibrated)
