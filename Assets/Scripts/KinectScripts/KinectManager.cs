@@ -1705,8 +1705,17 @@ public class KinectManager : MonoBehaviour
 
                     for (int i = 0; i < filters.Count; ++i)
                     {
+                        //if ((i + 1) < filters.Count)
+                        //{
+                        //    var nextFilter = filters[i+1];
+                        //    filters[i].bodyFrame.Copy(ref nextFilter.bodyFrame);
+                        //}
+                        
                         //filters should be applied before any AvatarController work happens, regardless of lateUpdateAvatars
                         filters[i].ApplyFilter(bodyIndex);
+
+                        //TODO: filter chaining. Let's say I copy the last filter into the next and apply then.
+                        //That'd work, wouldn't it?
 
                         ProcessBodyFrameData(ref filters[i].bodyFrame);
                     }
