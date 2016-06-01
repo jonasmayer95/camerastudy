@@ -972,7 +972,6 @@ public class KinectInterop
 
                 if (sensorData.rawDepthBuffer != null)
                 {
-                    //float[] buffer = new float[sensorData.depthImage.Length];
 
                     for (int i = 0; i < sensorData.depthImage.Length; i++)
                     {
@@ -980,7 +979,6 @@ public class KinectInterop
                     }
 
                     sensorData.rawDepthBuffer.SetData(sensorData.tmpDepthBuffer);
-                    //buffer = null;
 
                     Graphics.Blit(null, sensorData.rawDepthTexture, sensorData.rawDepthMaterial);
                 }
@@ -995,7 +993,7 @@ public class KinectInterop
                     for (int i = 0; i < sensorData.depthImage.Length; i++)
                     {
                         int depth = sensorData.depthImage[i] < 5000 ? (int)sensorData.depthImage[i] : 5000;
-                        /*bufDepth*/sensorData.tmpDepthBuffer[i] = (float)depth;
+                        sensorData.tmpDepthBuffer[i] = (float)depth;
 
                         if (sensorData.bodyIndexImage[i] != 255)
                         {
@@ -1013,7 +1011,7 @@ public class KinectInterop
                     }
 
                     sensorData.depthImageMaterial.SetFloat("_TotalPoints", (float)totalPoints);
-                    sensorData.depthImageBuffer.SetData(/*bufDepth*/ sensorData.tmpDepthBuffer);
+                    sensorData.depthImageBuffer.SetData(sensorData.tmpDepthBuffer);
                     sensorData.depthHistBuffer.SetData(bufEqualHist);
 
                     //bufDepth = null;
