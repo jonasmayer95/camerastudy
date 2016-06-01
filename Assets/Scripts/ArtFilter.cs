@@ -123,7 +123,7 @@ public class ArtFilter : AbstractFilter
 
     public override void ApplyFilter(int bodyIndex)
     {
-        print("ArtFilter: applying");
+        //print("ArtFilter: applying");
 
         //overwrite wrist data with art gameobject data
 

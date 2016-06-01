@@ -65,11 +65,13 @@ public class AVProMovieCaptureFromTexture : AVProMovieCaptureBase
 	{
 		if (_capturing && !_paused && _sourceTexture)
 		{
-			while (_handle >= 0 && !AVProMovieCapturePlugin.IsNewFrameDue(_handle))
-			{
-				System.Threading.Thread.Sleep(1);
-			}
-			if (_handle >= 0)
+			//while (_handle >= 0 && !AVProMovieCapturePlugin.IsNewFrameDue(_handle))
+			//{
+                //what kind of moron coded this?
+                //System.Threading.Thread.Sleep(1);
+                //return;
+			//}
+            if (_handle >= 0 && AVProMovieCapturePlugin.IsNewFrameDue(_handle))
 			{
 				RenderTexture old = RenderTexture.active;
 				RenderTexture buffer = RenderTexture.GetTemporary(_texture.width, _texture.height, 0);

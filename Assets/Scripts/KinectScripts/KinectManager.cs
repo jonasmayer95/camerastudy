@@ -449,7 +449,7 @@ public class KinectManager : MonoBehaviour
 
             if (index >= 0 && index < sensorData.bodyCount)
             {
-                if (filter != null && filter.bodyFrame.bodyData[index].bIsTracked != 0)
+                if (filter != null && filter.bodyFrame.bodyData != null && filter.bodyFrame.bodyData[index].bIsTracked != 0)
                 {
                     return filter.bodyFrame.bodyData[index].position;
                 }
