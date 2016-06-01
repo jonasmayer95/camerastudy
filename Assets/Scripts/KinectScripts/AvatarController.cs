@@ -33,11 +33,6 @@ public class AvatarController : MonoBehaviour
 	// Offset node this transform is relative to, if any (optional)
 	public GameObject offsetNode;
 
-    // Determines if this avatar uses ART data
-    //public bool useArt;
-
-    //private AbstractFilter activeFilter;
-
 	// Makes initial avatar position, relative to the specified camera
 	// to be equal to the user's position, relative to the sensor (optional)
 	public Camera posRelativeToCamera;
@@ -145,15 +140,6 @@ public class AvatarController : MonoBehaviour
 			kinectManager = KinectManager.Instance;
 		}
 
-        //int index = kinectManager.filters.Count - 1;
-        //if (index >= 0)
-        //{
-        //    activeFilter = kinectManager.filters[index];
-
-        //    print(string.Format("AvatarController: left knee {0}", activeFilter.bodyFrame.bodyData[index].joint[(int)KinectInterop.JointType.KneeLeft].trackingState));
-        //}
-        //else activeFilter = null;
-
 		// move the avatar to its Kinect position
 		MoveAvatar(UserID);
 
@@ -166,10 +152,6 @@ public class AvatarController : MonoBehaviour
 			{
 				KinectInterop.JointType joint = !mirroredMovement ? boneIndex2JointMap[boneIndex] : boneIndex2MirrorJointMap[boneIndex];
 
-                //if (mirroredMovement && joint == KinectInterop.JointType.WristRight)
-                //{
-                //
-                //}
 				TransformBone(UserID, joint, boneIndex, !mirroredMovement);
 			}
 			else if(specIndex2JointMap.ContainsKey(boneIndex))
